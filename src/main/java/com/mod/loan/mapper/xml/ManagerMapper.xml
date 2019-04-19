@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mod.loan.mapper.ManagerMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.Manager">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="login_name" property="loginName" jdbcType="VARCHAR"/>
+        <result column="login_password" property="loginPassword" jdbcType="VARCHAR"/>
+        <result column="role_id" property="roleId" jdbcType="BIGINT"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+        <result column="user_email" property="userEmail" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="last_login_ip" property="lastLoginIp" jdbcType="VARCHAR"/>
+        <result column="account_status" property="accountStatus" jdbcType="INTEGER"/>
+        <result column="account_type" property="accountType" jdbcType="INTEGER"/>
+        <result column="merchant" property="merchant" jdbcType="VARCHAR"/>
+    	<result column="user_security" jdbcType="TINYINT" property="userSecurity" />
+    </resultMap>
+
+    <select id="findManagerList" resultType="map">
+        select account.id,account.login_name as 'loginName',account.user_phone as 'userPhone',account.user_email as 'userEmail',user_security as 'userSecurity',
+        account.user_name as 'userName',account.last_login_time as 'lastLoginTime',account.last_login_ip as 'lastLoginIp',
+        account.account_status as 'accountStatus',role.role_name as 'roleName',account.create_time as 'createTime'
+        from tb_merchant_manager account left join tb_merchant_role role on account.role_id = role.id
+        <where>
+            <if test="accountStatus != null">
+                and account.account_status = #{accountStatus}
+            </if>
+            <if test="merchant != null">
+                and account.merchant = #{merchant}
+            </if>
+            <if test="userName !=null">
+                and account.user_name = #{userName}
+            </if>
+            <if test="userPhone!=null">
+                and account.user_phone = #{userPhone}
+           </if>
+            <if test=" roleId != null">
+                and account.role_id = #{roleId}
+            </if>
+            and account.account_type = 0 
+        </where>
+        order by account.id desc
+        limit #{startIndex},#{pageSize}
+    </select>
+    
+    <select id="managerCount" resultType="int">
+        select count(1) from tb_merchant_manager account left join tb_merchant_role role on account.role_id = role.id
+        <where>
+            <if test="accountStatus != null">
+                and account.account_status = #{accountStatus}
+            </if>
+            <if test="merchant != null">
+                and account.merchant = #{merchant}
+            </if>
+            <if test="userName !=null">
+                and account.user_name = #{userName}
+            </if>
+            <if test="userPhone!=null">
+                and account.user_phone = #{userPhone}
+            </if>
+            <if test=" roleId != null">
+                and account.role_id = #{roleId}
+            </if>
+            and account.account_type = 0
+        </where>
+    </select>
+    
+ 	<select id="selectById" resultMap="BaseResultMap">
+        select id,login_name,role_id,user_phone,user_email,user_name,
+        last_login_time,last_login_ip,account_status,merchant,user_security
+        from tb_merchant_manager where id = #{id}
+    </select>
+
+</mapper>

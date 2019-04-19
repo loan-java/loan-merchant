@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/html">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>魔杖报告</title>
+		<meta charset="utf-8/">
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" th:href="@{/static/css/bootstrap.min.css}" media="screen" />
+		<style>
+			body {
+				margin: 4%;
+			}
+			.ali-title {
+				text-align: center;
+				font-size: 18px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="row-fluid">
+			<div class="block">
+				<div class="navbar block-header">
+					<div class="muted ali-title">魔杖报告</div>
+				</div>
+				<div class="block-content collapse in" id="report">
+
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+						<tr class="success" >
+							<td colspan="10"> 更新时间：<span v-text="update_date"></span></td>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--用户基本信息-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+						<tr class="success" >
+							<td colspan="10">用户基本信息</td>
+						</tr>
+						<tr>
+							<td colspan="2">姓名：<span v-text="person_info.name"></span></td>
+							<td colspan="2">年龄：<span v-text="person_info.age"></span></td>
+							<td colspan="2">性别：<span v-text="person_info.sex"></span></td>
+						</tr>
+						<tr>
+							<td colspan="2">身份证号：<span v-text="person_info.idcard"></span></td>
+							<td colspan="2">身份证地址：<span v-text="person_info.idcard_location"></span></td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2">手机号：<span v-text="person_info.mobile"></span></td>
+							<td colspan="2">运营商：<span v-text="person_info.carrier"></span></td>
+							<td colspan="2">号码归属地：<span v-text="person_info.mobile_location"></span></td>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--基本信息校验-->
+					<table class="table table-bordered"  style="width:1100px" align="center">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">基本信息校验</td>
+						</tr>
+						<tr>
+							<td width="50%" >
+								用户是否导入过运营商数据
+							</td>
+							<td width="50%">
+								<template v-if="verification_info.has_carrier_data">
+									是
+								</template>
+								<template v-else>
+									否
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								用户是否导入过公积金数据
+							</td>
+							<td>
+								<template v-if="verification_info.has_fund_data">
+									是
+								</template>
+								<template v-else>
+									否
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								用户是否导入过网银数据
+							</td>
+							<td >
+								<template v-if="verification_info.has_onlinebank_data">
+									是
+								</template>
+								<template v-else>
+									否
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								身份证号是否与公积金数据匹配
+							</td>
+							<td>
+								<template v-if="verification_info.idcard_match_fund">
+									匹配
+								</template>
+								<template v-else-if="verification_info.idcard_match_fund==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								手机号是否与公积金数据匹配.
+							</td>
+							<td>
+								<template v-if="verification_info.mobile_match_fund">
+									匹配
+								</template>
+								<template v-else-if="verification_info.mobile_match_fund==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								姓名是否与公积金数据匹配
+							</td>
+							<td>
+								<template v-if="verification_info.name_match_fund">
+									匹配
+								</template>
+								<template v-else-if="verification_info.name_match_fund==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								身份证号是否与网银数据匹配
+							</td>
+							<td>
+								<template v-if="verification_info.idcard_match_onlinebank">
+									匹配
+								</template>
+								<template v-else-if="verification_info.idcard_match_onlinebank==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								手机号是否与网银数据匹配
+							</td>
+							<td>
+								<template v-if="verification_info.mobile_match_onlinebank">
+									匹配
+								</template>
+								<template v-else-if="verification_info.mobile_match_onlinebank==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								姓名是否与网银数据匹配
+							</td>
+							<td>
+								<template v-if="verification_info.name_match_onlinebank">
+									匹配
+								</template>
+								<template v-else-if="verification_info.name_match_onlinebank==false">
+									不匹配
+								</template>
+								<template v-else>
+									此字段缺失表示无法判断
+								</template>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--黑名单信息-->
+					<table class="table table-bordered"  style="width:1100px" align="center">
+						<tbody>
+							<tr class="success">
+								<td colspan="10">黑名单信息</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">本人</th>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									涉黑评分. 取值0-100, 分值越低涉黑程度越深
+								</td>
+								<td colspan="5" width="50%">
+									<font color="red" v-text="black_info_detail.match_score"></font>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									手机和姓名是否在黑名单
+								</td>
+								<td colspan="5" width="50%">
+									<template v-if="black_info_detail.mobile_name_in_blacklist">
+										<font color="red"> 在</font>
+									</template>
+									<template v-else>
+										不在
+									</template>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									手机和姓名黑名单信息更新时间
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="black_info_detail.mobile_name_blacklist_updated_time"></span></font>
+									
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									身份证和姓名是否在黑名单
+								</td>
+								<td colspan="5" width="50%">
+									<template v-if="black_info_detail.idcard_name_in_blacklist">
+										<font color="red"> 在</font>
+									</template>
+									<template v-else>
+										不在
+									</template>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									身份证和姓名黑名单信息更新时间
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="black_info_detail.idcard_name_blacklist_updated_time"></span></font>			
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									被标记的黑名单分类
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"> <span v-text="black_info_detail.black_types"></span></font>
+								</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">黑名单详细信息</th>
+							</tr>
+							<tr >
+								<td colspan="2" width="20%">地址</td>
+								<td colspan="2" width="20%">累计借入本金</td>
+								<td colspan="2" width="20%">最大逾期状态</td>
+								<td colspan="2" width="20%">累计已还金额</td>
+								<td colspan="2" width="20%">累计逾期金额</td>
+							</tr>
+							<template v-if="black_info_detail.blacklist_record != null">
+								<tr style="background-color: HotPink">
+									<td colspan="2" width="20%">
+										<span v-text="black_info_detail.blacklist_record.address"></span>
+									</td>
+									<td colspan="2" width="20%">
+										<span v-text="black_info_detail.blacklist_record.capital"></span>
+									</td>
+									<td colspan="2" width="20%">
+										<span v-text="black_info_detail.blacklist_record.overdue_status"></span>
+									</td>
+									<td colspan="2" width="20%">
+										<span v-text="black_info_detail.blacklist_record.paid_amount"></span>
+									</td>
+									<td colspan="2" width="20%">
+										<span v-text="black_info_detail.blacklist_record.overdue_amount"></span>
+									</td>
+								</tr>
+							</template>
+							<tr>
+								<th colspan="10" style="text-align: center">联系人</th>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接联系人在黑名单的数量
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"> <span v-text="black_info_detail.direct_black_count"></span></font>			
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接联系人总数
+								</td>
+								<td colspan="5" width="50%">
+									<span v-text="black_info_detail.direct_contact_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									间接联系人在黑名单的数量
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"> <span v-text="black_info_detail.indirect_black_count"></span></font>			
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									引起黑名单的直接联系人(该直接联系人的联系人有黑名单用户)的数量
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="black_info_detail.introduce_black_count"></span></font>				
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									引起黑名单的直接联系人在全部直接联系人中的比例. 按万分比
+								</td>
+								<td colspan="5" width="50%">
+									<span v-text="black_info_detail.introduce_black_ratio"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接联系人黑名单类型
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="black_info_detail.direct_black_type"></span></font>		
+								</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">亲密联系人</th>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接亲密联系人是黑名单的数量
+								</td>
+								<td colspan="5" width="50%">
+									<font color="red"><span v-text="black_info_detail.direct_intimate_black_count"></span></font>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接亲密联系人数量
+								</td>
+								<td colspan="5" width="50%">
+									<span v-text="black_info_detail.direct_intimate_contact_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									间接亲密联系人是黑名单的数量
+								</td>
+								<td colspan="5" width="50%">
+									<font color="red"> <span v-text="black_info_detail.indirect_intimate_black_count"></span></font>
+								</td>
+							</tr>
+
+							<tr>
+								<td colspan="5" width="50%">
+									引起黑名单的直接亲密联系人(该直接亲密联系人的亲密联系人有黑名单用户)的数量
+								</td>
+								<td colspan="5" width="50%">
+									<font color="red"><span v-text="black_info_detail.introduce_intimate_black_count"></span></font>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									引起黑名单的直接亲密联系人在全部直接亲密联系人中的比例. 按万分比
+								</td>
+								<td colspan="5" width="50%">
+									<span v-text="black_info_detail.introduce_intimate_black_ratio"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									直接亲密联系人黑名单类型
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="black_info_detail.direct_intimate_black_type"></span></font>								
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!--灰名单信息-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+							<tr class="success" >
+								<td colspan="10">灰名单信息</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">本人</th>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									手机和姓名是否在灰名单
+								</td>
+								<td colspan="5" width="50%">
+									<template v-if="gray_info_detail.mobile_name_in_gray">
+										<font color="red">在</font>		
+									</template>
+									<template v-else>
+										不在
+									</template>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									手机和姓名灰名单信息更新时间
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="gray_info_detail.mobile_name_gray_updated_time"></span></font>		
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									身份证和姓名是否在灰名单
+								</td>
+								<td colspan="5" width="50%">
+									<template v-if="gray_info_detail.idcard_name_in_gray">
+										<font color="red">在</font>		
+									</template>
+									<template v-else>
+										不在
+									</template>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									身份证和姓名灰名单信息更新时间
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="gray_info_detail.idcard_name_gray_updated_time"></span></font>		
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5" width="50%">
+									被标记的灰名单分类
+								</td>
+								<td colspan="5" width="50%">
+								<font color="red"><span v-text="gray_info_detail.gray_types"></span></font>	
+								</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">灰名单详细信息</th>
+							</tr>
+							<tr>
+								<td colspan="2" width="25%">累计借入本金</td>
+								<td colspan="2" width="25%">最大逾期状态</td>
+								<td colspan="2" width="25%">累计已还金额</td>
+								<td colspan="2" width="25%">累计逾期金额</td>
+							</tr>
+							<template v-if="gray_info_detail.gray_record != null">
+								<tr style="background-color: HotPink">
+									<td colspan="2" width="25%">
+										<span v-text="gray_info_detail.gray_record.capital"></span>
+									</td>
+									<td colspan="2" width="25%">
+										<span v-text="gray_info_detail.gray_record.overdue_status"></span>
+									</td>
+									<td colspan="2" width="25%">
+										<span v-text="gray_info_detail.gray_record.paid_amount"></span>
+									</td>
+									<td colspan="2" width="25%">
+										<span v-text="gray_info_detail.gray_record.overdue_amount"></span>
+									</td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+
+					<!--多头信息-注册信息-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+							<tr class="success">
+								<td colspan="10">多头信息</td>
+							</tr>
+							<tr>
+								<th colspan="10" style="text-align: center">注册信息</th>
+							</tr>
+							<tr>
+								<td colspan="10">注册机构数量：<font color="red"><span v-text="register_info.org_count"></span></font>		</td>
+							<tr>
+							</tr>
+								<td colspan="10">注册机构类型列表：
+									<span v-text="register_info.org_types"></span>
+								</td>
+							</tr>
+							<tr>
+								<th colspan="10"  style="text-align: center">机构查询信息</th>
+							</tr>
+							<tr>
+								<td colspan="10">查询用户的机构数量：<span v-text="queried_detail.org_count"></span></td>
+							</tr>
+
+							<tr>
+								<th colspan="10"  style="text-align: center">机构查询统计分析</th>
+							</tr>
+							<tr>
+								<td colspan="2">机构类型</td>
+								<td colspan="2">近15天查询数量</td>
+								<td colspan="2">近30天查询数量</td>
+								<td colspan="2">近90天查询数量</td>
+								<td colspan="2">近180天查询数量</td>
+							</tr>
+							<template v-for="(item,index) in queried_detail.queried_analyze">
+								<tr>
+									<td colspan="2">{{_org_type_match(item.org_type)}}</span></td>
+									<td colspan="2"><span v-text="item.loan_cnt_15d"></span></td>
+									<td colspan="2"><span v-text="item.loan_cnt_30d"></span></td>
+									<td colspan="2"><span v-text="item.loan_cnt_90d"></span></td>
+									<td colspan="2"><span v-text="item.loan_cnt_180d"></span></td>
+								</tr>
+							</template>
+							<tr>
+								<th colspan="10"  style="text-align: center">机构查询历史</th>
+							</tr>
+							<tr>
+								<td colspan="4">机构查询日期</td>
+								<td colspan="3">机构类型</td>
+								<td colspan="3">是否本机构查询</td>
+							</tr>
+							<template v-for="(item,index) in queried_detail.queried_infos">
+								<tr>
+									<td colspan="4">
+										<span v-text="item.date"></span>
+									</td>
+									<td colspan="3">
+										{{_org_type_match(item.org_type)}}
+									</td>
+									<td colspan="3">
+										<template v-if="item.is_self">
+											是
+										</template>
+										<template v-else>
+											否
+										</template>
+									</td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+
+					<!--变更信息-手机存疑-->
+                    <table class="table table-bordered" style="width:1100px" align="center">
+                        <tbody>
+                        <tr class="success">
+                            <td colspan="10">变更信息-手机存疑</td>
+                        </tr>
+                        <tr >
+                            <td width="33%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeTelStatus(1)">使用当前手机的其他身份证列表</a>
+							</td>
+                            <td width="33%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeTelStatus(2)">使用过当前手机的其他姓名列表</a>
+							</td>
+                            <td width="34%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeTelStatus(3)">提供数据的机构信息列表</a>
+							</td>
+                        </tr>
+
+                        <template v-if="tel_status==1">
+							<tr>
+								<th>身份证</th>
+								<th>最后使用时间</th>
+								<th></th>
+							</tr>
+							<template v-for="(item,index) in suspicious_mobile.other_idcards">
+								<tr>
+									<td v-text="item.idcard"></td>
+									<td v-text="item.latest_used_time"></td>
+									<td></td>
+								</tr>
+							</template>
+                        </template>
+
+
+                        <template v-if="tel_status==2">
+							<tr>
+								<th>姓名</th>
+								<th>最后使用时间</th>
+                                <th></th>
+							</tr>
+							<template v-for="(item,index) in suspicious_mobile.other_names">
+								<tr >
+									<td v-text="item.name"></td>
+									<td v-text="item.latest_used_time"></td>
+                                    <td></td>
+								</tr>
+							</template>
+                        </template>
+
+                        <template v-if="tel_status==3">
+							<tr>
+								<th>机构类型</th>
+								<th>最后使用时间</th>
+                                <th></th>
+							</tr>
+							<template v-for="(item,index) in suspicious_mobile.information_sources">
+								<tr>
+									<td>{{_org_type_match(item.org_type)}}</td>
+									<td v-text="item.latest_used_time"></td>
+                                    <td></td>
+								</tr>
+							</template>
+                        </template>
+						</tbody>
+					</table>
+
+					<!--变更信息-身份证存疑-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+                        <tr class="success">
+                            <td colspan="10">变更信息-身份证存疑</td>
+                        </tr>
+						<tr>
+                            <td width="33%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeIDStatus(1)">使用当前身份证的其他手机列表</a>
+							</td>
+                            <td width="33%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeIDStatus(2)">使用当前身份证的其他姓名列表</a>
+							</td>
+                            <td width="34%">
+								<a class="btn btn-info" href='javascript:void(0);' @click="changeIDStatus(3)">提供数据的机构信息列表</a>
+							</td>
+						</tr>
+                        <template v-if="id_status==1">
+                            <tr>
+                                <th>手机号</th>
+                                <th>手机号归属地</th>
+                                <th>运营商</th>
+                            </tr>
+                            <template v-for="(item,index) in suspicious_idcard.other_mobiles">
+                                <tr>
+                                    <td v-text="item.mobile"></td>
+                                    <td v-text="item.mobile_location"></td>
+                                    <td v-text="item.carrier"></td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template v-if="id_status==2">
+                            <tr>
+                                <th>姓名</th>
+                                <th>最后使用时间</th>
+                                <th></th>
+                            </tr>
+                            <template v-for="(item,index) in suspicious_idcard.other_names">
+                                <tr>
+                                    <td v-text="item.name"></td>
+                                    <td v-text="item.latest_used_time"></td>
+                                    <td></td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template v-if="id_status==3">
+                            <tr>
+                                <th>机构类型</th>
+                                <th>最后使用时间</th>
+                                <th></th>
+                            </tr>
+                            <template v-for="(item,index) in suspicious_idcard.information_sources">
+                                <tr >
+                                    <td>{{_org_type_match(item.org_type)}}</td>
+                                    <td v-text="item.latest_used_time"></td>
+                                    <td></td>
+                                </tr>
+                            </template>
+                        </template>
+						</tbody>
+					</table>
+
+					<!--公积金账户-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+						<template v-for="(item,index) in fund_infos">
+						<tr class="success">
+							<td colspan="10">公积金基本信息</td>
+						</tr>
+						<tr>
+							<td>最近数据更新时间：<span v-text="item.fund_basic.update_date"></span></td>
+							<td>最近缴存时间：<span v-text="item.fund_basic.last_pay_date"></span></td>
+							<td>账户状态：<span v-text="item.fund_basic.account_status"></span></td>
+							<td>开户时间：<span v-text="item.fund_basic.open_date"></span></td>
+							<td>开户地区：<span v-text="item.fund_basic.open_location"></span></td>
+							<td>账户余额：<span v-text="item.fund_basic.balance"></span></td>
+							<td>缴存基数：<span v-text="item.fund_basic.base_amount"></span></td>
+							<td>月缴存金额：<span v-text="item.fund_basic.monthly_income"></span></td>
+						</tr>
+						<tr class="success">
+							<td colspan="10">公积金统计信息</td>
+						</tr>
+						<tr>
+							<td colspan="2">近一年缴纳月数：<span v-text="item.fund_statistics.total_months"></span></td>
+							<td colspan="2">近一年连续缴纳月数：<span v-text="item.fund_statistics.continuous_months"></span></td>
+							<td colspan="2">近一年补缴次数：<span v-text="item.fund_statistics.repay_times"></span></td>
+							<td colspan="2">近一年缴纳单位数：<span v-text="item.fund_statistics.total_companies"></span></td>
+						</tr>
+						</template>
+						</tbody>
+					</table>
+
+					<!--借记卡-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">借记卡信息</td>
+						</tr>
+						<tr>
+							<td>最近数据更新时间：<span v-text="debit_card_info.update_date"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>卡数量：<span v-text="debit_card_info.card_amount"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>总余额：<span v-text="debit_card_info.balance"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>近一年总收入：<span v-text="debit_card_info.total_income"></span></td>
+                            <td>近一年总支出：<span v-text="debit_card_info.total_outcome"></span></td>
+						</tr>
+						<tr>
+							<td>近一年工资收入：<span v-text="debit_card_info.total_salary_income"></span></td>
+                            <td>近一年消费支出：<span v-text="debit_card_info.total_consume_outcome"></span></td>
+						</tr>
+						<tr>
+							<td>近一年贷款收入：<span v-text="debit_card_info.total_loan_income"></span></td>
+                            <td>近一年还贷支出：<span v-text="debit_card_info.total_loan_outcome"></span></td>
+						</tr>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--信用卡-->
+					<table class="table table-bordered" style="width:1100px" align="center">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">信用卡信息</td>
+						</tr>
+						<tr>
+							<td>最近数据更新时间：<span v-text="credit_card_info.update_date"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>卡数量：<span v-text="credit_card_info.card_amount"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>总信用额度：<span v-text="credit_card_info.total_credit_limit"></span></td>
+                            <td></td>
+						</tr>
+						<tr>
+							<td>总可用信用额：<span v-text="credit_card_info.total_credit_available"></span></td>
+                            <td>近一年逾期次数：<span v-text="credit_card_info.overdue_times"></span></td>
+						</tr>
+						<tr>
+							<td>单一银行最高信用额：<span v-text="credit_card_info.max_credit_limit"></span></td>
+                            <td>近一年逾期月数：<span v-text="credit_card_info.overdue_months"></span></td>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--关联手机号信息-->
+					<table class="table table-bordered"  width="100%" table-layout="fixed">
+						<tbody>
+						<template v-for="mobile_infos in mobile_infos">
+							<tr class="success">
+								<td colspan="10">关联手机号信息</td>
+							</tr>
+							<tr>
+								<td width="50%">关联手机号</td>
+								<td width="50%">{{mobile_infos.mobile}}</td>
+							</tr>
+
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-联系人信息</th>
+							</tr>
+							<template v-for="mobile_infos.mobile_contact_info != null">
+							<tr>
+								<td width="50%">
+									涉黑评分. 取值0-100, 分值越低涉黑程度越深
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.match_score"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接联系人数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_contact_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接联系人是黑名单的数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_black_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									间接联系人是黑名单的数量
+								</td>
+								<td width="50%">
+									<font color="red"><span v-text="mobile_infos.mobile_contact_info.indirect_black_count"></span></font>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									引起黑名单的直接联系人(该直接联系人的联系人有黑名单用户)的数量
+								</td>
+								<td width="50%">
+									<font color="red"><span v-text="mobile_infos.mobile_contact_info.introduce_black_count"></span></font>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									引起黑名单的直接联系人在全部直接联系人中的比例. 按万分比
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.introduce_black_ratio"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接联系人黑名单类型
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_black_type"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接亲密联系人数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_intimate_contact_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接亲密联系人是黑名单的数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_intimate_black_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									间接亲密联系人是黑名单的数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.indirect_intimate_black_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									引起黑名单的直接亲密联系人(该直接亲密联系人的亲密联系人有黑名单用户)的数量
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.introduce_intimate_black_count"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									引起黑名单的直接亲密联系人在全部直接亲密联系人中的比例. 按万分比
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.introduce_intimate_black_ratio"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="50%">
+									直接亲密联系人黑名单类型
+								</td>
+								<td width="50%">
+									<span v-text="mobile_infos.mobile_contact_info.direct_intimate_black_type"></span>
+								</td>
+							</tr>
+							</template>
+
+
+							</template>
+						</tbody>
+					</table>
+					<!--关联手机号信息--黑名单-->
+					<table class="table table-bordered"  width="100%" table-layout="fixed">
+						<tbody>
+						<template v-for="mobile_infos in mobile_infos">
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-黑名单</th>
+							</tr>
+							<template v-for="item in mobile_infos.mobile_black_info">
+								<tr>
+									<td colspan="5" width="50%">
+										手机和姓名是否在黑名单
+									</td>
+									<td colspan="5" width="50%">
+										<template v-if="item.mobile_name_in_blacklist">
+											在
+										</template>
+										<template v-else>
+											不在
+										</template>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="5" width="50%">
+										手机和姓名黑名单信息更新时间
+									</td>
+									<td colspan="5" width="50%">
+										<font color="red"><span v-text="item.mobile_name_blacklist_updated_time"></span></font>
+									</td>
+								</tr>
+							</template>
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-黑名单详细信息</th>
+							</tr>
+							<tr>
+								<td colspan="2" width="20%">地址</td>
+								<td colspan="2" width="20%">累计借入本金</td>
+								<td colspan="2" width="20%">最大逾期状态</td>
+								<td colspan="2" width="20%">累计已还金额</td>
+								<td colspan="2" width="20%">累计逾期金额</td>
+							</tr>
+							<template v-if="mobile_infos.blacklist_record != null">
+								<tr style="background-color: HotPink">
+									<td colspan="2" width="20%" v-text=" mobile_infos.blacklist_record.address"></td>
+									<td colspan="2" width="20%" v-text=" mobile_infos.blacklist_record.capital"></td>
+									<td colspan="2" width="20%" v-text=" mobile_infos.blacklist_record.overdue_status"></td>
+									<td colspan="2" width="20%" v-text=" mobile_infos.blacklist_record.paid_amount"></td>
+									<td colspan="2" width="20%" v-text=" mobile_infos.blacklist_record.overdue_amount"></td>
+								</tr>
+							</template>
+						</template>
+						</tbody>
+					</table>
+					<!--关联手机号信息--灰名单-->
+					<table class="table table-bordered"  width="100%" table-layout="fixed">
+						<tbody>
+						<template v-for="mobile_infos in mobile_infos">
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-灰名单</th>
+							</tr>
+							<template v-for="item in mobile_infos.mobile_gray_info">
+								<tr>
+									<td colspan="5" width="50%">
+										手机和姓名灰名单信息更新时间
+									</td>
+									<td colspan="5" width="50%">
+										<span v-text="item.mobile_name_gray_updated_time"></span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="5" width="50%">
+										身份证和姓名是否在灰名单
+									</td>
+									<td colspan="5" width="50%">
+										<template v-text="item.idcard_name_in_gray">
+											在
+										</template>
+										<template v-else>
+											不在
+										</template>
+									</td>
+								</tr>
+							</template>
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-灰名单详细信息</th>
+							</tr>
+							<tr>
+								<td colspan="2" width="20%"></td>
+								<td colspan="2" width="20%">累计借入本金</td>
+								<td colspan="2" width="20%">最大逾期状态</td>
+								<td colspan="2" width="20%">累计已还金额</td>
+								<td colspan="2" width="20%">累计逾期金额</td>
+							</tr>
+							<template v-if="mobile_infos.mobile_gray_info.gray_record != null">
+								<tr  style="background-color: HotPink">
+									<td colspan="2" width="20%" v-text="mobile_infos.mobile_gray_info.gray_record.capital"></td>
+									<td colspan="2" width="20%" v-text="mobile_infos.mobile_gray_info.gray_record.overdue_status"></td>
+									<td colspan="2" width="20%" v-text="mobile_infos.mobile_gray_info.gray_record.paid_amount"></td>
+									<td colspan="2" width="20%" v-text="mobile_infos.mobile_gray_info.gray_record.overdue_amount"></td>
+								</tr>
+							</template>
+
+						</template>
+						</tbody>
+					</table>
+					<!--关联手机号信息--手机存疑-->
+					<table class="table table-bordered"  width="100%" table-layout="fixed">
+						<tbody>
+						<template v-for="mobile_infos in mobile_infos">
+							<tr>
+								<th colspan="10" style="text-align: center">关联手机号信息-存疑信息</th>
+							</tr>
+							<tr>
+								<td width="33%">
+									<a class="btn btn-info" href='javascript:void(0);' @click="changeMobileStatus(1)">使用当前手机的其他身份证列表</a>
+								</td>
+								<td width="33%">
+									<a class="btn btn-info" href='javascript:void(0);' @click="changeMobileStatus(2)">使用过当前手机的其他姓名列表</a>
+								</td>
+								<td width="34%">
+									<a class="btn btn-info" href='javascript:void(0);' @click="changeMobileStatus(3)">提供数据的机构信息列表</a>
+								</td>
+							</tr>
+							<template v-if="mobile_infos.suspicious_mobile != null">
+
+								<template v-if="mobile_status==1">
+									<tr>
+										<th width="33%">身份证</th>
+										<th width="33%">最后使用时间</th>
+										<th width="34%"></th>
+									</tr>
+									<template v-for="item in mobile_infos.suspicious_mobile.other_idcards">
+										<tr>
+											<td width="33%" v-text="item.idcard"></td>
+											<td width="33%" v-text="item.latest_used_time"></td>
+											<td width="34%"></td>
+										</tr>
+									</template>
+								</template>
+
+								<template v-if="mobile_status==2">
+									<tr>
+										<th width="33%">姓名</th>
+										<th width="33%">最后使用时间</th>
+										<th width="34%"></th>
+									</tr>
+									<template v-for="item in mobile_infos.suspicious_mobile.other_names">
+										<tr >
+											<td width="33%" v-text="item.name"></td>
+											<td width="33%" v-text="item.latest_used_time"></td>
+											<td width="34%"></td>
+										</tr>
+									</template>
+								</template>
+
+								<template v-if="mobile_status==3">
+									<tr>
+										<th width="33%">机构类型</th>
+										<th width="33%">最后使用时间</th>
+										<th width="34%"></th>
+									</tr>
+									<template v-for="item in mobile_infos.suspicious_mobile.information_sources">
+										<tr>
+											<td width="33%">{{_org_type_match(item.org_type)}}</td>
+											<td width="33%" v-text="item.latest_used_time"></td>
+											<td width="34%"></td>
+										</tr>
+									</template>
+								</template>
+
+							</template>
+						</template>
+						</tbody>
+					</table>
+			</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+		<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+		<script type="text/javascript">
+			var contextPath = "[[@{/}]]";
+			var taskId = "[[${taskId}]]";
+			new Vue({
+				el: '#report',
+				data: {
+                    tel_status:1,
+                    id_status:1,
+                    mobile_status:1,
+                    gray_info_detail: [],
+                    person_info: [],
+                    black_info_detail: [],
+                    register_info: [],
+                    update_date: [],
+                    suspicious_idcard: [],
+                    mobile_infos: [],
+                    suspicious_mobile: {},
+                    debit_card_info: {},
+                    fund_infos: [],
+                    credit_card_info: {},
+                    verification_info: {},
+                    queried_detail:{}
+				},
+				methods: {
+                    changeTelStatus:function(status){
+                        this.tel_status=status;
+                    },
+                    changeIDStatus:function(status){
+                        this.id_status=status;
+                    },
+                    changeMobileStatus:function(status){
+                        this.mobile_status=status;
+                    },
+                    _org_type_match:function(value){
+                        if(value =='ZHENGXIN'){
+							return '征信机构';
+						}else if(value=='DATA_PLATFORM'){
+                            return '数据平台';
+						}else if(value=='BANK'){
+                            return '银行';
+                        }else if(value=='CUSTOMER_FINANCE'){
+                            return '消费金融';
+                        }else if(value=='CASH_LOAN'){
+                            return '现金贷';
+                        }else if(value=='P2P'){
+                            return 'P2P理财';
+                        }else if(value=='CREDITPAY'){
+                            return '信用支付';
+                        }else if(value=='CONSUMSTAGE'){
+                            return '消费分期';
+                        }else if(value=='COMPENSATION'){
+                            return '信用卡代偿';
+                        }else if(value=='DIVERSION') {
+                            return '导流平台';
+                        }else{
+                            return '其他';
+						}
+					}
+				},
+				created() {
+					var _that = this;
+					$.ajax({
+						type: "post",
+						url: contextPath + "user/user_magic_wand_ajax",
+						dataType: "json",
+						data: {
+                            taskId: taskId
+						},
+						success: function(result) {
+                            var wandReport = result;
+							_that.gray_info_detail = wandReport.gray_info_detail;
+							_that.person_info = wandReport.person_info;
+							_that.black_info_detail =  wandReport.black_info_detail;
+							_that.register_info =  wandReport.register_info;
+							_that.update_date = wandReport.update_date;
+							if(wandReport.suspicious_idcard){
+								_that.suspicious_idcard =  wandReport.suspicious_idcard;
+							}
+							if(wandReport.suspicious_mobile){
+								_that.suspicious_mobile = wandReport.suspicious_mobile;
+							}
+							_that.mobile_infos =  wandReport.mobile_infos;
+							_that.debit_card_info = wandReport.debit_card_info;
+							_that.fund_infos = wandReport.fund_infos;
+							_that.credit_card_info = wandReport.credit_card_info;
+							_that.verification_info = wandReport.verification_info;
+							_that.queried_detail = wandReport.queried_detail;
+						}
+					});
+
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

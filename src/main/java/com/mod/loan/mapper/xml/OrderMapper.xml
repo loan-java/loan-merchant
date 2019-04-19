@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.Order">
+        <!-- WARNING - @mbg.generated -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="uid" jdbcType="BIGINT" property="uid"/>
+        <result column="borrow_day" jdbcType="INTEGER" property="borrowDay"/>
+        <result column="borrow_money" jdbcType="DECIMAL" property="borrowMoney"/>
+        <result column="actual_money" jdbcType="DECIMAL" property="actualMoney"/>
+        <result column="total_rate" jdbcType="DECIMAL" property="totalRate"/>
+        <result column="total_fee" jdbcType="DECIMAL" property="totalFee"/>
+        <result column="interest_rate" jdbcType="DECIMAL" property="interestRate"/>
+        <result column="interest_fee" jdbcType="DECIMAL" property="interestFee"/>
+        <result column="overdue_rate" jdbcType="DECIMAL" property="overdueRate"/>
+        <result column="overdue_day" jdbcType="INTEGER" property="overdueDay"/>
+        <result column="overdue_fee" jdbcType="DECIMAL" property="overdueFee"/>
+        <result column="should_repay" jdbcType="DECIMAL" property="shouldRepay"/>
+        <result column="had_repay" jdbcType="DECIMAL" property="hadRepay"/>
+        <result column="reduce_money" jdbcType="DECIMAL" property="reduceMoney"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime"/>
+        <result column="arrive_time" jdbcType="TIMESTAMP" property="arriveTime"/>
+        <result column="repay_time" jdbcType="TIMESTAMP" property="repayTime"/>
+        <result column="real_repay_time" jdbcType="TIMESTAMP" property="realRepayTime"/>
+        <result column="order_version" jdbcType="INTEGER" property="orderVersion"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="follow_user_id" jdbcType="BIGINT" property="followUserId"/>
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="user_type" jdbcType="INTEGER" property="userType"/>
+        <result column="recycle_type" jdbcType="INTEGER" property="recycleType"/>
+    </resultMap>
+
+    <select id="orderCount" resultType="int">
+        select count(1) from tb_order o left join tb_user user on o.uid = user.id
+        <where>
+            <if test="id != null">
+                and o.id = #{id}
+            </if>
+            <if test="merchant != null">
+                and o.merchant = #{merchant}
+            </if>
+            <if test="userName != null">
+                and user.user_name=#{userName}
+            </if>
+            <if test="userPhone != null">
+                and user.user_phone=#{userPhone}
+            </if>
+            <if test="status != null">
+                and o.status = #{status}
+            </if>
+            <if test="borrowDay != null">
+                and o.borrow_day = #{borrowDay}
+            </if>
+            <if test="startTime != null">
+                and o.repay_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and o.repay_time &lt;= #{endTime}
+            </if>
+            <if test="startRealRepayTime != null">
+                and o.real_repay_time &gt;= #{startRealRepayTime}
+            </if>
+            <if test="endRealRepayTime != null">
+                and o.real_repay_time &lt;= DATE_ADD(#{endRealRepayTime},INTERVAL 1 DAY)
+            </if>
+            <if test="startCreateTime != null">
+                and o.create_time &gt;= #{startCreateTime}
+            </if>
+            <if test="endCreateTime != null">
+                and o.create_time &lt;= DATE_ADD(#{endCreateTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+    </select>
+
+    <select id="findOrderList" resultType="map">
+        select o.*,user.user_name,user.user_phone from tb_order o left join tb_user user on o.uid = user.id
+        <where>
+            <if test="id != null">
+                and o.id = #{id}
+            </if>
+            <if test="merchant != null">
+                and o.merchant = #{merchant}
+            </if>
+            <if test="userName != null">
+                and user.user_name=#{userName}
+            </if>
+            <if test="userPhone != null">
+                and user.user_phone=#{userPhone}
+            </if>
+            <if test="status != null">
+                and o.status = #{status}
+            </if>
+            <if test="borrowDay != null">
+                and o.borrow_day = #{borrowDay}
+            </if>
+            <if test="startTime != null">
+                and o.repay_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and o.repay_time &lt;= #{endTime}
+            </if>
+            <if test="startRealRepayTime != null">
+                and o.real_repay_time &gt;= #{startRealRepayTime}
+            </if>
+            <if test="endRealRepayTime != null">
+                and o.real_repay_time &lt;= DATE_ADD(#{endRealRepayTime},INTERVAL 1 DAY)
+            </if>
+            <if test="startCreateTime != null">
+                and o.create_time &gt;= #{startCreateTime}
+            </if>
+            <if test="endCreateTime != null">
+                and o.create_time &lt;= DATE_ADD(#{endCreateTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+        order by o.id desc limit #{startIndex},#{pageSize}
+    </select>
+
+	<select id="selectOrderById" resultMap="BaseResultMap">
+		/*FORCE_MASTER*/ select * from tb_order where id = #{id}
+	</select>
+
+    <select id="findUserByOrderId" resultType="map">
+        select user.user_name as userName,user.user_phone as userPhone,o.should_repay as shouldRepay from tb_order o
+        left join tb_user user on o.uid = user.id
+        <where>
+            <if test="id != null">
+                and o.id = #{id}
+            </if>
+        </where>
+    </select>
+    
+    <update id="updateOrderFollowUser">
+        update tb_order a set a.follow_user_id = #{followUserId} where a.merchant = #{merchant} and a.status in(33,34) and
+        a.id in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!-- 信审工作台统计数 -->
+    <select id="WorkbenchCount" resultType="int">
+	select count(1) from tb_order o
+	left join tb_order_audit oa on o.id = oa.order_id
+	where o.merchant = #{merchant} and o.status = #{status} and oa.audit_id = #{auditId} and oa.status = #{auditStatus}
+	</select>
+
+    <!-- 信审工作台 -->
+    <select id="findWorkbenchList" resultType="map">
+	select u.user_name,u.user_phone,o.id,o.uid,o.borrow_day,o.user_type,o.status,o.borrow_money,o.actual_money,o.create_time,oa.id 'orderAuditId'
+	from tb_order o
+	left join tb_user u on o.uid = u.id
+	left join tb_order_audit oa on o.id = oa.order_id
+	where o.merchant = #{merchant} and o.status = #{status} and oa.audit_id = #{auditId} and oa.status = #{auditStatus}
+	order by o.id limit #{startIndex},#{pageSize}
+	</select>
+
+    <!-- 未被取单数 -->
+    <select id="countUnAuditOrder" resultType="int">
+	select count(id) from tb_order where merchant = #{merchant} and status = #{status} and id not in (select order_id from tb_order_audit where merchant = #{merchant})
+	</select>
+
+    <!-- 未被取单的订单 -->
+    <select id="findUnAuditOrder" resultType="java.lang.Long">
+	select id from tb_order where merchant = #{merchant} and status = #{status} and id not in (select order_id from tb_order_audit where merchant = #{merchant})
+	limit #{getOrderNumber}
+	</select>
+
+    <!-- 用户提单情况 -->
+    <select id="countUserOrderRecord" resultType="map">
+	select
+	count(id) as 'countUserOrder',
+	count(case when status in (41,42) then id end) as 'countUserOrderSuccess',
+	count(case when status in (52,53) then id end) as 'countUserOrderFail',
+	count(case when status = 51 then id end) as 'countUserOrderFailByRisk'
+	from tb_order where uid = #{uid} and merchant = #{merchant}
+	</select>
+
+	<!-- 根据日期统计订单情况 -->
+    <select id="countOrderMessageByDay" resultType="map">
+    <![CDATA[
+    SELECT
+	COUNT(CASE WHEN (create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOrderNumberToDay',
+	COUNT(CASE WHEN (user_type = 1 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countNewUserNumberToDay',
+	COUNT(CASE WHEN (user_type = 2 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countSecondUserNumberToDay',
+	COUNT(CASE WHEN (user_type = 3 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOldUserNumberToDay',
+	COUNT(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countLoanOrderNumberToDay',
+	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN actual_money END),0.0) AS 'countLoanAmountToDay'
+	FROM tb_order WHERE merchant = #{merchant}
+	]]>
+	</select>
+
+    <!-- 共债记录 -->
+    <select id="countDebtRecord" resultType="map">
+		SELECT
+		COUNT(CASE WHEN o.status IN (31,32,33,34) THEN o.merchant END) AS 'onLoanAppNum',
+		COUNT(CASE WHEN o.status IN (33,34) THEN o.id END) AS 'overdueNum',
+		COUNT(CASE WHEN o.follow_user_id != 0 THEN o.id END) AS 'pressNum',
+		COUNT(o.id) AS 'orderNum'
+		FROM tb_order o
+		LEFT JOIN tb_user u ON o.uid = u.id
+		WHERE u.user_phone = #{userPhone};
+	</select>
+
+    <select id="exportReport" resultType="map">
+        select o.*,user.user_name,user.id,user.user_phone from tb_order o left join tb_user user on o.uid = user.id
+        <where>
+            <if test="id != null">
+                and o.id = #{id}
+            </if>
+            <if test="merchant != null">
+                and o.merchant = #{merchant}
+            </if>
+            <if test="userName != null">
+                and user.user_name=#{userName}
+            </if>
+            <if test="userPhone != null">
+                and user.user_phone=#{userPhone}
+            </if>
+            <if test="status != null">
+                and o.status = #{status}
+            </if>
+            <if test="borrowDay != null">
+                and o.borrow_day = #{borrowDay}
+            </if>
+            <if test="startTime != null">
+                and o.repay_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and o.repay_time &lt;= #{endTime}
+            </if>
+            <if test="startRealRepayTime != null">
+                and o.real_repay_time &gt;= #{startRealRepayTime}
+            </if>
+            <if test="endRealRepayTime != null">
+                and o.real_repay_time &lt;= DATE_ADD(#{endRealRepayTime},INTERVAL 1 DAY)
+            </if>
+            <if test="startCreateTime != null">
+                and o.create_time &gt;= #{startCreateTime}
+            </if>
+            <if test="endCreateTime != null">
+                and o.create_time &lt;= DATE_ADD(#{endCreateTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+        order by o.id desc limit 0,5000
+    </select>
+
+    <select id="findOrderPassList" resultType="map">
+        SELECT
+        DATE_FORMAT(o.create_time,'%Y-%m-%d') 'time_key',
+        count(0) 'order_cnt',
+        sum(case when o.status = 11 then 1 else 0 end) 'risk_auditing_cnt',
+        sum(case when o.status > 20 and o.status &lt; 50 and oa.id is null then 1 else 0 end) 'risk_pass_cnt',
+        sum(case when o.status = 51 then 1 else 0 end) 'risk_refuse_cnt',
+        sum(case when o.status = 12 then 1 else 0 end) 'wait_audit_cnt',
+        sum(case when oa.status = 0 and o.status > 20 and o.status &lt; 50 then 1 else 0 end) 'audit_pass_cnt',
+        sum(case when o.status = 52 then 1 else 0 end) 'audit_refuse_cnt',
+        sum(case when o.status = 53 then 1 else 0 end ) 'cancel_cnt'
+        FROM
+        tb_order o left join tb_order_audit oa on o.id = oa.order_id
+        <where>
+            <if test="userType != null">
+               and o.user_type = #{userType}
+            </if>
+            <if test="merchant != null">
+                and o.merchant = #{merchant}
+            </if>
+            <if test="startTime != null">
+                and o.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and o.create_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+        GROUP BY 1
+        order by time_key desc
+    </select>
+
+</mapper>

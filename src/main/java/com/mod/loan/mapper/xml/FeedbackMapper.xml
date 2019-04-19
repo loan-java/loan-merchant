@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.FeedbackMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.Feedback">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="question_type" jdbcType="VARCHAR" property="questionType" />
+		<result column="question_desc" jdbcType="VARCHAR" property="questionDesc" />
+		<result column="question_img" jdbcType="VARCHAR" property="questionImg" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+	</resultMap>
+	
+	<select id="feedbackCount" resultType="int">
+	select count(1) from tb_app_feedback feedback left join tb_user user on feedback.uid = user.id
+		<where>
+			<if test="merchant != null">
+				and feedback.merchant = #{merchant}
+			</if>
+			<if test="uid != null">
+				and feedback.uid = #{uid}
+			</if>
+			<if test="startTime != null">
+				and feedback.create_time &gt;= #{startTime}
+			</if>
+			<if test="endTime != null">
+				and feedback.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+			</if>
+		</where>
+	</select>
+	
+	<select id="findFeedbackList" resultType="map">
+	select feedback.id,feedback.question_type,feedback.question_desc,feedback.create_time,
+		   user.id,user.user_name,user.user_phone
+	from tb_app_feedback feedback left join tb_user user on feedback.uid = user.id
+		<where>
+			<if test="merchant != null">
+			   and feedback.merchant=#{merchant}
+			</if>
+			<if test="uid != null">
+			   and feedback.uid = #{uid}
+			</if>
+			<if test="startTime != null">
+				and feedback.create_time &gt;= #{startTime}
+			</if>
+			<if test="endTime != null">
+				and feedback.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+			</if>
+	   </where>
+	order by feedback.id desc limit #{startIndex},#{pageSize}
+	</select>
+</mapper>

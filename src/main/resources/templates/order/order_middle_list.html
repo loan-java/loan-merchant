@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+					<!-- 检索  -->
+					<div>
+					    <span>状态:</span>
+						<select id="status" name="status" class="form-control" onchange="this.blur()">
+							<option value="21" selected="selected">待放款</option>
+							<option value="22">放款中</option>
+							<option value="23">放款失败</option>
+							<option value="53">取消</option>
+						</select>
+					    <span>用户手机:</span>
+					    <input id="userPhone" name="userPhone" type="text" />
+					    <span>借款期限:</span>
+					    <input id="borrowDay" name="borrowDay" type="text" onkeyup="value=/^\d{0,9}$/.test(value)?value:''" onblur="value=/^\d{0,9}$/.test(value)?value:''" />
+						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+						<br>
+						<div id="makeLoansDiv">
+							<span>支付通道:</span>
+							<select id="payType" name="payType" class="form-control" onchange="this.blur()"></select>
+							<button id="makeLoansButton" class="btn btn-small btn-success" onclick="makeLoans()">放款</button>
+						</div>
+					</div>
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center"><label><input type="checkbox" onclick="selectAll(this.checked)" /><span class="lbl">全选</span></label></th>
+								<th class="center">用户姓名</th>
+								<th class="center">借款期限(天)</th>
+								<th class="center">状态</th>
+								<th class="center">借款金额(元)</th>
+								<th class="center">放款金额(元)</th>
+								<th class="center">创建时间</th>
+								<th class="center">审核时间</th>
+								<th class="center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		$(top.hangge());
+		var contextPath="[[@{/}]]";
+		var myTable = new MaxTable();
+		myTable.initialize({
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"order/order_list_ajax",
+            beforeSend : function(){
+                maskScreen();
+            },
+			complete : function(){
+				getPayTypeList();
+			},
+			headerColumns : [{
+					id : "id",
+					renderer : IdCheckBoxRenderer
+				},{
+		            id : "user_name",
+		            renderer : function(idValue,value,record){
+		            	return value ? value + "(" + record.user_phone + ")" : "---" ;
+					}
+	        	},{
+		            id : "borrow_day",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "status",
+		            renderer : function(idValue,value,record){
+		            	if(value == 11){
+							return "<font color='orange'>机审中</font>";
+						}
+			            if (value == 12){
+							return "<font color='orange'>等待复审</font>";
+						}
+		            	if (value == 21){
+							return "<font color='orange'>待放款</font>";
+						}
+		            	if (value == 22){
+							return "<font color='orange'>放款中</font>";
+						}
+		            	if (value == 23){
+							return "<font color='red'>放款失败</font>";
+						}
+		            	if(value == 31){
+							return "<font color='green'>还款中</font>";
+						}
+			            if (value == 32){
+							return "<font color='orange'>还款确认中</font>";
+						}
+		            	if (value == 33){
+							return "<font color='red'>逾期</font>";
+						}
+		            	if (value == 34){
+							return "<font color='red'>坏账</font>";
+						}
+		            	if (value == 41){
+							return "<font color='green'>已结清</font>";
+						}
+		            	if (value == 42){
+							return "<font color='green'>逾期还款</font>";
+						}
+		            	if(value == 51){
+							return "<font color='red'>自动审核失败</font>";
+						}
+			            if (value == 52){
+							return "<font color='red'>复审失败</font>";
+						}
+		            	if (value == 53){
+							return "<font color='red'>取消</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "borrow_money",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "actual_money",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "create_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	},{
+		            id : "audit_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	},{
+		            id : "id",
+		            renderer : function(idValue,value,record){
+		            	var html = "<div class='btn-group'>";
+			            html += "<a class='btn btn-mini btn-info' onclick=\"payDetail(" + value + ");\">放款详情</a>";
+			            if(record.status == 21 || record.status == 23){
+				            html += "<a class='btn btn-mini btn-info' onclick=\"cancel(" + value + ");\">取消放款</a>";
+			            }
+						html += "</div>";
+				        return html;
+			        }
+	        	}]
+		});
+		
+		function query() {
+			if($("#status").val() == 21 || $("#status").val() == 23){
+				$("#makeLoansDiv").show();
+			}else{
+				$("#makeLoansDiv").hide();
+			}
+			myTable.page.totalRowNum = 0;
+			myTable.onLoad({
+				userPhone : $("#userPhone").val(),
+				borrowDay : $("#borrowDay").val(),
+				status : $("#status").val(),
+				payType : $("#payType").val()
+			});
+		}
+		query();
+		function search() {
+			myTable.page.pageNo = 1;
+			query();
+		}
+		
+		function payDetail(orderId){
+			 var diag = new top.Dialog();
+			 diag.Drag = true;
+			 diag.Title = "放款详情";
+			 diag.URL = contextPath + "order/order_pay_detail?orderId=" + orderId;
+			 diag.Width = 1200;
+			 diag.Height = 600;
+			 diag.CancelEvent = function(){ //关闭事件
+				query();
+				diag.close();
+			 };
+			 diag.show();
+		}
+		
+		function makeLoans(){
+			var ids = getCheckedValuesByContainer().join(",");
+			var payType = $("#payType").val();
+			if(ids == ""){
+				Dialog.alert("请选择订单。");
+				return;
+			}
+			$.ajax({
+        		url : contextPath + "order/order_loan_ajax",
+				type : "POST",
+				dataType : "json",
+				data : {
+					"ids" : ids,
+					"payType":payType
+				},
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(data) {
+					Dialog.alert(data.message,function(){
+						query();
+					});
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		}
+		
+		function cancel(id){
+			Dialog.confirm("确定要取消这张订单吗?", function() {
+				$.ajax({
+					url : contextPath+"order/order_cancel_ajax",
+					type : "POST",
+					dataType : "json",
+					data : {
+						"orderId" : id
+					},
+					beforeSend : function(){
+						maskScreen();
+					},
+					success : function(data) {
+						if(data.status==2000){
+							query();
+						}else{
+							Dialog.alert(data.message);
+						}
+					},
+					complete : function(){
+						unMaskScreen();
+					}
+				});
+			});
+        }
+		
+        function getPayTypeList() {
+        	$.ajax({
+				url : contextPath+"order/pay_type_list",
+				type : "POST",
+				dataType : "json",
+				data : {},
+				success : function(jsonObject) {
+					$("#payType").html("");
+					var payType = JSON.parse(jsonObject.data);
+					if(payType.helibao && payType.helibao == 1) {
+						$("#payType").append("<option value='helibao'>合利宝</option>");
+					}
+					if(payType.fuyou && payType.fuyou == 1) {
+						$("#payType").append("<option value='fuyou'>富友</option>");
+					}
+					
+					if(payType.helibao && payType.helibao.pay && payType.helibao.pay == 1){
+						$("#payType").append("<option value='helibao'>合利宝</option>");
+					}
+					if(payType.fuyou && payType.fuyou.pay && payType.fuyou.pay == 1) {
+						$("#payType").append("<option value='fuyou'>富友</option>");
+					}
+					if(payType.huiju && payType.huiju.pay && payType.huiju.pay == 1) {
+						$("#payType").append("<option value='huiju'>汇聚</option>");
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+        }
+	</script>
+</body>
+</html>
+

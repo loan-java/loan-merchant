@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.MerchantOriginMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.MerchantOrigin">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="origin_no" jdbcType="VARCHAR" property="originNo"/>
+        <result column="origin_name" jdbcType="VARCHAR" property="originName"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <select id="findOriginListByManagerId" resultMap="BaseResultMap">
+		select b.* from tb_merchant_manager_origin a left join tb_merchant_origin b on a.origin_id=b.id where a.manager_id=#{managerId}
+	</select>
+
+    <delete id="deleteManagerOrigin">
+        delete from tb_merchant_manager_origin where manager_id=#{managerId}
+        <if test="ids !=null and ids.size>0">
+            and origin_id not in
+            <foreach collection="ids" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
+    <insert id="insertManagerOrigin">
+        insert into tb_merchant_manager_origin(manager_id,origin_id) VALUES
+        <foreach collection="ids" separator="," item="item">
+            (#{managerId}, #{item})
+        </foreach>
+    </insert>
+
+    <select id="findOriginRegisterByManagerId" resultType="map">
+        select user_phone,create_time from tb_user
+        <where>
+            and user_origin in (select CONCAT(origin_id, '') from tb_merchant_manager_origin where manager_id=#{managerId})
+            <if test="originId!=null ">
+                and user_origin=CONCAT(#{originId}, '')
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                and create_time>=#{startTime}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                and create_time &lt;=#{endTime}
+            </if>
+        </where>
+        order by id desc limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countOriginRegisterByManagerId" resultType="int">
+        select count(*) from tb_user
+        <where>
+            and user_origin in (select CONCAT(origin_id, '') from tb_merchant_manager_origin where manager_id=#{managerId})
+            <if test="originId!=null ">
+                and user_origin=CONCAT(#{originId}, '')
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                and create_time>=#{startTime}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                and create_time &lt;=#{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="findOriginList" resultType="map">
+        select id,merchant,origin_name,origin_no,status,create_time from tb_merchant_origin
+        <where>
+            <if test="merchant != null">
+                and merchant = #{merchant}
+            </if>
+        </where>
+        order by id desc limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="merchantOriginCount" resultType="int">
+        SELECT COUNT(1) FROM tb_merchant_origin
+        <where>
+            <if test="merchant != null">
+                and merchant = #{merchant}
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="findOriginStatistics" resultType="map">
+		SELECT
+		date(t1.create_time) as day_key
+		,t1.merchant as merchant
+		,t1.user_origin as user_origin
+		,count(t1.id) as reg_cnt
+		,count(t1.login_flag) as login_cnt
+		,count(t2.uid) as real_name_cnt
+		,count(t1.order_no) as submit_order_cnt
+		,count(t1.repay_time) as first_submit_cnt
+		,sum(case when t1.repay_time is not null then t1.borrow_money else 0 end) as first_submit_amount
+		from
+		(
+			SELECT a.id,a.user_origin,a.create_time,a.merchant,b.id as
+			login_flag,c.order_no,c.repay_time,c.borrow_money
+			from tb_user a
+			left JOIN tb_user_device b on a.id = b.uid
+			left JOIN tb_order c on a.id = c.uid and c.user_type in (1,2)
+			where a.create_time >= date_sub(CURRENT_DATE(), INTERVAL 1 DAY)
+			and a.create_time &lt; date_add(CURRENT_DATE(), INTERVAL 1 DAY)
+			and a.merchant = #{merchant}
+			GROUP BY 1
+		)t1
+		left JOIN tb_user_ident t2 on t1.id=t2.uid and t2.real_name=2
+		GROUP BY 1,2,3 order by day_key desc
+    </select>
+
+    <select id="findOriginOrderList" resultType="map">
+        SELECT
+        t.user_origin,
+        count(0) 'order_apply_cnt',
+        sum(case when t.status > 20 and t.status &lt; 50 and t.id is null then 1 else 0 end) 'risk_pass_cnt',
+        sum(case when t.status > 20 and t.status &lt; 50 and t.id is null then 1 else 0 end)/IFNULL(count(0),1) 'risk_pass_rate',
+        sum(case when t.status = 51 then 1 else 0 end) 'risk_refuse_cnt',
+        sum(case when t.status = 51 then 1 else 0 end)/IFNULL(count(0),1) 'risk_refuse_rate',
+        sum(case when t.tadstatus = 0 and t.status > 20 and t.status &lt; 50 then 1 else 0 end) 'audit_pass_cnt',
+        sum(case when t.tadstatus = 0 and t.status > 20 and t.status &lt; 50 then 1 else 0 end)/IFNULL(count(0),1) 'audit_pass_rate',
+        sum(case when t.status = 52 then 1 else 0 end) 'audit_refuse_cnt',
+        sum(case when t.status = 12 then 1 else 0 end) 'wait_audit_cnt',
+        sum(case when t.status = 53 then 1 else 0 end ) 'cancel_cnt' ,
+        sum(case when t.status = 53 then 1 else 0 end )/IFNULL(count(0),1) 'cancel_rate',
+        sum(t.is_pass) 'order_pass_cnt',
+        sum(t.is_pass)/IFNULL(count(0),1) 'order_pass_rate',
+        sum(case when t.dq_days>=0 then 1 else 0 end) 'order_expire_cnt',
+        sum(case when t.dq_days>=0 and t.overdue &lt; 0 then 1 else 0 end)  'order_advance_cnt',
+        sum(case when t.dq_days>=0 and t.overdue=0 then 1 else 0 end) 'order_normal_cnt',
+        sum(case when t.dq_days>0 and t.overdue>0 then 1 else 0 end) 'order_overdue_cnt',
+        sum(case when t.dq_days>=0 and t.overdue_cur>0 then 1 else 0 end) 'current_overdue_cnt',
+        sum(case when t.dq_days>=0 and t.overdue_cur>0 then 1 else 0 end)/sum(case when t.dq_days>=0 then 1 else 0 end) 'current_overdue_rate',
+        sum(case when t.dq_days>0 and t.overdue>0 then 1 else 0 end)/sum(case when t.dq_days>0 then 1 else 0 end) 'first_overdue_rate',
+        sum(case when t.dq_days>0 and t.overdue>2 then 1 else 0 end)/sum(case when t.dq_days>2 then 1 else 0 end) 'overdue_3_rate',
+        sum(case when t.dq_days>0 and t.overdue>6 then 1 else 0 end)/sum(case when t.dq_days>6 then 1 else 0 end) 'overdue_7_rate',
+        sum(case when t.dq_days>0 and t.overdue>14 then 1 else 0 end)/sum(case when t.dq_days>14 then 1 else 0 end) 'overdue_15_rate',
+        sum(case when t.dq_days>0 and t.overdue>29 then 1 else 0 end)/sum(case when t.dq_days>29 then 1 else 0 end) 'overdue_30_rate'
+        from
+        (SELECT
+        cr.create_time,ur.user_origin, od.status as tadstatus,cr.status,od.id,
+        case when cr.`status` > 20 and cr.`status` &lt; 50 then 1 else 0 end is_pass,
+        case when repay_time is not null and repay_time&lt;CURDATE() then DATEDIFF(CURDATE(),repay_time) else null end as dq_days,
+        case when repay_time is not null and real_repay_time is null then DATEDIFF(CURDATE(),repay_time) when real_repay_time is not null then DATEDIFF(real_repay_time,repay_time) else null end as overdue,
+        case when real_repay_time is null and repay_time&lt;CURDATE() then DATEDIFF(CURDATE(),repay_time) else null end as overdue_cur
+        from
+        tb_order cr
+        LEFT JOIN tb_user ur on cr.uid=ur.id
+        left join tb_order_audit od on cr.id=od.order_id
+        <where>
+            <if test="userType != null">
+                and cr.user_type = #{userType}
+            </if>
+            <if test="merchant != null">
+                and cr.merchant = #{merchant}
+            </if>
+            <if test="startTime != null">
+                and cr.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and cr.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+        ) t
+        <where>
+            <if test="userOrigin != null">
+                and user_origin = #{userOrigin}
+            </if>
+        </where>
+        GROUP BY 1
+    </select>
+
+    <select id="countCurrentOriginStatistics" resultType="int">
+        select count(*) from report_partner_effect pe left join tb_merchant_origin mo on pe.user_origin = mo.id left join tb_merchant_manager_origin mmo on mmo.origin_id = mo.id
+        <where>
+            <if test="merchant != null">
+                and pe.merchant = #{merchant}
+            </if>
+            <if test="originName != null">
+                and origin_name = #{originName}
+            </if>
+            <if test="startTime != null">
+                and pe.day_key &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and pe.day_key &lt;= #{endTime}
+            </if>
+            <if test="managerId != null">
+                and mmo.manager_id = #{managerId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCurrentOriginStatisticsList" resultType="map">
+        select * from report_partner_effect pe left join tb_merchant_origin mo on pe.user_origin = mo.id left join tb_merchant_manager_origin mmo on mmo.origin_id = mo.id
+        <where>
+            <if test="merchant != null">
+                and pe.merchant = #{merchant}
+            </if>
+            <if test="originName != null">
+                and mo.origin_name = #{originName}
+            </if>
+            <if test="startTime != null">
+                and pe.day_key &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and pe.day_key &lt; #{endTime}
+            </if>
+            <if test="managerId != null">
+                and mmo.manager_id = #{managerId}
+            </if>
+        </where>
+        order by pe.id desc limit #{startIndex},#{pageSize}
+    </select>
+</mapper>

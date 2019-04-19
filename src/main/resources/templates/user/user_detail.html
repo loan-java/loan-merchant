@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+<style>
+.over {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: 100;
+}
+.tempContainer {
+	position: fixed;
+	width: 100%;
+	text-align: center;
+	z-index: 101;
+}
+</style>
+</head>
+<body>
+	<a class="btn btn-info" target='_blank' id="moxieZfbMXReport" style="display:none;">支付宝报告</a>
+	<a class="btn btn-info" target='_blank' id="carrierJxReport" style="display:none;">运营商资信报告</a>
+	<a class="btn btn-info" target='_blank' id="magicWandReport" style="display:none;">魔杖报告</a>
+	<a class="btn btn-info" href='javascript:void(0);' id="auditList" style="display:none;" onclick='userAuditList()'>用户信审记录</a>
+	<a class="btn btn-info" href='javascript:void(0);' id="recycleList" style="display:none;" onclick='userRecycleList()'>用户催收记录</a>
+	<div id="zhongxin" align="center">
+		<template v-if="imgFace">
+			<div align="left">
+				<h4>人脸识别</h4>
+				<span v-html="imgFace"></span>
+			</div>
+		</template>
+		<div align="left">
+			<h4>身份证照</h4>
+			<template v-if="imgCertFront">
+				<span v-html="imgCertFront"></span>
+			</template>
+			<template v-if="imgCertFront">
+				<span v-html="imgCertBack"></span>
+			</template>
+		</div>
+
+		<h4 align="left">基本信息</h4>
+		<table id="myTable" class="table table-striped table-bordered table-hover">
+			<tr>
+				<template v-if="userIdent.bindbank">
+				<td>
+					ID
+				</td>
+				<td>
+					<span v-text="user.id"></span>
+				</td>
+				</template>
+				<template v-else>
+				<td>
+					<a class='btn btn-mini btn-info' onclick='editUser()' href='javascript:void(0);'>身份信息纠正</a>
+				</td>
+				<td>
+					ID：<span v-text="user.id"></span>
+				</td>
+				</template>
+				<td>手机号码</td>
+				<td><span v-text="user.userPhone"></span></td>				
+			</tr>
+	        <tr>
+				<td>姓名</td>
+				<td><span v-text="user.userName"></span></td>
+				<td>身份证</td>
+				<td><span v-text="user.userCertNo"></span></td>
+	        </tr>
+	        <tr>
+				<td>注册渠道</td>
+				<td><span v-text="user.userOrigin"></span></td>
+				<td>所属商户</td>
+				<td><span v-text="user.merchant"></span></td>
+	        </tr>
+	        <tr>
+				<td>身份证住址</td>
+				<td><span v-text="user.address"></span></td>
+				<td>身份证有效期</td>
+				<td><span v-text="user.indate"></span></td>
+	        </tr>
+		</table>
+
+		<h4 align="left">个人信息</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td>学历</td>
+				<td><span v-text="userInfo.education"></span></td>
+				<td>婚姻状况</td>
+				<td><span v-text="userInfo.liveMarry"></span></td>
+			</tr>
+			<tr>
+				<td>居住地址</td>
+				<td><span v-text="userInfo.liveProvince"></span><span v-text="userInfo.liveCity"></span><span v-text="userInfo.liveDistrict"></span>，<span v-text="userInfo.liveAddress"></span></td>
+				<td>居住时长</td>
+				<td><span v-text="userInfo.liveTime"></span></td>
+			</tr>
+			<tr>
+				<td>工作地址</td>
+				<td colspan="3"><span v-text="userInfo.workAddress"></span></td>
+			</tr>
+			<tr>
+				<td>公司</td>
+				<td><span v-text="userInfo.workCompany"></span></td>
+				<td>职业</td>
+				<td><span v-text="userInfo.workType"></span></td>
+			</tr>
+			<tr>
+				<td>直系联系人</td>
+				<td><span v-text="userInfo.directContact"></span>，<span v-text="userInfo.directContactName"></span>，<span v-text="userInfo.directContactPhone"></span></td>
+				<td>其他联系人</td>
+				<td><span v-text="userInfo.othersContact"></span>，<span v-text="userInfo.othersContactName"></span>，<span v-text="userInfo.othersContactPhone"></span></td>
+			</tr>
+		</table>
+
+		<template v-if="userDevice != null">
+		<h4 align="left">设备信息</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td>手机品牌</td>
+				<td><span v-text="userDevice.phoneBrand"></span></td>
+				<td>手机型号</td>
+				<td><span v-text="userDevice.phoneModel"></span></td>
+				<td>系统版本号</td>
+				<td><span v-text="userDevice.phoneSystem"></span></td>
+	        </tr>
+	        <tr>
+				<td>应用名称</td>
+				<td colspan="2"><span v-text="userDevice.clientAlias"></span></td>
+				<td>应用版本</td>
+				<td colspan="2"><span v-text="userDevice.clientVersion"></span></td>
+	        </tr>
+		</table>
+		</template>
+		
+		<template v-if="userBank != null">
+		<h4 align="left">绑卡信息</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td>银行名称</td>
+				<td><span v-text="userBank.cardName"></span></td>
+				<td>卡号</td>
+				<td><span v-text="userBank.cardNo"></span></td>
+				<td>预留电话</td>
+				<td><span v-text="userBank.cardPhone"></span></td>
+				<td>绑卡类型</td>
+				<td><span v-html="getBindType(userBank.bindType)"></span></td>
+	        </tr>
+		</table>
+		</template>
+		
+		<h4 align="left">认证信息</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td colspan="2">通讯录</td>
+				<td colspan="2"><a class="btn btn-info" href='javascript:void(0);' onclick='userAddressListDetail()'>通讯录</a></td>
+	        </tr>
+			<tr>
+				<td>实名认证</td>
+				<td><span v-html="getIdentValue(userIdent.realName)"></span></td>
+				<td>实名认证时间</td>
+				<td><span v-text="formatDate(userIdent.realNameTime)"></span></td>
+	        </tr>
+	        <tr>
+				<td>人脸识别认证</td>
+				<td><span v-html="getIdentValue(userIdent.liveness)"></span></td>
+				<td>人脸识别认证时间</td>
+				<td><span v-text="formatDate(userIdent.livenessTime)"></span></td>
+	        </tr>
+	        <tr>
+				<td>个人信息认证</td>
+				<td><span v-html="getIdentValue(userIdent.userDetails)"></span></td>
+				<td>个人信息认证时间</td>
+				<td><span v-text="formatDate(userIdent.userDetailsTime)"></span></td>
+	        </tr>
+	        <tr>
+				<td>运营商手机认证</td>
+				<td><span v-html="getIdentValue(userIdent.mobile)"></span></td>
+				<td>运营商手机认证时间</td>
+				<td><span v-text="formatDate(userIdent.mobileTime)"></span></td>
+	        </tr>
+	        <tr>
+				<td>支付宝认证</td>
+				<td><span v-html="getIdentValue(userIdent.alipay)"></span></td>
+				<td>支付宝认证时间</td>
+				<td><span v-text="formatDate(userIdent.alipayTime)"></span></td>
+	        </tr>
+	        <tr>
+				<td>绑卡</td>
+				<td><span v-html="getIdentValue(userIdent.bindbank)"></span></td>
+				<td>绑卡时间</td>
+				<td><span v-text="formatDate(userIdent.bindbankTime)"></span></td>
+	        </tr>
+		</table>
+		
+		<h4 align="left">共债记录</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td>提单总数</td>
+				<td><span v-text="orderNum"></span></td>
+				<td>催收过的订单数</td>
+				<td><span v-text="pressNum"></span></td>
+			</tr>
+			<tr>
+				<td>在借平台个数</td>
+				<td><span v-text="onLoanAppNum"></span></td>
+				<td>当前逾期平台数</td>
+				<td><span v-text="overdueNum"></span></td>
+			</tr>
+		</table>
+		
+		<h4 align="left">提单历史</h4>
+		<table class="table table-striped table-bordered table-hover">
+			<tr>
+				<td>当前平台提单总次数</td>
+				<td><span v-text="countUserOrder"></span></td>
+	        	<td>已完成次数</td>
+				<td><span v-text="countUserOrderSuccess"></span></td>
+			</tr>
+			<tr>
+				<td>人工复审拒绝次数</td>
+				<td><span v-text="countUserOrderFail"></span></td>
+				<td>风控拒绝次数</td>
+				<td><span v-text="countUserOrderFailByRisk"></span></td>
+			</tr>
+		</table>
+		
+		<template v-if="feedbackList">
+			<h4 align="left">用户反馈</h4>
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">用户</th>
+						<th class="center">问题描述</th>
+						<th class="center">创建时间</th>
+						<th class="center">详情</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="(item,index) in feedbackList">
+						<tr>
+							<td class="center"><span v-html="item.user_name + '(' + item.user_phone + ')'"></span></td>
+							<td class="center"><span v-text="item.question_desc"></span></td>
+							<td class="center"><span v-text="formatDate(item.create_time)"></span></td>
+							<td class="center"><span v-html='"<a class=\"btn btn-mini btn-info\" title=\"详情\" onclick=\"feedbackDetail(" + item.id + ")\">详情</a>"'></span></td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</template>
+	</div>
+	<!-- 蒙层 -->
+	<div class="over"></div>
+	<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+	<script type="text/javascript">
+		var id = [[${id}]];
+		var contextPath="[[@{/}]]";
+		
+		new Vue({
+			el: '#zhongxin',
+			created() {
+				var _that = this;
+				$.ajax({
+					type: "post",
+					url: contextPath + "user/user_detail_ajax",
+					dataType: "json",
+					data: {
+						"id" : id
+					},
+					beforeSend : function(){
+						maskScreen();
+					},
+					success: function(result) {
+						_that.user = result.data.user;
+						_that.userBank = result.data.userBank;
+						_that.userDevice = result.data.userDevice;
+						_that.userIdent = result.data.userIdent;
+						_that.userInfo = result.data.userInfo;
+						_that.imgFace = result.data.user.imgFace ? "<img class='photo' width='200px' height='100px' alt='人脸识别' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgFace + "' />" : null;
+						_that.imgCertFront = result.data.user.imgCertFront ? "<img class='photo' width='200px' height='100px' alt='身份证前' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgCertFront + "' />" : null;
+						_that.imgCertBack = result.data.user.imgCertBack ? "<img class='photo' width='200px' height='100px' alt='身份证后' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgCertBack + "' />" : null;
+						_that.onLoanAppNum = result.data.onLoanAppNum;
+						_that.overdueNum = result.data.overdueNum;
+						_that.pressNum = result.data.pressNum;
+						_that.orderNum = result.data.orderNum;
+						_that.countUserOrder = result.data.countUserOrder;
+						_that.countUserOrderSuccess = result.data.countUserOrderSuccess;
+						_that.countUserOrderFail = result.data.countUserOrderFail;
+						_that.countUserOrderFailByRisk = result.data.countUserOrderFailByRisk;
+						
+						if(result.data.countUserOrder > 0){
+		                    $("#auditList").show();
+		                    $("#recycleList").show();
+						}
+						
+						if(result.data.moxieMobileTaskId){
+		                       var moxieMobileTaskId = result.data.moxieMobileTaskId;
+		                       $("#carrierJxReport").attr("href",contextPath + "user/user_carrier_jxreport?taskId="+moxieMobileTaskId);
+		                       $("#carrierJxReport").show();
+
+							   $("#magicWandReport").attr("href",contextPath + "user/user_magic_wand_report?taskId="+moxieMobileTaskId);
+							   $("#magicWandReport").show();
+
+		        		}
+						
+						if(result.data.moxieZfbTaskId){
+		        			var moxieZfbTaskId = result.data.moxieZfbTaskId;
+		       				$("#moxieZfbMXReport").attr("href",contextPath + "user/user_zfb_mxreport?taskId="+moxieZfbTaskId);
+		       				$("#moxieZfbMXReport").show();
+
+		        		}
+					},
+					complete : function(){
+						unMaskScreen();
+					}
+				});
+				$.ajax({
+					type: "post",
+					url: contextPath + "operation/feedback_list_ajax",
+					dataType: "json",
+					data: {
+						"uid" : id
+					},
+					success: function(result) {
+						_that.feedbackList = result.data.length == 0 ? null : result.data;
+					}
+				});
+			},
+			data: {
+				user: {},
+				userBank: {},
+				userDevice: {},
+				userIdent: {},
+				userInfo: {},
+				imgFace: {},
+				imgCertFront: {},
+				imgCertBack: {},
+				onLoanAppNum: {},
+				overdueNum: {},
+				pressNum: {},
+				orderNum: {},
+				countUserOrder: {},
+				countUserOrderSuccess: {},
+				countUserOrderFail: {},
+				countUserOrderFailByRisk: {},
+				feedbackList: []
+			},
+			methods: {
+				getIdentValue(status){
+		        	var identValue="";
+		        	switch(status){
+			        	case 0:
+							identValue = "<font color='red'>未认证</font>";
+							break;
+						case 1:
+							identValue = "<font color='orange'>认证中</font>";
+							break;
+						case 2:
+							identValue = "<font color='green'>认证成功</font>";
+							break;
+						case 3:
+							identValue = "<font color='red'>认证失败</font>";
+							break;
+						case 4:
+							identValue = "<font color='red'>已失效</font>";
+							break;		
+		        	}
+					return identValue;
+		        },
+                getBindType(bindType) {
+                    var bindTypes = "";
+                    switch (bindType) {
+                        case 1:
+                            bindTypes = "合利宝";
+                            break;
+                        case 2:
+                            bindTypes = "富友";
+                            break;
+                        case 3:
+                            bindTypes = "汇聚";
+                            break;
+                    }
+                    return bindTypes;
+                },
+		        formatDate(date){
+					return date ? moment(date).format("YYYY-MM-DD HH:mm:ss") : "";
+				}
+			},
+			updated: function(){
+				// 每次渲染完成后执行的方法
+		        this.$nextTick(function(){
+		        	enlargeImg();
+		        })
+		    }
+		});
+		
+		// 放大图片
+		function enlargeImg(){
+			var imgsObj = $('.photo');//需要放大的图像
+		    if(imgsObj.length > 0){
+		        $.each(imgsObj,function(){
+		            $(this).click(function(i){
+		                var currImg = $(this);
+		                coverLayer(1);
+		                var tempContainer = $("<div class='tempContainer'></div>");//图片容器
+		                with(tempContainer){//with方法等同于$(this)
+		                    appendTo("body");
+		                    var windowWidth = $(window).width();
+		                    var windowHeight = $(window).height();
+		                    //获取图片原始宽度、高度
+		                    var orignImg = new Image();
+		                    orignImg.src = currImg.attr("src") ;
+		                    var currImgWidth = orignImg.width;
+		                    var currImgHeight = orignImg.height;
+		                    if(currImgWidth < windowWidth){
+		                        if(currImgHeight < windowHeight){
+		                            var topHeight = (windowHeight - currImgHeight)/2;
+		                            css('top',topHeight);
+		                            html('<img border=0 src=' + currImg.attr('src') + '>');
+		                        }else{
+		                            css('top',0);
+		                            html('<img border=0 src=' + currImg.attr('src') + ' style="height:800px;" />');
+		                        }
+		                    }else{
+		                        var currImgChangeHeight=(currImgHeight*windowWidth)/currImgWidth;
+		                        if(currImgChangeHeight<windowHeight){
+		                            var topHeight=(windowHeight-currImgChangeHeight)/2;
+		                            css('top',topHeight);
+		                            html('<img border=0 src=' + currImg.attr('src') + ' style="height:800px;" />');
+		                        }else{
+		                            css('top',0);
+		                            html('<img border=0 src=' + currImg.attr('src') + ' style="height:800px;" />');
+		                        }
+		                    }
+		                }
+		                tempContainer.click(function(){
+		                    $('.tempContainer').remove();
+		                    coverLayer(0);
+		                });
+		            });
+		        });
+		    }
+		}
+		
+	    //蒙层效果
+	    function coverLayer(tag){
+	        with($('.over')){
+	            if(tag==1){
+	                css('height',$(document).height());
+	                css('display','block');
+	                css('opacity',0.75);
+	                css("background-color","#191919");
+	            }
+	            else{
+	                css('display','none');
+	            }
+	        }
+	    }
+	    
+        function userAddressListDetail(){
+			 var diag = new top.Dialog();
+			 diag.Drag = true;
+			 diag.Title = "通讯录";
+			 diag.URL = contextPath + "user/user_address_list_detail?id=" + id;
+			 diag.Width = 600;
+			 diag.Height = 600;
+			 diag.CancelEvent = function(){ //关闭事件
+				diag.close();
+			 };
+			 diag.show();
+		}
+
+        function userAuditList(){
+            var diag = new top.Dialog();
+            diag.Drag = true;
+            diag.Title = "用户信审记录";
+            diag.URL = contextPath + "user/user_audit_list?id=" + id;
+            diag.Width = 600;
+            diag.Height = 600;
+            diag.CancelEvent = function(){ //关闭事件
+                diag.close();
+            };
+            diag.show();
+        }
+
+        function userRecycleList(){
+            var diag = new top.Dialog();
+            diag.Drag = true;
+            diag.Title = "用户催收记录";
+            diag.URL = contextPath + "recycle/recycle_record_list?uid=" + id;
+            diag.Width = 800;
+            diag.Height = 700;
+            diag.CancelEvent = function(){ //关闭事件
+                diag.close();
+            };
+            diag.show();
+        }
+
+		//修改
+		function editUser() {
+			var diag = new top.Dialog();
+			diag.Drag = true;
+			diag.Title = "身份信息纠正";
+			diag.URL = contextPath + "user/user_basic_edit?id=" + id;
+			diag.Width = 600;
+			diag.Height = 600;
+			diag.CancelEvent = function () { //关闭事件
+				diag.close();
+				window.location.reload();
+			};
+			diag.show();
+		}
+		
+		function feedbackDetail(id){
+			 var diag = new top.Dialog();
+			 diag.Drag = true;
+			 diag.Title = "详情";
+			 diag.URL = contextPath + "operation/feedback_detail?id=" + id;
+			 diag.Width = 600;
+			 diag.Height = 600;
+			 diag.CancelEvent = function(){ //关闭事件
+				diag.close();
+			 };
+			 diag.show();
+		}
+	</script>
+</body>
+</html>

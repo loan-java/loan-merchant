@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.UserInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.mod.loan.model.UserInfo">
+		<!-- WARNING - @mbg.generated -->
+		<id column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="education" jdbcType="VARCHAR" property="education" />
+		<result column="live_province" jdbcType="VARCHAR" property="liveProvince" />
+		<result column="live_city" jdbcType="VARCHAR" property="liveCity" />
+		<result column="live_district" jdbcType="VARCHAR" property="liveDistrict" />
+		<result column="live_address" jdbcType="VARCHAR" property="liveAddress" />
+		<result column="live_time" jdbcType="VARCHAR" property="liveTime" />
+		<result column="live_marry" jdbcType="VARCHAR" property="liveMarry" />
+		<result column="work_type" jdbcType="VARCHAR" property="workType" />
+		<result column="work_company" jdbcType="VARCHAR" property="workCompany" />
+		<result column="work_address" jdbcType="VARCHAR" property="workAddress" />
+		<result column="direct_contact" jdbcType="VARCHAR" property="directContact" />
+		<result column="direct_contact_name" jdbcType="VARCHAR" property="directContactName" />
+		<result column="direct_contact_phone" jdbcType="VARCHAR" property="directContactPhone" />
+		<result column="others_contact" jdbcType="VARCHAR" property="othersContact" />
+		<result column="others_contact_name" jdbcType="VARCHAR" property="othersContactName" />
+		<result column="others_contact_phone" jdbcType="VARCHAR" property="othersContactPhone" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+</mapper>

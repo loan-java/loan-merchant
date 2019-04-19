@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>支付宝数据</title>
+	<meta charset="utf-8/">
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css" th:href="@{/static/css/bootstrap.min.css}" media="screen" />
+	<style>
+	body {
+		margin: 4%;
+	}
+	
+	.ali-title {
+		text-align: center;
+		font-size: 18px;
+	}
+	</style>
+	</head>
+	<body>
+		<div class="row-fluid">
+			<div class="block">
+				<div class="navbar block-header">
+					<div class="muted ali-title">支付宝查询结果</div>
+				</div>
+				<div class="block-content collapse in" id="report">
+					<table class="table table-bordered">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">基本信息</td>
+							</tr>
+							<tr>
+								<th colspan="2">姓名:<span v-text="userinfo.user_name"></span></th>
+								<th colspan="2">性别:<span v-text="userinfo.gender"></span></th>
+								<th colspan="2">身份证号:<span v-text="userinfo.idcard_number"></span></th>
+								<th colspan="2">是否实名认证:<span v-text="userinfo.certified"></span></th>
+							</tr>
+							<tr>
+								<th colspan="2">邮箱:<span v-text="userinfo.email"></span></th>
+								<th colspan="2">手机号:<span v-text="userinfo.phone_number"></span></th>
+								<th colspan="2">淘宝会员名:<span v-text="userinfo.taobao_id"></span></th>
+								<th colspan="2">支付宝注册时间:<span v-text="userinfo.register_time"></span></th>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table table-bordered">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">芝麻信用分近况</td>
+							</tr>
+							<tr>
+								<th colspan="4">日期</th>
+								<th colspan="4">芝麻分</th>
+							</tr>
+							<template v-for="(item,index) in zhima">
+								<tr>
+									<td colspan="4" v-text="item.time"></td>
+									<td colspan="4" v-text="item.zm_score"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<table class="table table-bordered">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">资产状况</td>
+							</tr>
+							<tr>
+								<th colspan="2">余额:<span v-text="wealth.yue /100"></span>元
+								</th>
+								<th colspan="2">余额宝:<span v-text="wealth.yeb/100"></span>元
+								</th>
+								<th colspan="2">招财宝:<span v-text="wealth.zcb/100"></span>元
+								</th>
+								<th colspan="2">基金:<span v-text="wealth.fund/100"></span>元
+								</th>
+							</tr>
+							<tr>
+								<th colspan="2">存金宝:<span v-text="wealth.cjb/100"></span>元
+								</th>
+								<th colspan="2">淘宝理财:<span v-text="wealth.taolicai/100"></span>元
+								</th>
+								<th colspan="2">花呗额度:<span v-text="wealth.huabai_limit/100"></span>元
+								</th>
+								<th colspan="2">花呗可用额度:<span v-text="wealth.huabai_balance/100"></span>元
+								</th>
+							</tr>
+							<tr>
+								<th colspan="2">花呗是否逾期:<span v-text="wealth.huabei_overdue"></span></th>
+								<th colspan="2">花呗逾期金额:<span v-text="wealth.huabei_overdue_amount/100"></span>元
+								</th>
+								<th colspan="2">花呗利息金额:<span v-text="wealth.huabei_overdue_interest/100"></span>元
+								</th>
+								<th colspan="2"></th>
+							</tr>
+						</tbody>
+					</table>
+					<!-- 支付宝借呗信息 -->
+					<table class="table table-bordered">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">借呗信息</td>
+							</tr>
+							<tr>
+								<th colspan="2">是否未开通借呗:<span v-text="alipayjiebei.new_able"></span></th>
+								<th colspan="2">借呗额度:<span v-text="alipayjiebei.credit_amt/100"></span>元
+								</th>
+								<th colspan="2">借呗可用额度:<span v-text="alipayjiebei.loanable_amt/100"></span>元
+								</th>
+								<th colspan="2">日利率(‰):<span v-text="alipayjiebei.risk_int_by_thousand"></span></th>
+							</tr>
+							<tr>
+								<th colspan="2">是否逾期:<span v-text="alipayjiebei.ovd_able"></span></th>
+								<th colspan="2">绑定的手机号码:<span v-text="alipayjiebei.binded_mobile"></span></th>
+								<th colspan="4">未开通借呗描述:<span v-text="alipayjiebei.refuse_reason"></span></th>
+							</tr>
+						</tbody>
+					</table>
+					<!-- 支付宝收获地址 -->
+					<table class="table table-bordered">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">收货地址</td>
+							</tr>
+							<tr>
+								<th>姓名</th>
+								<th>手机号</th>
+								<th>邮政编码</th>
+								<th>详细地址</th>
+							</tr>
+							<template v-for="(item,index) in alipaydeliveraddresses">
+								<tr>
+									<td v-text="item.name"></td>
+									<td v-text="item.phone_number"></td>
+									<td v-text="item.area_code"></td>
+									<td v-text="item.full_address"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">绑定银行卡信息</td>
+							</tr>
+							<tr>
+								<th>银行名称</th>
+								<th>银行卡类型</th>
+								<th>银行卡标志</th>
+								<th>用户姓名</th>
+								<th>银行卡尾号(后四位)</th>
+								<th>绑定手机号码</th>
+								<th>银行卡绑定时间</th>
+								<th>是否开通快捷支付</th>
+							</tr>
+							<template v-for="(item,index) in bankinfo">
+								<tr>
+									<td v-text="item.bank_name"></td>
+									<td v-text="item.card_type"></td>
+									<td v-text="item.sign_id"></td>
+									<td v-text="item.user_names"></td>
+									<td v-text="item.card_number"></td>
+									<td v-text="item.mobile"></td>
+									<td v-text="item.active_date"></td>
+									<td v-text="item.open_fpcard"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<!-- 支付宝交易记录 -->
+					<table class="table table-striped">
+
+						<tbody>
+							<tr class="success">
+								<td colspan="8">交易记录</td>
+							</tr>
+							<tr>
+								<th>交易时间</th>
+								<th>交易类型</th>
+								<th style="width: 170px">交易对方</th>
+								<th style="width: 250px">商品名称</th>
+								<th>交易金额(元)</th>
+								<th>交易状态</th>
+							</tr>
+							<template v-for="(item,index) in tradeinfo">
+								<tr>
+									<td v-text="item.trade_time"></td>
+									<td v-text="item.trade_type"></td>
+									<td v-text="item.counterparty"></td>
+									<td v-text="item.product_name"></td>
+									<td v-text="item.trade_amount/100"></td>
+									<td v-text="item.trade_status"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">联系人信息</td>
+							</tr>
+							<tr>
+								<th>联系人Id</th>
+								<th>真实姓名</th>
+								<th>账号</th>
+							</tr>
+							<template v-for="(item,index) in alipaycontacts">
+								<tr>
+									<td v-text="item.alipay_userid"></td>
+									<td v-text="item.real_name"></td>
+									<td v-text="item.account"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<table class="table table-striped">
+						<tbody>
+							<tr class="success">
+								<td colspan="8">最近交易人信息</td>
+							</tr>
+							<tr>
+								<th>联系人Id</th>
+								<th>账号</th>
+								<th>昵称</th>
+								<th>真实姓名</th>
+							</tr>
+							<template v-for="(item,index) in recenttraders">
+								<tr>
+									<td v-text="item.alipay_userid"></td>
+									<td v-text="item.account"></td>
+									<td v-text="item.nick_name"></td>
+									<td v-text="item.real_name"></td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+		<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+		<script type="text/javascript">
+			var contextPath = "[[@{/}]]";
+			var taskId = "[[${taskId}]]";
+
+			new Vue({
+				el: '#report',
+				data: {
+					userinfo: {},
+					tradeinfo: [],
+					bankinfo: [],
+					recenttraders: [],
+					alipaycontacts: [],
+					alipaydeliveraddresses: [],
+					wealth: {},
+					alipayjiebei: {},
+					zhima: {}
+				},
+				methods: {
+
+				},
+				created() {
+					var _that = this;
+					$.ajax({
+						type: "get",
+						url: contextPath + "user/user_zfb_mxreport_ajax",
+						dataType: "json",
+						data: {
+							taskId: taskId
+						},
+						success: function(result) {
+							_that.userinfo = result.userinfo;
+							_that.tradeinfo = result.tradeinfo;
+							_that.bankinfo = result.bankinfo;
+							_that.recenttraders = result.recenttraders;
+							_that.alipaycontacts = result.alipaycontacts;
+							_that.alipaydeliveraddresses = result.alipaydeliveraddresses;
+							_that.wealth = result.wealth;
+							_that.alipayjiebei = result.alipayjiebei != null ? result.alipayjiebei : [];
+						}
+					});
+
+					$.ajax({
+						type: "get",
+						url: contextPath + "user/user_zfb_zmscore_ajax",
+						timeout:5000,
+						dataType: "json",
+						data: {
+							taskId: taskId
+						},
+						success: function(result) {
+							_that.zhima = result;
+						}
+					});
+				}
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form id="myForm">
+			<fieldset>
+				<legend>新增</legend>
+				<table>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">角色</label>
+						</td>
+						<td>
+							<select name="roleId" id="roleId" class="form-control">
+							<option value="">选择角色</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">用户名</label>
+						</td>
+						<td>
+							<input name="loginName" id="loginname" maxlength="32" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">初始密码</label>
+						</td>
+						<td>
+							<input name="loginPassword" id="password" maxlength="32" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">姓名</label>
+						</td>
+						<td>
+							<input name="userName" id="name" maxlength="10" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">手机号</label>
+						</td>
+						<td>
+							<input name="userPhone" id="PHONE" maxlength="11" class="form-control" required="required" onkeyup="value=value.replace(/[^\d]/,'')" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">邮箱</label>
+						</td>
+						<td>
+							<input name="userEmail" id="userEmail" maxlength="32" class="form-control"  required="required"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">状态</label>
+						</td>
+						<td>
+							<select name="accountStatus" id="accountStatus" class="form-control">
+								<option value="0">正常</option>
+								<option value="1">停用</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">是否需要安全验证</label>
+						</td>
+						<td>
+							<select name="userSecurity" id="userSecurity" class="form-control">
+								<option value="0">不需要</option>
+								<option value="1" selected="selected">需要</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+		<font color="red" style="position:absolute;left:0;bottom:0;">*初始密码必须由6-18位字母数字组合。</font>
+	</div>
+	<script type="text/javascript">
+		$(top.hangge());
+		var contextPath="[[@{/}]]";
+		$("#saveButton").bind("click",function(){
+			if(!$("#roleId").val()){
+				Dialog.alert("请选择角色");
+				return;
+			}
+			if($("#loginname").val()==""){
+				$("#loginname").tips({
+					side:3,
+		            msg:"输入用户名",
+		            bg:"#AE81FF",
+		            time:2
+		        });
+				$("#loginname").focus();
+				$("#loginname").val("");
+				return false;
+			}else{
+				$("#loginname").val(jQuery.trim($("#loginname").val()));
+			}
+			if($("#password").val()==""){
+				$("#password").tips({
+					side:3,
+		            msg:"输入密码",
+		            bg:"#AE81FF",
+		            time:2
+		        });
+				$("#password").focus();
+				return false;
+			}
+			if($("#name").val()==""){
+				$("#name").tips({
+					side:3,
+		            msg:"输入姓名",
+		            bg:"#AE81FF",
+		            time:2
+		        });
+				$("#name").focus();
+				return false;
+			}
+			if($("#PHONE").val()==""){
+				$("#PHONE").tips({
+					side:3,
+		            msg:"输入手机号",
+		            bg:"#AE81FF",
+		            time:2
+		        });
+				$("#PHONE").focus();
+				return false;
+			}
+			$.ajax({
+        		url : contextPath+"system/manager_add_ajax",
+				type : "POST",
+				dataType : "json",
+				data : $("#myForm").serialize(),
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(jsonObject) {
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		});
+		
+		function getList(){
+			//角色列表
+			$.post(contextPath+"system/role_all_list",{},function(jsonObject){
+				var roleList = jsonObject.data;
+				$.each(roleList,function(i){
+					$("#roleId").append("<option value='"+roleList[i].id+"'>"+roleList[i].roleName+"</option>");
+				});
+			});
+		}
+		getList();
+	</script>
+</body>
+</html>

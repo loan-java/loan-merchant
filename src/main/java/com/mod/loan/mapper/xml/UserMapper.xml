@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.User">
+        <!-- WARNING - @mbg.generated -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="user_pwd" jdbcType="VARCHAR" property="userPwd"/>
+        <result column="user_origin" jdbcType="VARCHAR" property="userOrigin"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_cert_no" jdbcType="VARCHAR" property="userCertNo"/>
+        <result column="img_face" jdbcType="VARCHAR" property="imgFace"/>
+        <result column="img_cert_front" jdbcType="VARCHAR" property="imgCertFront"/>
+        <result column="img_cert_back" jdbcType="VARCHAR" property="imgCertBack"/>
+        <result column="ia" jdbcType="VARCHAR" property="ia"/>
+        <result column="indate" jdbcType="VARCHAR" property="indate"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="nation" jdbcType="VARCHAR" property="nation"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+    </resultMap>
+
+    <select id="userCount" resultType="int">
+        select count(1) from tb_user u
+        <where>
+            <if test="userName != null and userName != ''">
+                and u.user_name=#{userName}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and u.user_phone=#{userPhone}
+            </if>
+            <if test="merchant != null and merchant != ''">
+                and u.merchant=#{merchant}
+            </if>
+            <if test="startTime != null">
+                and u.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and u.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+            <if test="userOrigin !=null">
+                and u.user_origin = #{userOrigin}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserList" resultType="map">
+        select u.id,u.user_name,u.user_phone,u.user_origin,u.create_time,u.merchant,u.user_cert_no,
+        ui.real_name,ui.liveness,ui.user_details,ui.mobile,ui.alipay,ui.bindbank
+        from tb_user u
+        left join tb_user_ident ui on u.id = ui.uid
+        <where>
+            <if test="userName != null and userName != ''">
+                and u.user_name=#{userName}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and u.user_phone=#{userPhone}
+            </if>
+            <if test="merchant != null and merchant != ''">
+                and u.merchant=#{merchant}
+            </if>
+            <if test="startTime != null">
+                and u.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and u.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+            <if test="userOrigin !=null">
+                and u.user_origin = #{userOrigin}
+            </if>
+        </where>
+        order by u.id desc limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countRegisterUserNumberToDay" resultType="int">
+        select count(id) from tb_user where merchant = #{merchant} and create_time &gt;= #{searchTime} and create_time &lt; DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+    <select id="countRealNameUserNumberToDay" resultType="int">
+        select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant} and ui.real_name_time &gt;= #{searchTime} and ui.real_name_time &lt; DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+    <select id="countAlipayUserNumberToDay" resultType="int">
+        SELECT COUNT(mz.id) FROM tb_moxie_zfb mz LEFT JOIN tb_user u ON mz.uid = u.id
+		WHERE u.merchant = #{merchant} AND mz.status = 'report' AND mz.create_time BETWEEN #{searchTime} AND DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+    <select id="countMobileUserNumberToDay" resultType="int">
+        SELECT COUNT(mm.id) FROM tb_moxie_mobile mm LEFT JOIN tb_user u ON mm.uid = u.id
+		WHERE u.merchant = #{merchant} AND mm.status = 'report' AND mm.create_time BETWEEN #{searchTime} AND DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+	</select>
+
+    <select id="countBindbankUserNumberToDay" resultType="int">
+        select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant} and ui.bindbank_time &gt;= #{searchTime} and ui.bindbank_time &lt; DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+    <select id="countUserDetailsUserNumberToDay" resultType="int">
+        select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant} and ui.user_details_time &gt;= #{searchTime} and ui.user_details_time &lt;
+        DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+	<select id="exportUserOriginReport" resultType="map">
+        select user_origin,user_name,REPLACE(user_phone, SUBSTR(user_phone,4,4), '****') 'user_phone',u.create_time,
+		case when sum(case when o.status > 20 and o.status &lt; 50 then 1 else 0 end) > 0 then '是' else '否' end 'borrow_flag'
+		from tb_user u left join tb_order o on u.id = o.uid
+		<where>
+			<if test="merchant != null and merchant != ''">
+                and u.merchant=#{merchant}
+            </if>
+            <if test="userOrigin != null and userOrigin != ''">
+                and u.user_origin=#{userOrigin}
+            </if>
+            <if test="startTime != null">
+                and u.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and u.create_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+            and u.user_name != ''
+		</where>
+		group by uid
+		limit 5000
+    </select>
+</mapper>

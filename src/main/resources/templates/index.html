@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/static :: head">
+</head>
+<head>
+<style type="text/css">
+.commitopacity {
+	position: absolute;
+	width: 100%;
+	height: 100px;
+	background: #7f7f7f;
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+	top: 0px;
+	z-index: 99999;
+}
+</style>
+</head>
+<body>
+	<!-- 页面顶部 -->
+	<div class="navbar navbar-inverse left-nav">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="brand" href="" target="_blank">
+					<small style="font-size: 60%;"><i class="icon-leaf"></i>网站首页</small>
+				</a>
+				<ul class="nav ace-nav pull-right">
+					<li class="light-blue user-profile">
+						<a class="user-menu dropdown-toggle" href="javascript:;" data-toggle="dropdown">
+							<img alt="FH" src="/static/avatars/user.jpg" class="nav-user-photo" th:src="@{/static/images/user.jpg}" />
+							<span id="user_info"></span>
+							<i class="icon-caret-down"></i>
+						</a>
+						<ul id="user_menu" class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-closer">
+							<li>
+								<a onclick="javascript:void(0);" style="cursor: pointer;" class="my_info">
+									<i class="icon-user"></i>个人资料
+								</a>
+							</li>
+							<li>
+								<a onclick="javascript:void(0);" style="cursor: pointer;" class="update_pwd">
+									<i class="icon-edit"></i>修改密码
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="/system/exit" th:href="@{/system/exit}">
+									<i class="icon-off"></i>退出
+								</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="websocket_button"></div>
+	<div class="container-fluid" id="main-container" style="margin-top: 45px; overflow: auto; position: static;">
+		<a href="#" id="menu-toggler"><span></span></a>
+		<!-- 页面顶部 -->
+		<!-- 左侧菜单 -->
+		<div id="sidebar" class="menu-min">
+			<div id="sidebar-shortcuts">
+				<!-- <div id="sidebar-shortcuts-large">
+					<button class="btn btn-small btn-success"
+						onclick="javascript:void(0);" title="切换菜单">
+						<i class="icon-pencil"></i>
+					</button>
+					<button class="btn btn-small btn-info" title="UI实例"
+						onclick="javascript:void(0);">
+						<i class="icon-eye-open"></i>
+					</button>
+					<button class="btn btn-small btn-warning" title="数据字典"
+						id="adminzidian" onclick="javascript:void(0);">
+						<i class="icon-book"></i>
+					</button>
+					<button class="btn btn-small btn-danger" title="菜单管理"
+						id="adminmenu" onclick="javascript:void(0);">
+						<i class="icon-folder-open"></i>
+					</button>
+				</div> -->
+				<div id="sidebar-shortcuts-mini">
+					<span class="btn btn-success"></span> <span class="btn btn-info"></span>
+					<span class="btn btn-warning"></span> <span class="btn btn-danger"></span>
+				</div>
+			</div>
+			<ul class="nav nav-list">
+				<li class="active" id="fhindex">
+					<a href="javascript:void(0);" onclick="siMenu('tab1_index1','tab1_index1','主页','/system/main')" target="mainFrame">
+						<i class="icon-dashboard"></i>
+						<span>后台首页</span>
+					</a>
+				</li>
+				<th:block th:each="parent:${resourceList}">
+					<li th:id="@{'lm'+${parent.id }}">
+						<a style="cursor: pointer;" class="dropdown-toggle">
+							<i class="icon-desktop"></i>
+							<span th:text="${parent.resourceName}"></span>
+							<b class="arrow icon-angle-down"></b>
+						</a>
+						<ul class="submenu">
+							<th:block th:each="child:${parent.childResource}">
+								<li th:id="@{'z'+${child.id}}">
+									<a style="cursor: pointer;" target="mainFrame" th:onclick="|siMenu('z${child.id}','lm${parent.id}','${child.resourceName}','${child.resourceUrl}')|">
+											<i class="icon-double-angle-right"></i>
+										<th:block th:text="${child.resourceName}"></th:block>
+									</a>
+								</li>
+							</th:block>
+						</ul>
+					</li>
+				</th:block>
+			</ul>
+			<div id="sidebar-collapse">
+				<i class="icon-double-angle-left"></i>
+			</div>
+		</div>
+		<!-- 右侧菜单 -->
+		<div id="main-content" class="clearfix">
+			<div id="jzts" style="display: none; width: 100%; position: fixed; z-index: 99999999;">
+				<div class="commitopacity" id="bkbgjz"></div>
+				<div style="padding-left: 70%; padding-top: 1px;">
+					<div style="float: left; margin-top: 3px;">
+						<img src="/static/images/loadingi.gif" th:src="@{/static/images/loadingi.gif}" />
+					</div>
+					<div style="margin-top: 5px;">
+						<h4 class="lighter block red">&nbsp;加载中 ...</h4>
+					</div>
+				</div>
+			</div>
+			<div>
+				<iframe name="mainFrame" id="mainFrame" frameborder="0" src="tab" style="margin: 0 auto; width: 100%; height: 100%;"></iframe>
+			</div>
+			<!-- 换肤 -->
+			<div id="ace-settings-container">
+				<div class="btn btn-app btn-mini btn-warning" id="ace-settings-btn">
+					<i class="icon-cog"></i>
+				</div>
+				<div id="ace-settings-box">
+					<div>
+						<div class="pull-left">
+							<select id="skin-colorpicker" class="hidden">
+								<option data-class="default" value="#438EB9" selected>#438EB9</option>
+								<option data-class="skin-1" value="#222A2D" selected>#222A2D</option>
+								<option data-class="skin-2" value="#C6487E" selected>#C6487E</option>
+								<option data-class="skin-3" value="#D0D0D0" selected>#D0D0D0</option>
+							</select>
+						</div>
+						<span>&nbsp;选择皮肤</span>
+					</div>
+					<div>
+						<label>
+							<input type='checkbox' name='menusf' id="menusf" onclick="menusf();" />
+							<span class="lbl" style="padding-top: 5px;">菜单缩放</span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="/static/js/jquery.cookie.js" th:src="@{/static/js/jquery.cookie.js}"></script>
+	<script type="text/javascript" src="/static/js/myjs/head.js?version=1.0" th:src="@{/static/js/myjs/head.js?version=1.0}"></script>
+	<script type="text/javascript" src="/static/js/myjs/index.js?version=1.0" th:src="@{/static/js/myjs/index.js?version=1.0}"></script>
+	<script>
+		var contextPath="[[@{/}]]";
+		
+		window.onload = function() {
+			var hachId = (window.location + '').split('#');
+			var obj = "#" + hachId[1] + " a";
+			$(obj).click();
+		}
+		
+		changeTitle();
+		function changeTitle(){
+			$.post(contextPath+"system/login_current_merchant_ajax",{},function(data){
+				$("title").prepend(data.data);
+			});
+		}
+	</script>
+</body>
+</html>

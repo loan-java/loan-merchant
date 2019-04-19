@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+	    <hr />
+		<form>
+	        <fieldset>
+		        <legend>基本信息</legend>
+		        <table>
+		        	<!-- <tr>
+		        		<td><label class="col-sm-2 control-label">ID</label></td>
+		        		<td>
+		        			<label class="form-control" id="id"></label>
+		        		</td>
+		        	</tr> -->
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">用户名</label></td>
+		        		<td>
+		        			<label class="form-control" id="loginName"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">姓名</label></td>
+		        		<td>
+		        			<label class="form-control" id="userName"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">工号</label></td>
+		        		<td>
+		        			<label class="form-control" id="userWorkNumber"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">手机号</label></td>
+		        		<td>
+		        			<label class="form-control" id="userPhone"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">当前角色</label></td>
+		        		<td>
+		        			<label class="form-control" id="roleName"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">所属公司</label></td>
+		        		<td>
+		        			<label class="form-control" id="companyName"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">所属部门</label></td>
+		        		<td>
+		        			<label class="form-control" id="departmentName"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">上次登录时间</label></td>
+		        		<td>
+		        			<label class="form-control" id="lastLoginTime"></label>
+		        		</td>
+		        	</tr>
+		        	<tr>
+		        		<td><label class="col-sm-2 control-label">上次登录IP</label></td>
+		        		<td>
+		        			<label class="form-control" id="lastLoginIp"></label>
+		        		</td>
+		        	</tr>
+		        </table>
+			</fieldset>
+		</form>
+	</div>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		function getAllMessage(){
+			$.post(contextPath+"system/manager_current_detail_ajax",{},function(jsonObject){
+				var manager = jsonObject.data.manager;
+				var roleName = jsonObject.data.roleName;
+				var companyName = jsonObject.data.companyName;
+				var departmentName = jsonObject.data.departmentName;
+				
+				$("#id").html(manager.id == null ? "---" : manager.id);
+				$("#loginName").html(manager.loginName == null ? "---" : manager.loginName);
+				$("#userName").html(manager.userName == null ? "---" : manager.userName);
+				$("#userWorkNumber").html(manager.userWorkNumber == null ? "---" : manager.userWorkNumber);
+				$("#userPhone").html(manager.userPhone == null ? "---" : manager.userPhone);
+				$("#roleName").html(roleName == null ? "---" : roleName);
+				$("#companyName").html(companyName == null ? "---" : companyName);
+				$("#departmentName").html(departmentName == null ? "---" : departmentName);
+				$("#lastLoginTime").html(manager.lastLoginTime == null ? "---" : moment(manager.lastLoginTime).format("YYYY-MM-DD HH:mm:ss"));
+				$("#lastLoginIp").html(manager.lastLoginIp == null ? "---" : manager.lastLoginIp);
+			});
+		}
+		getAllMessage();
+	</script>
+</body>
+</html>

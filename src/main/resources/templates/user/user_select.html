@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+					<!-- 检索  -->
+					<div>
+					    <span>用户姓名:</span>
+					    <input id="userName" name="userName" type="text" />
+					    <span>用户电话:</span>
+					    <input id="userPhone" name="userPhone" type="text" />
+						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+					</div>
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center">序号</th>
+								<th class="center">用户姓名</th>
+								<th class="center">用户电话</th>
+								<th class="center">所属商户</th>
+								<th class="center">注册时间</th>
+								<th class="center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input id="uid" type="hidden" />
+	<input id="name" type="hidden" />
+	<input id="tel" type="hidden" />
+	<input id="certNo" type="hidden" />
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		var myTable = new MaxTable();
+		myTable.initialize({
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"user/user_list_ajax",
+			headerColumns : [{
+  			   		id : "id",
+  			   		renderer : numRenderer
+				},{
+		            id : "user_name",
+		            renderer : function(idValue,value,record){
+			            return value ? value + "(" + record.id + ")" : "---" ;
+			        }
+	        	},{
+		            id : "user_phone",
+		            renderer : function(idValue,value,record){
+			            return value ?  value : "---";
+			        }
+	        	},{
+		            id : "user_origin",
+		            renderer : function(idValue,value,record){
+			            return value;
+			        }
+	        	},{
+		            id : "create_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	},{
+		            id : "id",
+		            renderer : function(idValue,value,record){
+		            	var html = "<div class='btn-group'>";
+		            	html += "<a class='btn btn-mini btn-info' title='选取' onclick=\"selectUser('" + value + "','"+record.user_name+"','"+record.user_phone+"','"+record.user_cert_no+"');\">选取</a>";
+						html += "</div>";
+			        	return html;
+			        }
+	        	}]
+		});
+		
+		function query() {
+			myTable.page.totalRowNum = 0;
+			myTable.onLoad({
+				userName:$("#userName").val(),
+				userPhone:$("#userPhone").val()
+			});
+		}
+		query();
+		function search(){
+			myTable.page.pageNo = 1;
+			query();
+		}
+		
+		function selectUser(id,name,tel,certNo){
+			$("#uid").val(id);
+			$("#name").val(name);
+			$("#tel").val(tel);
+			$("#certNo").val(certNo);
+			top.Dialog.close();
+		}
+	</script>
+</body>
+</html>
+

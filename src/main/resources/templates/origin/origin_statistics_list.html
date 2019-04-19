@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <div>
+                    <span>渠道编号:</span>
+                    <input id="userOrigin" name="userOrigin" type="text"/>
+                    <span>注册时间:</span>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <button id="query" class="btn btn-small btn-success" onclick="onSearch()"><i
+                            class="icon-search"></i> 查询
+                    </button>
+                </div>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">注册日期</th>
+                        <th class="center">注册渠道</th>
+                        <th class="center">注册人数(人)</th>
+                        <th class="center">注册的登录数量(人)</th>
+                        <th class="center">实名人数(人)</th>
+                        <th class="center">提单人数(人)</th>
+                        <th class="center">首借人数(人)</th>
+                        <th class="center">首借金额(元)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo: false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "origin/origin_statistics_list_ajax",
+        beforeSend : function(){
+            maskScreen();
+        },
+        complete : function(){
+            unMaskScreen();
+        },
+        headerColumns: [{
+            id: "day_key",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD") : "---";
+            }
+        }, {
+            id: "origin_name",
+            renderer: function (idValue, value, record) {
+                return value ? value + "(" + record.user_origin + ")" : record.user_origin;
+            }
+        }, {
+            id: "reg_cnt",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "login_cnt",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "real_name_cnt",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "submit_order_cnt",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "first_submit_cnt",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "first_submit_amount",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }]
+    });
+
+    function query() {
+        myTable.onLoad({});
+    }
+    query();
+
+    function onSearch() {//js函数开始
+        setTimeout(function () {//因为是即时查询，需要用setTimeout进行延迟，让值写入到input内，再读取
+            var storeId = document.getElementById('myTable');//获取table的id标识
+            var rowsLength = storeId.rows.length;//表格总共有多少行
+            var userOrigin = document.getElementById('userOrigin').value;//
+            var startTime = document.getElementById('startTime').value;
+            var endTime = document.getElementById('endTime').value;
+            for (var i = 0; i < rowsLength; i++) {//按表的行数进行循环，本例第一行是标题，所以i=1，从第二行开始筛选（从0数起）
+                var searchDayKey = storeId.rows[i].cells[0].innerHTML;//取得table行，列的值
+                var searchOrigin = storeId.rows[i].cells[1].innerHTML;//取得table行，列的值
+                // 时间区间查询
+                if (startTime != '' && endTime != '') {
+                    if(endTime >= searchDayKey) {
+                        storeId.rows[i].style.display = '';
+                        if (userOrigin != '') {
+                            if (searchOrigin.match(userOrigin)) {
+                                storeId.rows[i].style.display = '';
+                            } else {
+                                storeId.rows[i].style.display = 'none';
+                            }
+                        }
+                    }
+                    else {
+                        storeId.rows[i].style.display = 'none';
+                    }
+                    continue;
+                }
+                if (startTime != '' && endTime == '') {
+                    if(startTime <= searchDayKey) {
+                        storeId.rows[i].style.display = '';
+                        if (userOrigin != '') {
+                            if (searchOrigin.match(userOrigin)) {
+                                storeId.rows[i].style.display = '';
+                            } else {
+                                storeId.rows[i].style.display = 'none';
+                            }
+                        }
+                    }
+                    else {
+                        storeId.rows[i].style.display = 'none';
+                    }
+                    continue;
+                }
+                if (startTime == '' && endTime != '') {
+                    if(endTime >= searchDayKey) {
+                        storeId.rows[i].style.display = '';
+                        if (userOrigin != '') {
+                            if (searchOrigin.match(userOrigin)) {
+                                storeId.rows[i].style.display = '';
+                            } else {
+                                storeId.rows[i].style.display = 'none';
+                            }
+                        }
+                    }
+                    else {
+                        storeId.rows[i].style.display = 'none';
+                    }
+                    continue;
+                }
+                // origin单条件查询
+                if (startTime == '' && endTime == '' && userOrigin != '') {
+                    if (searchOrigin.match(userOrigin)) {//用match函数进行筛选，如果input的值，即变量 key的值为空，返回的是ture，
+                        storeId.rows[i].style.display = '';//显示行操作
+                    } else {
+                        storeId.rows[i].style.display = 'none';//隐藏行操作
+                    }
+                    continue;
+                }
+                // 无条件全部展示
+                if (startTime == '' && endTime == '' && userOrigin == '') {
+                    if (searchOrigin.match(userOrigin)) {//用match函数进行筛选，如果input的值，即变量 key的值为空，返回的是ture，
+                        storeId.rows[i].style.display = '';//显示行操作
+                    } else {
+                        storeId.rows[i].style.display = 'none';//隐藏行操作
+                    }
+                    continue;
+                }
+            }
+        }, 200);//200为延时时间
+    }
+</script>
+</body>
+</html>
+

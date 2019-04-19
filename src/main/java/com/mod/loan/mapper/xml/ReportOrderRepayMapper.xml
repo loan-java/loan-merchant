@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportOrderRepayMapper">
+  <resultMap id="BaseResultMap" type="com.mod.loan.model.ReportOrderRepay">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="day_key" jdbcType="DATE" property="dayKey" />
+    <result column="merchant" jdbcType="VARCHAR" property="merchant" />
+    <result column="should_repay_cnt" jdbcType="INTEGER" property="shouldRepayCnt" />
+    <result column="early_repay_cnt" jdbcType="INTEGER" property="earlyRepayCnt" />
+    <result column="normal_repay_cnt" jdbcType="INTEGER" property="normalRepayCnt" />
+    <result column="overdue_repay_cnt" jdbcType="INTEGER" property="overdueRepayCnt" />
+    <result column="overdue_cnt" jdbcType="INTEGER" property="overdueCnt" />
+    <result column="bad_cnt" jdbcType="INTEGER" property="badCnt" />
+    <result column="overdue1_repay_cnt" jdbcType="INTEGER" property="overdue1RepayCnt" />
+    <result column="overdue3_repay_cnt" jdbcType="INTEGER" property="overdue3RepayCnt" />
+    <result column="overdue7_repay_cnt" jdbcType="INTEGER" property="overdue7RepayCnt" />
+    <result column="overdue15_repay_cnt" jdbcType="INTEGER" property="overdue15RepayCnt" />
+    <result column="repay_amount" jdbcType="DECIMAL" property="repayAmount" />
+    <result column="real_repay_amount" jdbcType="DECIMAL" property="realRepayAmount" />
+    <result column="pay_amount" jdbcType="DECIMAL" property="payAmount" />
+    <result column="overdue_fee" jdbcType="DECIMAL" property="overdueFee" />
+    <result column="reduce_money" jdbcType="DECIMAL" property="reduceMoney" />
+    <result column="overdue_repay_amount" jdbcType="DECIMAL" property="overdueRepayAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+	
+	<select id="reportOrderRepayCount" resultType="int">
+	select count(1) from report_order_repay
+	<where>
+	 <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key >= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	</select>
+	
+	<select id="findReportOrderRepayList" resultType="map">
+	select * from report_order_repay
+	<where>
+	 <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key >= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	order by day_key desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="exportReport" resultType="map">
+	select * from report_order_repay
+	<where>
+	 <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key >= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	order by day_key
+	</select>
+	
+</mapper>

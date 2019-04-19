@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+					<!-- 检索  -->
+					<div>
+					    <span>手机号:</span>
+					    <input id="userPhone" name="userPhone" type="text" style="width:100px" />
+					    <span>逾期天数:</span>
+					    <input id="overdueDayDown" name="overdueDayDown" onkeyup="value=value.replace(/[^\d$]/,'')" value="1" style="width:40px" min="1" />
+					    ~
+					    <input id="overdueDayUp" name="overdueDayUp" onkeyup="value=value.replace(/[^\d$]/,'')" style="width:40px" />
+					    <span>状态:</span>
+					    <select id="orderStatus" name="orderStatus" style="width:100px">
+							<option value="33">逾期</option>
+							<option value="42">逾期还款</option>
+							<option value="34">坏账</option>
+					    </select>
+					    <span>催收人:</span>
+						<select id="followUserId" name="followUserId"  >
+					    </select>
+					    <span>客群:</span>
+					    <select id="userType" name="userType">
+							<option value="">所有</option>
+							<option value="1">新客</option>
+							<option value="2">次新</option>
+							<option value="3">老客</option>
+					    </select>
+					    <br>
+						<span>应还时间:</span>
+						<input id="repayTimeDown" style="width:100px" name="repayTimeDown" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+						~
+						<input id="repayTimeUp" style="width:100px" name="repayTimeUp" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>				
+						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+						<button id="query" class="btn btn-small btn-success" onclick="fendan()">分单</button>
+						<!-- <button id="query" class="btn btn-small btn-success" onclick="export()">导出</button> -->
+					</div>
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center"><label><input id="mycheck" type="checkbox" onclick="selectAll(this.checked)" /><span class="lbl">全选</span></label></th>
+								<th class="center">序号</th>
+								<th class="center">催收人</th>
+								<th class="center">状态</th>
+								<th class="center">用户姓名</th>
+								<th class="center">逾期天数</th>
+								<th class="center">借款金额</th>
+								<th class="center">逾期费</th>
+								<th class="center">减免金额</th>
+								<th class="center">应还金额</th>
+								<th class="center">借款时间</th>
+								<th class="center">应还时间</th>
+								<th class="center">实际还款</th>
+								<th class="center">客群</th>
+								<th class="center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		var myTable = new MaxTable();
+		myTable.initialize({
+			showPageInfo:true,
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"recycle/recycle_fenpei_list_ajax",
+            beforeSend : function(){
+                maskScreen();
+            },
+			complete : function(){
+				unMaskScreen();
+			},
+			headerColumns : [{
+	  			   id : "id",
+	  			   renderer : IdCheckBoxRenderer
+				},{
+  			   		id : "id",
+  			   		renderer : numRenderer
+				},{
+		            id : "follow_name",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "status",
+		            renderer : function(idValue,value,record){
+		            	if(value==33){
+		            		return "<font  color='red'>逾期</font>";
+		            	}
+		            	if(value==42){
+		            		return "<font  color='green'>已还</font>";
+		            	}
+		            	if(value==34){
+		            		return "坏账";
+		            	}
+			            return "---";
+			        }
+	        	},{
+		            id : "user_name",
+		            renderer : function(idValue,value,record){
+		            	 return value ? value + "(" + record.user_phone + ")" : "---" ;
+			        }
+	        	},{
+		            id : "overdue_day",
+		            renderer : function(idValue,value,record){
+			            return "<font  color='red'>"+value+"</font>";
+			        }
+	        	},{
+		            id : "borrow_money",
+		            renderer : function(idValue,value,record){
+			            return value;
+			        }
+	        	},{
+		            id : "overdue_fee",
+		            renderer : function(idValue,value,record){
+			            return value;
+			        }
+	        	},{
+		            id : "reduce_money",
+		            renderer : function(idValue,value,record){
+			            return value;
+			        }
+	        	},{
+		            id : "should_repay",
+		            renderer : function(idValue,value,record){
+			            return value;
+			        }
+	        	},{
+		            id : "arrive_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD") : "---";
+			        }
+	        	},{
+		            id : "repay_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD") : "---";
+			        }
+	        	},{
+		            id : "real_repay_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	},{
+		            id : "user_type",
+		            renderer : function(idValue,value,record){
+		            	if(value == 1){
+							return "<font color='red'>新客</font>";
+						}
+			            if (value == 2){
+							return "<font color='orange'>次新</font>";
+						}
+		            	if (value == 3){
+							return "<font color='green'>老客</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "id",
+		            renderer : function(idValue,value,record){
+		            	var html = "<div class='btn-group'>";
+		            	html += "<a class='btn btn-mini btn-info' title='详情' onclick=\"detail(" + record.uid + ");\">详情</a>";
+		            	html += "<a class='btn btn-mini btn-info' onclick=\"addBlackList(" + record.uid + ");\">加入黑名单</a>";
+		            	html += "<a class='btn btn-mini btn-info' onclick=\"record(" + value + ");\">催收记录</a>";
+						html += "</div>";
+			        	return html;
+			        }
+	        	}]
+		});
+		
+		var orderStatus;
+		function query() {
+			orderStatus=$("#orderStatus").val();
+			myTable.page.totalRowNum = 0;
+			myTable.onLoad({
+				orderStatus:orderStatus,
+				userPhone:$("#userPhone").val(),
+				overdueDayDown:$("#overdueDayDown").val(),
+				overdueDayUp:$("#overdueDayUp").val(),
+				repayTimeDown:$("#repayTimeDown").val(),
+				repayTimeUp:$("#repayTimeUp").val(),
+				followUserId:$("#followUserId").val(),
+				userType:$("#userType").val()
+			});
+		}
+		function search(){
+			myTable.page.pageNo = 1;
+			query();
+		}
+		
+		getManagerList();
+		var managerList;
+		function getManagerList(){
+			//催收人员列表
+			$.post(contextPath+"recycle/fenpei_recycle_user_list_ajax",{},function(jsonObject){
+				managerList = jsonObject.data;
+				$.each(managerList,function(i){
+					$("#followUserId").append("<option value='"+managerList[i].followUserId+"'>"+managerList[i].groupName+" - "+managerList[i].recycleName+" - "+managerList[i].remark+"</option>");
+				});
+				query();
+			});
+		}
+		
+		function fendan(){
+			var ids = getCheckedValuesByContainer().join(",");
+			if(!ids){
+				Dialog.alert("请选择订单");
+				return;
+			}
+			if(orderStatus!=33 && orderStatus!=34){
+				Dialog.alert("请选择逾期或坏账的订单");
+				return;
+			}
+			var diag = new Dialog();
+			diag.Title = "选择催收人";
+			diag.Width = 250;
+			diag.Height = 90;
+			diag.URL =contextPath+"system/blank";
+			diag.OKEvent = function(){
+				var followUserId = diag.innerFrame.contentWindow.document.getElementById('followUserId').value;
+				$.ajax({
+		        	url : contextPath + "recycle/recycle_fenpei",
+					type : "POST",
+					dataType : "json",
+					async : false,
+					data : {
+						"ids":ids,
+						"followUserId":followUserId
+					},
+					beforeSend : function(){
+						maskScreen();
+					},
+					success : function(result) {
+						if(result.status==2000){
+							diag.close();
+							query();
+							document.getElementById("mycheck").checked=false;
+						}else{
+							Dialog.alert(result.message);
+						}
+					},
+					complete : function(){
+						unMaskScreen();
+					}
+				});
+			};
+			diag.show();
+			var doc=diag.innerFrame.contentWindow.document;
+			var html="";
+			$.each(managerList,function(i){
+				html+="<option value='"+managerList[i].followUserId+"'>"+managerList[i].groupName+" - "+managerList[i].recycleName+" - "+managerList[i].remark+"</option>";
+			});
+			doc.open();
+			doc.write('<html><body><div style="text-align:center;"><select id="followUserId" name="followUserId">'+html+'</select></div></body></html>') ;
+			doc.close(); 
+		}
+		
+		function record(orderId){
+			var diag = new Dialog();
+			diag.Title = "催收操作记录";
+			diag.Width = 800;
+			diag.Height = 700;
+			diag.URL =contextPath+ "recycle/recycle_record_list?orderId="+orderId;
+			diag.CancelEvent = function(){ //关闭事件
+				diag.close();
+			 };
+			diag.show();
+		}
+		
+		function addBlackList(uid){
+			var diag = new top.Dialog();
+			diag.Drag = true;
+			diag.Title = "加入黑名单";
+			diag.URL = contextPath + "recycle/recycle_blacklist_edit?uid="+uid;
+			diag.Width = 600;
+			diag.Height = 600;
+			diag.CancelEvent = function(){ //关闭事件
+				diag.close();
+			};
+			diag.show();
+		}
+		
+		function detail(id){
+			 var diag = new top.Dialog();
+			 diag.Drag = true;
+			 diag.Title = "详情";
+			 diag.URL = contextPath + "user/user_detail?id=" + id;
+			 diag.Width = 1400;
+			 diag.Height = 800;
+			 diag.CancelEvent = function(){ //关闭事件
+				query();
+				diag.close();
+			 };
+			 diag.show();
+		}
+	</script>
+</body>
+</html>
+

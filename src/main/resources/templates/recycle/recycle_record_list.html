@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <button class="btn btn-small btn-success" onclick="add()" id="add">新增记录</button>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">序号</th>
+                        <th class="center">催收人</th>
+                        <th class="center">类型</th>
+                        <th class="center" width="500px">备注</th>
+                        <th class="center">时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    $(top.hangge());
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo: false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "recycle/recycle_record_list_ajax",
+        beforeSend : function(){
+            maskScreen();
+        },
+        complete : function(){
+            unMaskScreen();
+        },
+        headerColumns: [{
+            id: "id",
+            renderer: numRenderer
+        }, {
+            id: "follow_name",
+            renderer: function (idValue, value, record) {
+                return value ? value : "";
+            }
+        }, {
+            id: "type",
+            renderer: function (idValue, value, record) {
+                if (value == 0) {
+                    return "其他";
+                }
+                if (value == 1) {
+                    return "承诺还款";
+                }
+                if (value == 2) {
+                    return "谈判-高负债";
+                }
+                if (value == 3) {
+                    return "谈判-还款意愿低";
+                }
+                if (value == 4) {
+                    return "无人接听";
+                }
+                if (value == 5) {
+                    return "关机";
+                }
+                if (value == 6) {
+                    return "无法接通";
+                }
+                if (value == 7) {
+                    return "设置拒接";
+                }
+                if (value == 8) {
+                    return "通话中";
+                }
+                if (value == 9) {
+                    return "停机";
+                }
+                if (value == 10) {
+                    return "跳票";
+                }
+                if (value == 11) {
+                    return "家人代偿";
+                }
+                if (value == 12) {
+                    return "线下已还款";
+                }
+                if (value == 13) {
+                    return "失联（本人通讯录无效）";
+                }
+                if (value == 14) {
+                    return "拒绝还款";
+                }
+                if (value == 15) {
+                    return "部分还款";
+                }
+                if (value == 16) {
+                    return "谈判中";
+                }
+                if (value == 17) {
+                    return "第三方转告";
+                }
+                if (value == 18) {
+                    return "停止催收";
+                }
+                return "---";
+            }
+        },  {
+            id: "remark",
+            renderer: function (idValue, value, record) {
+                return value ? value : "";
+            }
+        }, {
+            id: "create_time",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        }]
+    });
+    var orderId = queryUrlParam("orderId");
+    var uid =queryUrlParam("uid");
+    function query() {
+        myTable.onLoad({
+            orderId: orderId,
+            uid:uid
+        });
+    }
+    query();
+    function search() {
+        query();
+    }
+    if(uid){
+    	$("#add").hide();
+    }
+    function add() {
+        var diag = new Dialog();
+        diag.Title = "新增";
+        diag.Width = 600;
+        diag.Height = 600;
+        diag.URL = contextPath + "recycle/recycle_record_add?orderId=" + orderId;
+        diag.CancelEvent = function () { //关闭事件
+            diag.close();
+            query();
+        };
+        diag.show();
+    }
+</script>
+</body>
+</html>
+

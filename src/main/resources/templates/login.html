@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>管理系统</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="stylesheet" href="/static/css/bootstrap.min.css"  th:href="@{/static/css/bootstrap.min.css}"/>
+<link rel="stylesheet" href="/static/css/matrix-login.css" th:href="@{/static/css/matrix-login.css}"/>
+<link rel="stylesheet" href="/static/css/font-awesome.css"th:href="@{/static/css/font-awesome.css}"/>
+<link rel="stylesheet" href="/static/css/font-awesome.min.css" th:href="@{/static/css/font-awesome.min.css}"/>
+<link rel="stylesheet" href="/static/css/ace.min.css" th:href="@{/static/css/ace.min.css}"/>
+<link rel="stylesheet" href="/static/css/jquery.gritter.css" th:href="@{/static/css/jquery.gritter.css}"/>
+<script src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+<script src="/static/js/bootstrap.min.js" th:src="@{/static/js/bootstrap.min.js}"></script>
+<script src="/static/js/jquery.tips.js" th:src="@{/static/js/jquery.tips.js}"></script>
+<script src="/static/js/jquery.cookie.js" th:src="@{/static/js/jquery.cookie.js}"></script>
+<script src="/static/js/ace-extra.min.js" th:src="@{/static/js/ace-extra.min.js}"></script>
+<script src="/static/js/jquery.gritter.min.js"th:src="@{/static/js/jquery.gritter.min.js}"></script>
+</head>
+<body>
+	<div style="width:100%;text-align: center;margin: 0 auto;position: absolute;">
+		<div id="loginbox">
+			<form action="" method="post" name="loginForm" id="loginForm">
+				<div class="control-group normal_text">
+					<h3 id="title">管理系统</h3>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<div class="main_input_box">
+							<span class="add-on bg_lg">
+								<i><img src="/static/images/user.png"   th:src="@{/static/images/user.png}"/></i>
+							</span>
+							<input type="text" name="loginname" id="loginname" placeholder="请输入用户名" />
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<div class="main_input_box">
+							<span class="add-on bg_ly">
+								<i><img src="/static/images/suo.png"  th:src="@{/static/images/suo.png}"/></i>
+							</span>
+							<input type="password" name="password" id="password" placeholder="请输入密码" />
+						</div>
+					</div>
+				</div>
+				<div class="control-group" style="display: none;" id="phoneDiv">
+					<div class="controls">
+						<div class="main_input_box">
+                            <span class="add-on bg_lh">
+                            	<i><img src="/static/images/phone.png"  th:src="@{/static/images/phone.png}" style="width: 17px;"/></i>
+                            </span>
+                            <input type="text" name="phone" id="phone" readonly="readonly" />
+						</div>
+					</div>
+				</div>
+				<div class="control-group" style="display: none;" id="codeDiv">
+					<div class="controls">
+						<div class="main_input_box">
+                            <span class="add-on bg_db">
+                            	<i><img src="/static/images/msg.png"  th:src="@{/static/images/msg.png}" style="width: 17px;"/></i>
+                            </span>
+							<input type="text" name="code" id="code" placeholder="请输入验证码" style="width:50%;" maxlength="6" />
+							<span id="codeButton" onclick="getPhoneCode()" style="display:inline-block;width:25%;height:39px;line-height:39px;text-align:center;color:white;border-radius:5px;background:cadetblue;">获取验证码</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-actions">
+					<div style="width:86%;padding-left:8%;">
+						<span class="pull-right" >
+							<a href="javascript:cancel();" class="btn btn-success">取消</a>
+						</span>
+						<span class="pull-right">
+							<a onclick="severCheck();" class="flip-link btn btn-info" id="to-recover">登录</a>
+						</span>
+					</div>
+				</div>
+			</form>
+			<div class="controls">
+				<div class="main_input_box">
+					<font color="white">
+						<span id="nameerr">Copyright © FH 2017</span>
+					</font>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		
+		if (window != top) {
+			top.location.href = contextPath + "system/login";
+		}
+
+		//服务器校验
+		function severCheck() {
+			if (check()) {
+				var loginname = $("#loginname").val();
+				var password = $("#password").val();
+				var code = $("#code").val();
+				$.ajax({
+					type : "POST",
+					url : contextPath + "system/login_ajax",
+					data : {
+						"loginname" : loginname,
+						"password" : password,
+						"code" : code
+					},
+					dataType : "json",
+					cache : false,
+					success : function(data) {
+						if (2000 == data.status) {
+							saveCookie();
+							window.location.href = "index";
+						} else if (5001 == data.status) {
+							$.gritter.add({
+								title : "温馨提示",
+								text : data.message,
+								class_name : "gritter-error"
+							});
+							//取消"正在登陆"的tips
+							$(".jq_tips_box").remove();
+							$("#phone").val(data.data);
+							$("#phoneDiv").show();
+							$("#codeDiv").show();
+						} else {
+							$.gritter.add({
+								title : "温馨提示",
+								text : data.message,
+								class_name : "gritter-error"
+							});
+							//取消"正在登陆"的tips
+							$(".jq_tips_box").remove();
+							$("#loginname").focus();
+						}
+					}
+				});
+			}
+		}
+
+		//客户端校验
+		function check() {
+			if ($("#loginname").val() == "") {
+				$.gritter.add({
+					title : "温馨提示",
+					text : "用户名不得为空",
+					class_name : "gritter-error"//gritter-error gritter-light
+				});
+				$("#loginname").focus();
+				return false;
+			}
+			if ($("#password").val() == "") {
+				$.gritter.add({
+					title : "温馨提示",
+					text : "密码不得为空",
+					class_name : "gritter-error"
+				});
+				$("#password").focus();
+				return false;
+			}
+			$("#loginbox").tips({
+				side : 1,
+				msg : "正在登录 , 请稍后 ...",
+				bg : "#68B500",
+				time : 3
+			});
+			return true;
+		}
+
+		function saveCookie() {
+			if ($("#saveid").attr("checked")) {
+				$.cookie("loginname", $("#loginname").val(), {
+					expires : 7
+				});
+				$.cookie("password", $("#password").val(), {
+					expires : 7
+				});
+			}
+		}
+
+		function cancel() {
+			$("#loginname").val("");
+			$("#password").val("");
+			$("#code").val("");
+		}
+
+		jQuery(function() {
+			changeTitle();
+			var loginname = $.cookie("loginname");
+			var password = $.cookie("password");
+			if (typeof (loginname) != "undefined" && typeof (password) != "undefined") {
+				$("#loginname").val(loginname);
+				$("#password").val(password);
+				$("#saveid").attr("checked", true);
+			}
+		});
+
+		function changeTitle() {
+			$.post(contextPath + "system/login_current_merchant_ajax", {}, function(data) {
+				if(!data.data){
+					window.location.href = "error";
+					return;
+				}
+				$("title").prepend(data.data);
+				$("#title").prepend(data.data);
+			});
+		}
+		
+		$(document).keyup(function(event) {
+			if (event.keyCode == 13) {
+				$("#to-recover").trigger("click");
+			}
+		});
+		
+		function getPhoneCode() {
+			countdown();
+			var loginname = $("#loginname").val();
+			var password = $("#password").val();
+			$.post(contextPath + "system/login_phone_code_ajax", {"loginname" : loginname,"password" : password}, function(data) {
+				if (2000 != data.status) {
+					$.gritter.add({
+						title : "温馨提示",
+						text : data.message,
+						class_name : "gritter-error"
+					});
+				}
+			});
+		}
+
+		//验证码倒计时
+		var InterValObj;
+		function countdown() {
+			$("#codeButton").attr("disabled", "true");
+			$("#codeButton").css({
+				"background" : "#DDDDDD"
+			});
+			//timer变量，控制时间
+			var count = 119; //间隔函数，1秒执行
+			var curCount; //当前剩余秒数
+			sendMessage();
+			function sendMessage() {
+				curCount = count;
+				//设置效果，开始计时
+				$("#codeButton").text(curCount + "s");
+				InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+			}
+			//timer处理函数
+			function SetRemainTime() {
+				if (curCount == 0) {
+					window.clearInterval(InterValObj); //停止计时器
+					$("#codeButton").removeAttr("disabled"); //启用按钮
+					$("#codeButton").text("获取验证码");
+					$("#codeButton").css({
+						"background" : "cadetblue"
+					});
+				} else {
+					$("#codeButton").attr({
+						"disabled" : "disabled"
+					});
+					curCount--;
+					$("#codeButton").text(curCount + "s");
+				}
+			}
+		}
+	</script>
+</body>
+</html>

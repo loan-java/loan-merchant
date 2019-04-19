@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form name="myForm" id="myForm">
+		<input name="orderId" id="orderId"  type="hidden"   th:value="${orderId}" />
+			<fieldset>
+				<legend>新增催收记录</legend>
+			</fieldset>
+				<table>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">催收标签</label>
+						</td>
+						<td>
+							<select id="type" name="type"   class="form-control">
+								<option value="0">其他</option>
+								<option value="1">承诺还款</option>
+								<option value="2">谈判-高负债</option>
+								<option value="3">谈判-还款意愿低</option>
+								<option value="4">无人接听</option>
+								<option value="5">关机</option>
+								<option value="6">无法接通</option>
+								<option value="7">设置</option>
+								<option value="8">通话中</option>
+								<option value="9">停机</option>
+								<option value="10">跳票</option>
+								<option value="11">家人代偿</option>
+								<option value="12">线下已还款</option>
+								<option value="13">失联（本人通讯录无效）</option>
+								<option value="14">拒绝还款</option>
+								<option value="15">部分还款</option>
+								<option value="16">谈判中</option>
+								<option value="17">第三方转告</option>
+								<option value="18">停止催收</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">催收备注</label>
+						</td>
+						<td>
+							<textarea name="remark" id="remark" style="resize:none; width: 300px; height: 300px;"></textarea>
+						</td>
+					</tr>
+				</table>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		$("#saveButton").bind("click",function(){
+			var remark = document.getElementById('remark').value;
+			$.ajax({
+        		url : contextPath+"recycle/recycle_record_add_ajax",
+        		type : "POST",
+				dataType : "json",
+				data : $("#myForm").serialize(),
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(jsonObject) {
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		});
+	</script>
+</body>
+</html>

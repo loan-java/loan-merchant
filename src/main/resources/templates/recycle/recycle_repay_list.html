@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <div>
+                    <span>客群:</span>
+                    <select id="userType" name="userType" class="form-control" onchange="this.blur()">
+                        <option value="">全部</option>
+                        <option value="1">新客</option>
+                        <option value="2">次客</option>
+                        <option value="3">老客</option>
+                    </select>
+                    <span>应还日期:</span>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+                </div>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">序号</th>
+                        <th class="center">催收人姓名</th>
+                        <th class="center">入催订单数</th>
+                        <th class="center">未还订单数</th>
+                        <th class="center">当前逾期率</th>
+                        <th class="center">入催一天还款率</th>
+                        <th class="center">入催三天还款率</th>
+                        <th class="center">入催七天还款率</th>
+                        <th class="center">入催六十天还款率</th>
+                        <th class="center">总还款率</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    $(top.hangge());
+    var submitTime = laydate.now(0, 'YYYY-MM-DD');
+    $("#startTime").attr('value', submitTime);
+    $("#endTime").attr('value', submitTime);
+    
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo: false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "recycle/recycle_repay_list_ajax",
+        beforeSend : function(){
+            maskScreen();
+        },
+        complete : function(){
+            unMaskScreen();
+        },
+        headerColumns: [{
+            id : "id",
+            renderer : numRenderer
+        },{
+            id: "recycled_name",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "recycle_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "not_return_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "current_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "repay_1_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "repay_3_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "repay_7_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "repay_60_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "sum_repay_rate",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }]
+    });
+
+    function query() {
+        myTable.onLoad({
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val(),
+            userType: $("#userType").val(),
+        });
+    }
+    
+    function search() {
+    	var startTime = $("#startTime").val();
+		var endTime = $("#endTime").val();
+		var timeDiff = times(startTime, endTime);
+		if (timeDiff > 38 || timeDiff < 0) {
+			$("#startTime").tips({
+				side : 3,
+				msg : "请选择区间少于38天的时间段！",
+				bg : "#AE81FF",
+				time : 3
+			});
+			$("#startTime").focus();
+			return false;
+		}
+        query();
+    }
+    
+    function times(startTime, endTime) {
+		if (startTime == '') {
+			return -1;
+		}
+		if (endTime == '') {
+			return -1;
+		}
+		startTime = new Date(startTime.replace(/-/g, "/"));
+		endTime = new Date(endTime.replace(/-/g, "/"));
+		var days = endTime.getTime() - startTime.getTime();
+		var time = parseInt(days / (1000 * 60 * 60 * 24));
+		return time;
+	}
+</script>
+</body>
+</html>
+

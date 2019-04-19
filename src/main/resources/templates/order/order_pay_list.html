@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <div id="searchDiv">
+                    <span>放款状态:</span>
+                    <select id="payStatus" name="payStatus" class="form-control" onchange="this.blur()">
+                        <option value="">全部</option>
+                        <option value="0">初始状态</option>
+                        <option value="1">受理成功</option>
+                        <option value="2">受理失败</option>
+                        <option value="3" selected="selected">放款成功</option>
+                        <option value="4">放款失败</option>
+                    </select>
+                    <span>用户手机:</span>
+                    <input id="userPhone" name="userPhone" type="text"/>
+                    <span>放款流水号:</span>
+                    <input id="payNo" name="payNo" type="text"/>
+                    <span>支付通道:</span>
+                    <select id="payType" name="payType" class="form-control" onchange="this.blur()">
+                        <option value="">全部</option>
+                        <option value="1">合利宝</option>
+                        <option value="2">富友</option>
+                        <option value="3">汇聚</option>
+                    </select>
+                    <br>
+                    <span>放款时间:</span>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <span>完成时间:</span>
+                    <input id="startUpdateTime" name="startUpdateTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endUpdateTime" name="endUpdateTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <br>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+                    <button class="btn btn-small btn-success" onclick="exportReport()">EXCEL导出</button>
+                </div>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">放款流水号</th>
+                        <th class="center">用户姓名</th>
+                        <th class="center">支付通道</th>
+                        <th class="center">放款状态</th>
+                        <th class="center">支付金额(元)</th>
+                        <th class="center">到帐银行</th>
+                        <th class="center">到账卡号</th>
+                        <th class="center">放款时间</th>
+                        <th class="center">完成时间</th>
+                        <th class="center">备注</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var orderId = "[[${orderId}]]";
+    var contextPath = "[[@{/}]]";
+    $(top.hangge());
+    var myTable = new MaxTable();
+    var submitTime = laydate.now(0, 'YYYY-MM-DD');
+    $("#startTime").attr('value', submitTime);
+    $("#endTime").attr('value', submitTime);
+    myTable.initialize({
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "order/order_pay_list_ajax",
+        headerColumns: [{
+            id: "pay_no",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        },{
+            id: "user_name",
+            renderer: function (idValue, value, record) {
+                return value ? value + "(" + record.user_phone + ")" : "---";
+            }
+        },{
+            id: "pay_type",
+            renderer: function (idValue, value, record) {
+                if (value == 1) {
+                    return "合利宝";
+                }
+                if (value == 2) {
+                    return "富友";
+                }
+                if (value == 3) {
+                    return "汇聚";
+                }
+                return "---";
+            }
+        },{
+            id: "pay_status",
+            renderer: function (idValue, value, record) {
+                if (value == 0) {
+                    return "<font color='orange'>初始状态</font>";
+                }
+                if (value == 1) {
+                    return "<font color='green'>受理成功</font>";
+                }
+                if (value == 2) {
+                    return "<font color='red'>受理失败</font>";
+                }
+                if (value == 3) {
+                    return "<font color='green'>放款成功</font>";
+                }
+                if (value == 4) {
+                    return "<font color='red'>放款失败</font>";
+                }
+                return "---";
+            }
+        },{
+            id: "pay_money",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        },{
+            id: "bank",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        },{
+            id: "bank_no",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        },{
+            id: "create_time",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        },{
+            id: "update_time",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        },{
+            id: "remark",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+           }
+        }]
+    });
+
+    function query() {
+        var payStatus = $("#payStatus").val();
+        if (orderId) {
+            $("#searchDiv").hide();
+            payStatus = "";
+        }
+        myTable.page.totalRowNum = 0;
+        myTable.onLoad({
+            orderId: orderId,
+            userPhone: $("#userPhone").val(),
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val(),
+            startUpdateTime: $("#startUpdateTime").val(),
+            endUpdateTime: $("#endUpdateTime").val(),
+            payNo: $("#payNo").val(),
+            payStatus: $("#payStatus").val(),
+            payType: $("#payType").val()
+        });
+    }
+    query();
+    function search() {
+        myTable.page.pageNo = 1;
+        if (times($("#startTime").val(),$("#endTime").val())>7) {
+            $("#startTime").tips({
+                side: 3,
+                msg: "选择时间区间请少于7天！",
+                bg: "#AE81FF",
+                time: 2
+            });
+            $("#startTime").focus();
+            $("#endTime").tips({
+                side: 3,
+                msg: "选择时间区间请少于7天！",
+                bg: "#AE81FF",
+                time: 2
+            });
+            $("#endTime").focus();
+            return false;
+        }
+        if (times($("#startUpdateTime").val(),$("#endUpdateTime").val()) > 7) {
+            $("#startUpdateTime").tips({
+                side: 3,
+                msg: "选择时间区间请少于7天！",
+                bg: "#AE81FF",
+                time: 2
+            });
+            $("#startUpdateTime").focus();
+            $("#endUpdateTime").tips({
+                side: 3,
+                msg: "选择时间区间请少于7天！",
+                bg: "#AE81FF",
+                time: 2
+            });
+            $("#endUpdateTime").focus();
+            return false;
+        }
+        query();
+    }
+    
+    function secondSecurityVerify(){
+    	var diag = new top.Dialog();
+        diag.Drag = true;
+        diag.Title = "安全校验";
+        diag.URL = contextPath + "user_security";
+        diag.Width = 1400;
+        diag.Height = 800;
+        diag.CancelEvent = function () { //关闭事件
+            diag.close();
+        };
+        diag.show();
+    }
+    
+    function exportReport() {
+    	$.ajax({
+			url : contextPath+"system/security_first_verify",
+			type : "POST",
+			dataType : "json",
+			data : {},
+			beforeSend : function(){
+	            maskScreen();
+	        },
+			success : function(jsonObject) {
+				if(jsonObject.status != 2000){
+					secondSecurityVerify();
+				}else{
+					Dialog.confirm("确认按条件导出放款列表吗？",function () {
+			            location.href = contextPath + "order/export_report_pay?reportName=order_pay_list&startTime=" + $("#startTime").val()
+			                    + "&endTime=" + $("#endTime").val()
+			                    + "&payStatus=" + $("#payStatus").val()
+			                    + "&payType=" + $("#payType").val()
+			                    + "&userPhone=" + $("#userPhone").val()
+			                    + "&startUpdateTime=" + $("#startUpdateTime").val()
+			                    + "&payNo=" + $("#payNo").val()
+			                    + "&endUpdateTime=" + $("#endUpdateTime").val();
+			        });
+				}
+			},
+			complete : function(){
+				unMaskScreen();
+			}
+		});
+    }
+    
+    function times(startTime,endTime) {
+        var day1 = startTime;
+        day1 = new Date(day1.replace(/-/g, "/"));
+        var day2 = endTime;
+        day2 = new Date(day2.replace(/-/g, "/"));
+        var days = day2.getTime()-day1.getTime();
+        var time = parseInt(days/(1000*60*60*24));
+        return time;
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+	<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+	<link type="text/css" rel="stylesheet" href="/static/plugins/zTree/2.6/zTreeStyle.css" th:href="@{/static/plugins/zTree/2.6/zTreeStyle.css}" />
+	<script type="text/javascript" src="/static/plugins/zTree/2.6/jquery.ztree-2.6.min.js" th:src="@{/static/plugins/zTree/2.6/jquery.ztree-2.6.min.js}"></script>
+</head>
+<body>
+	<div id="zhongxin">
+		<ul id="tree" class="tree"></ul>
+	</div>
+	<div align="center">
+		<a class="btn btn-mini btn-primary" onclick="save()">保存</a>
+		<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+	</div>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		var zTree;
+		var roleId = [[${roleId}]];
+		
+		$(document).ready(function(){
+			$.ajax({
+        		url : contextPath + "system/role_resource_edit_ajax",
+        		type : "POST",
+				dataType : "json",
+				data : {"roleId":roleId},
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(jsonObject) {
+					var zn = jsonObject.data.zTreeNodes;
+					var setting = {
+							showLine: true,
+						    checkable: true
+					};
+					var zTreeNodes = eval(zn);
+					zTree = $("#tree").zTree(setting, zTreeNodes);
+					var node = zTree.getNodeByParam("id","tree_13_span");
+					zTree.selectNode(node,true);//指定选中ID的节点
+					zTree.expandNode(node, true, false);//指定选中ID节点展开
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		});
+		
+		function save(){
+			var nodes = zTree.getCheckedNodes();
+			var tmpNode;
+			var ids = "";
+			for(var i=0; i<nodes.length; i++){
+				tmpNode = nodes[i];
+				if(i!=nodes.length-1){
+					ids += tmpNode.id+",";
+				}else{
+					ids += tmpNode.id;
+				}
+			}
+				
+			$.ajax({
+        		url : contextPath+"system/role_resource_update_ajax",
+        		type : "POST",
+				dataType : "json",
+				data : {
+					"roleId":roleId,
+					"resourceId":ids
+				},
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(jsonObject) {
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		}
+	</script>
+</body>
+</html>

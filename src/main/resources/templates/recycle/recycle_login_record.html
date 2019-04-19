@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">登录ip</th>
+                        <th class="center">登录时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    var followUserId = "[[${followUserId}]]";
+    $(top.hangge());
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo:false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "recycle/recycle_login_record_ajax",
+        beforeSend : function(){
+			maskScreen();
+		},
+        complete : function(){
+			unMaskScreen();
+		},
+        headerColumns: [{
+            id: "loginIp",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "createTime",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        }]
+    });
+
+    function query() {
+        myTable.onLoad({
+            "followUserId": followUserId,
+        });
+    }
+    query();
+
+</script>
+</body>
+</html>
+

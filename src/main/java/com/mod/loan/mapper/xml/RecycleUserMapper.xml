@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.RecycleUserMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.RecycleUser">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="follow_user_id" jdbcType="BIGINT" property="followUserId"/>
+    </resultMap>
+    <select id="findRecycleUserList" resultType="map">
+        SELECT u.id AS id ,
+        u. status AS status ,
+        m.user_name AS recycleName ,
+        u.remark AS remark ,
+        g.group_name AS groupName,
+        g.status AS groupStatus,
+        u.follow_user_id as followUserId
+        FROM tb_recycle_user u
+        LEFT JOIN tb_merchant_manager m ON u.follow_user_id = m.id
+        LEFT JOIN tb_recycle_group g ON u.group_id = g.id
+        <where>
+            <if test="recycleName != null and recycleName != ''">
+                and m.user_name like concat(#{recycleName},'%')
+            </if>
+            <if test="groupName != null and groupName != ''">
+                and g.group_name like concat(#{groupName},'%')
+            </if>
+            <if test="merchant != null">
+                and m.merchant = #{merchant}
+            </if>
+        </where>
+        order by status,u.id desc  limit #{startIndex},#{pageSize}
+    </select>
+    <select id="findRecycleUserDetail" resultType="com.mod.loan.model.dto.RecycleUserDto">
+        SELECT u.id AS id ,
+        u. status AS status ,
+        m.user_name AS recycleName ,
+        u.remark AS remark ,
+        u.group_id AS groupId,
+        m.merchant as merchant,
+        u.follow_user_id as followUserId
+        FROM tb_recycle_user u
+        LEFT JOIN tb_merchant_manager m ON u.follow_user_id = m.id
+        WHERE u.id = #{id} and m.merchant=#{merchant}
+    </select>
+    <select id="recycleUserCount" resultType="int">
+        SELECT COUNT(1) FROM (SELECT u.id AS id ,
+        u. status AS status ,
+        m.user_name AS recycleName ,
+        u.remark AS remark ,
+        g.group_name AS groupName
+        FROM tb_recycle_user u
+        LEFT JOIN tb_merchant_manager m ON u.follow_user_id = m.id
+        LEFT JOIN tb_recycle_group g ON u.group_id = g.id
+        <where>
+            <if test="merchant != null">
+                and m.merchant = #{merchant}
+            </if>
+        </where>
+        ) t
+        <where>
+            <if test="recycleName != null and recycleName != ''">
+                and t.recycleName = #{recycleName}
+            </if>
+            <if test="groupName != null and groupName != ''">
+                and t.groupName = #{groupName}
+            </if>
+
+        </where>
+    </select>
+    
+    <select id="findRealRecycleUserList" resultType="map">
+        SELECT 
+        m.user_name AS recycleName ,
+        u.remark AS remark ,
+        g.group_name AS groupName,
+        u.follow_user_id as followUserId
+        FROM tb_recycle_user u
+        LEFT JOIN tb_merchant_manager m ON u.follow_user_id = m.id
+        LEFT JOIN tb_recycle_group g ON u.group_id = g.id
+        where  m.merchant = #{merchant} and u.status=0 and g.status=0 and m.account_status=0
+        order by g.id,u.id desc
+    </select>
+
+    <select id="findFenPeiRecycleUserList" resultType="map">
+        SELECT
+        m.user_name AS recycleName ,
+        u.remark AS remark ,
+        g.group_name AS groupName,
+        u.follow_user_id as followUserId
+        FROM tb_recycle_user u
+        LEFT JOIN tb_merchant_manager m ON u.follow_user_id = m.id
+        LEFT JOIN tb_recycle_group g ON u.group_id = g.id
+        where  m.merchant = #{merchant} and u.status=0 and g.status=0 and m.account_status=0
+        and u.group_id in (select group_id from tb_recycle_user where follow_user_id=#{uid})
+        order by g.id,u.id desc
+    </select>
+
+    <select id="findRecycleLoginRecord" resultType="map">
+        select login_ip as loginIp,create_time as createTime from tb_merchant_login_record
+        WHERE merchant = #{merchant} and manager_id = #{followUserId} order by id desc
+    </select>
+</mapper>

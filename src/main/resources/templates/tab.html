@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script type="text/javascript" src="/static/js/jquery-1.7.2.js" th:src="@{/static/js/jquery-1.7.2.js}"></script>
+	<script type="text/javascript" src="/static/plugins/tab/js/framework.js" th:src="@{/static/plugins/tab/js/framework.js}"></script>
+	<link href="/static/plugins/tab/css/import_basic.css" rel="stylesheet" type="text/css" th:href="@{/static/plugins/tab/css/import_basic.css}"/>
+	<link id="skin" prePath="/static/plugins/tab/" th:prePath="@{/static/plugins/tab/}" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" charset="utf-8" src="/static/plugins/tab/js/tab.js" th:src="@{/static/plugins/tab/js/tab.js}"></script>
+</head>
+<body>
+	<div id="tab_menu"></div>
+	<div style="width:100%;">
+		<div id="page" style="width:100%;height:100%;"></div>
+	</div>
+	
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		var hostname = window.location.hostname;
+		var port = window.location.port;	
+		var domain= window.location.protocol+'//'+hostname+":"+port+contextPath;
+		var tab;
+		$(function() {
+			 tab = new TabView( {
+				containerId : 'tab_menu',
+				pageid : 'page',
+				cid : 'tab1',
+				position : "top"
+			});
+			tab.add( {
+				id : 'tab1_index1',
+				title : "主页",
+				url : domain+"system/main",
+				isClosed : false
+			});
+		});
+		function tabAddHandler(mid,mtitle,murl){
+			tab.update({
+				id :mid,
+				title :mtitle,
+				url :domain+murl,
+				isClosed :true
+			});
+			tab.add({
+				id :mid,
+				title :mtitle,
+				url :domain+murl,
+				isClosed :true
+			});
+			tab.activate(mid);
+		}
+		function cmainFrameT(){
+			var hmainT = document.getElementById("page");
+			var bheightT = document.documentElement.clientHeight;
+			hmainT.style.width = '100%';
+			hmainT.style.height = (bheightT  - 51) + 'px';
+		}
+		cmainFrameT();
+		window.onresize=function(){  
+			cmainFrameT();
+		};
+	</script>
+</body>
+</html>
+

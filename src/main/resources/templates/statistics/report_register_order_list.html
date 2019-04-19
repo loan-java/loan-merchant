@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+	<div id="page-content" class="clearfix">
+		<div class="row-fluid">
+			<div class="row-fluid">
+				<!-- 检索  -->
+				<div>
+					<span>统计日期:</span>
+					<input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+					~
+					<input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+					<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+				</div>
+				<!-- 检索  -->
+				<table id="table_report" class="table table-striped table-bordered table-hover">
+					<thead>
+					<tr>
+						<th class="center">统计日期</th>
+						<th class="center">注册人数(人)</th>
+						<th class="center">实名认证人数(人)</th>
+						<th class="center">支付宝认证人数(人)</th>
+						<th class="center">运营商认证人数(人)</th>
+						<th class="center">总提单人数(人)</th>
+						<th class="center">新客人数(人)</th>
+						<th class="center">次客人数(人)</th>
+						<th class="center">老客人数(人)</th>
+					</tr>
+					</thead>
+					<tbody id="myTable"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+	<i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+	var contextPath="[[@{/}]]";
+	$(top.hangge());
+	var myTable = new MaxTable();
+	myTable.initialize({
+		table : "myTable",
+		id : "id",
+		queryUrl : contextPath+"statistics/report_register_order_list_ajax",
+		headerColumns : [{
+			id : "day_key",
+			renderer : function(idValue,value,record){
+				return value ? moment(value).format("YYYY-MM-DD") : "---";
+			}
+		},{
+			id : "register_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---";
+			}
+		},{
+			id : "realname_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "zfb_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "mobile_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "order_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "first_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "second_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		},{
+			id : "old_cnt",
+			renderer : function(idValue,value,record){
+				return value ? value : "---" ;
+			}
+		}]
+	});
+
+	function query() {
+		myTable.page.totalRowNum = 0;
+		myTable.onLoad({
+			startTime:$("#startTime").val(),
+			endTime:$("#endTime").val()
+		});
+	}
+	query();
+	function search() {
+		myTable.page.pageNo = 1;
+		query();
+	}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<h4>通讯录</h4><span>人数：<span id="num"></span></span>
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center">重复名单</th>
+					<th class="center">电话</th>
+				</tr>
+			</thead>
+			<tbody id="three">
+			</tbody>
+			<tbody>
+			<tr style="height: 40px">
+				<td colspan="2"></td>
+			</tr>
+			</tbody>
+			<thead>
+				<tr>
+					<th class="center">姓名</th>
+					<th class="center">电话</th>
+				</tr>
+			</thead>
+			<tbody id="addressList">
+			</tbody>
+		</table>
+	</div>
+	<script type="text/javascript">
+		$(top.hangge());
+		var id = [[${id}]];
+		var contextPath="[[@{/}]]";
+		function getAllMessage(){
+			$.ajax({
+				url : contextPath+"user/user_address_list_detail_ajax",
+				type : "POST",
+				dataType : "json",
+				data : {"id":id},
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(data) {
+					var addressList = data.data;
+					if(addressList){
+						var arr = JSON.parse(addressList);
+						$("#num").text(arr.length)
+						var tempMap={};
+						var rd = {}
+						$.each(arr,function(i){
+							var name = this.n;
+							var phone = this.p;
+							$("#addressList").append("<tr><td class='center'>" + name + "</td><td class='center'>" + phone + "</td></tr>");
+							rd[name] ? (rd[name]++) : (rd[name] = 1)
+							if(tempMap[name]!=0&&!tempMap[name]){
+								tempMap[name]=phone;
+							}else{
+								tempMap[name]=tempMap[name]+","+phone;
+							}
+						});
+						for(key in rd){
+							if(rd[key] >=3) {
+								$("#three").append("<tr><td class='center'>" +"<font color='red'>"+key+"</font>"+ "</td><td class='center'>" + "<font color='red'>"+tempMap[key]+"</font>" + "</td></tr>");
+							}
+						}
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+        }
+        getAllMessage();
+	</script>
+</body>
+</html>

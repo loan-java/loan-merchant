@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.RecycleOrderExportMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.RecycleOrderExport">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+		<result column="manager_id" jdbcType="BIGINT" property="managerId" />
+		<result column="param" jdbcType="VARCHAR" property="param" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+
+	<select id="findDownloadList" resultType="map">
+		select e.id,m.user_name,e.status,e.create_time from tb_recycle_order_export e left join tb_merchant_manager m on e.manager_id = m.id
+		where m.merchant = #{merchant}
+		order by e.id desc
+	</select>
+</mapper>

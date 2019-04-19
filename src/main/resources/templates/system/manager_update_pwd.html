@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+	    <hr />
+		<form id="myForm">
+			<fieldset>
+		        <legend>修改密码</legend>
+				<table>	
+					<tr>
+						<td><label class="col-sm-2 control-label">旧密码</label></td>
+						<td>
+							<input id="old_pwd" name="old_pwd" class="form-control" />
+						</td>
+					</tr>
+					<tr>
+						<td><label class="col-sm-2 control-label">新密码</label></td>
+						<td>
+							<input id="new_pwd" name="new_pwd" class="form-control" />
+						</td>
+					</tr>
+					<tr>
+						<td><label class="col-sm-2 control-label">确认密码</label></td>
+						<td>
+							<input id="new_pwd_2" name="new_pwd_2" class="form-control" />
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+		<font color="red" style="position:absolute;left:0;bottom:0;">*密码必须由6-18位字母数字组合。</font>
+	</div>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		$("#saveButton").bind("click",function(){
+			if($("#old_pwd").val()==""){
+				Dialog.alert("请输入旧密码");
+				$("#old_pwd").focus();
+				return false;
+			}
+			if($("#new_pwd").val()==""){
+				$("#new_pwd").focus();
+				Dialog.alert("请输入新密码");
+				return false;
+			}
+			if($("#new_pwd_2").val()==""){
+				$("#new_pwd_2").focus();
+				Dialog.alert("请确认新密码");
+				return false;
+			}
+			if($("#new_pwd").val()!=$("#new_pwd_2").val()){
+				$("#new_pwd_2").focus();
+				Dialog.alert("新密码不一致");
+				return false;
+			}
+			$.ajax({
+				url : contextPath+"system/manager_update_pwd_ajax",			
+				type : "POST",
+				dataType : "json",
+				data : {
+					old_pwd:$("#old_pwd").val(),
+					new_pwd:$("#new_pwd").val()
+				},
+				success : function(jsonObject){
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							window.location.href="index.html";
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

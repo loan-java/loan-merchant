@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <div>
+                    <span>客群:</span>
+                    <select id="userType" name="userType" class="form-control" onchange="this.blur()">
+                        <option value="">全部</option>
+                        <option value="1">新客</option>
+                        <option value="2">次客</option>
+                        <option value="3">老客</option>
+                    </select>
+                    <span>渠道编号:</span>
+                    <input id="userOrigin" name="userOrigin" type="text"/>
+                    <span>提单日期:</span>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i>
+                        查询
+                    </button>
+                    <button class="btn btn-small btn-success" onclick="exportReport()">EXCEL导出</button>
+                </div>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">序号</th>
+                        <th class="center">渠道</th>
+                        <th class="center">申请订单量</th>
+                        <th class="center">风控拒绝数</th>
+                        <th class="center">风控拒绝率</th>
+                        <th class="center">风控通过数</th>
+                        <th class="center">风控通过率</th>
+                        <th class="center">人工通过数</th>
+                        <th class="center">人工通过率</th>
+                        <th class="center">取消订单数</th>
+                        <th class="center">取消订单率</th>
+                        <th class="center">总通过数</th>
+                        <th class="center">总通过率</th>
+                        <th class="center">到期订单数</th>
+                        <th class="center">逾期订单数</th>
+                        <th class="center">当前逾期数</th>
+                        <th class="center">当前逾期率</th>
+                        <th class="center">首逾</th>
+                        <th class="center">逾期三天</th>
+                        <th class="center">逾期七天</th>
+                        <th class="center">逾期十五天</th>
+                        <th class="center">逾期三十天</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    var submitTime = laydate.now(0, 'YYYY-MM-DD');
+    $("#startTime").attr('value', submitTime);
+    $("#endTime").attr('value', submitTime);
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo: false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "origin/origin_order_statistics_list_ajax",
+        beforeSend: function () {
+            maskScreen();
+        },
+        complete: function () {
+            unMaskScreen();
+        },
+        headerColumns: [{
+            id: "id",
+            renderer: numRenderer
+        }, {
+            id: "user_origin",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "order_apply_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "risk_refuse_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "risk_refuse_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "risk_pass_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "risk_pass_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "audit_pass_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "audit_pass_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "cancel_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "cancel_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "order_pass_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "order_pass_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "order_expire_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "order_overdue_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "current_overdue_cnt",
+            renderer: function (idValue, value, record) {
+                return value != null ? value : "---";
+            }
+        }, {
+            id: "current_overdue_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "first_overdue_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "overdue_3_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "overdue_7_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "overdue_15_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }, {
+            id: "overdue_30_rate",
+            renderer: function (idValue, value, record) {
+                if (value == null) {
+                    return "---";
+                } else {
+                    var a = value * 100;
+                    var b = a.toFixed(2);
+                    return b + "%";
+                }
+            }
+        }]
+    });
+
+    function query() {
+        myTable.onLoad({
+            userType: $("#userType").val(),
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val(),
+            userOrigin: $("#userOrigin").val()
+
+        });
+    }
+
+    function search() {
+        query();
+    }
+
+    function search() {
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        var timeDiff = times(startTime, endTime);
+        if (timeDiff > 38 || timeDiff < 0) {
+            $("#startTime").tips({
+                side: 3,
+                msg: "请选择区间少于38天的时间段！",
+                bg: "#AE81FF",
+                time: 3
+            });
+            $("#startTime").focus();
+            return false;
+        }
+        query();
+    }
+
+    function times(startTime, endTime) {
+        if (startTime == '') {
+            return -1;
+        }
+        if (endTime == '') {
+            return -1;
+        }
+        startTime = new Date(startTime.replace(/-/g, "/"));
+        endTime = new Date(endTime.replace(/-/g, "/"));
+        var days = endTime.getTime() - startTime.getTime();
+        var time = parseInt(days / (1000 * 60 * 60 * 24));
+        return time;
+    }
+
+    function exportReport() {
+        Dialog.confirm("确认按条件导出渠道订单统计列表吗？", function () {
+            location.href = contextPath + "origin/export_origin_order_statistics_list?reportName=origin_order_statistics_list&userType=" + $("#userType").val() +
+                "&startTime=" + $("#startTime").val() +
+                "&userOrigin=" + $("#userOrigin").val() +
+                "&endTime=" + $("#endTime").val();
+        });
+    }
+</script>
+</body>
+</html>
+

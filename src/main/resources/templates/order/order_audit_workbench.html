@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+						<table class="table table-striped table-bordered table-hover">
+							<tr>
+								<td colspan="2">剩余等待复审数</td>
+								<td colspan="2" id="syddfss"></td>
+							</tr>
+							<tr>
+								<td>今日复审数</td>
+								<td id="jrfss"></td>
+								<td>总复审数</td>
+								<td id="zfss"></td>
+							</tr>
+							<tr>
+								<td>今日通过量</td>
+								<td id="jrtgl"></td>
+								<td>总通过量</td>
+								<td id="ztgl"></td>
+							</tr>
+							<tr>
+								<td>今日拒绝量</td>
+								<td id="jrjjl"></td>
+								<td>总拒绝量</td>
+								<td id="zjjl"></td>
+							</tr>
+						</table>
+						<span>取单数:</span>
+					    <input id="getOrderNumber" name="getOrderNumber" type="text" value="10" onkeyup="value=/^\d{0,9}$/.test(value)?value:''" onblur="value=/^\d{0,9}$/.test(value)?value:''" />
+						<button class="btn btn-small btn-success" onclick="getOrder()">取单</button>
+					</div>
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center">用户姓名</th>
+								<th class="center">借款期限(天)</th>
+								<th class="center">状态</th>
+								<th class="center">借款金额(元)</th>
+								<th class="center">到账金额(元)</th>
+								<th class="center">客群</th>
+								<th class="center">创建时间</th>
+								<th class="center">操作</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		var myTable = new MaxTable();
+		myTable.initialize({
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"order/order_audit_workbench_ajax",
+			headerColumns : [{
+		            id : "user_name",
+		            renderer : function(idValue,value,record){
+		            	return value ? value + "(" + record.user_phone + ")" : "---" ;
+				    }
+	        	},{
+		            id : "borrow_day",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "status",
+		            renderer : function(idValue,value,record){
+		            	if(value == 11){
+							return "<font color='orange'>机审中</font>";
+						}
+			            if (value == 12){
+							return "<font color='orange'>等待复审</font>";
+						}
+		            	if (value == 21){
+							return "<font color='orange'>待放款</font>";
+						}
+		            	if (value == 22){
+							return "<font color='orange'>放款中</font>";
+						}
+		            	if (value == 23){
+							return "<font color='red'>放款失败</font>";
+						}
+		            	if(value == 31){
+							return "<font color='green'>还款中</font>";
+						}
+			            if (value == 32){
+							return "<font color='orange'>还款确认中</font>";
+						}
+		            	if (value == 33){
+							return "<font color='red'>逾期</font>";
+						}
+		            	if (value == 41){
+							return "<font color='green'>已结清</font>";
+						}
+		            	if (value == 42){
+							return "<font color='green'>逾期还款</font>";
+						}
+		            	if(value == 51){
+							return "<font color='red'>自动审核失败</font>";
+						}
+			            if (value == 52){
+							return "<font color='red'>复审失败</font>";
+						}
+		            	if (value == 53){
+							return "<font color='red'>取消</font>";
+						}
+		            	if (value == 54){
+							return "<font color='red'>坏账</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "borrow_money",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "actual_money",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "user_type",
+		            renderer : function(idValue,value,record){
+		            	if(value == 1){
+							return "<font color='red'>新客</font>";
+						}
+			            if (value == 2){
+							return "<font color='orange'>次新</font>";
+						}
+		            	if (value == 3){
+							return "<font color='green'>老客</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "create_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	},{
+		            id : "id",
+		            renderer : function(idValue,value,record){
+		            	if(record.status == 12){
+			            	var html = "<div class='btn-group'>";
+			            	html += "<a class='btn btn-mini btn-info' title='人工复审' onclick=\"audit('" + value + "','" + record.uid + "','" + record.orderAuditId + "');\">人工复审</a>";
+							html += "</div>";
+				        	return html;
+		            	}else{
+		            		return "";
+		            	}
+			        }
+	        	}]
+		});
+		
+		function query() {
+			getAuditOrderMessage();
+			myTable.page.totalRowNum = 0;
+			myTable.onLoad({
+			});
+		}
+		query();
+		function search() {
+			myTable.page.pageNo = 1;
+			query();
+		}
+		
+		// 取单
+		function getOrder(){
+			$.post(contextPath+"order/take_out_order_ajax",{"getOrderNumber":$("#getOrderNumber").val()},function(data){
+				Dialog.alert(data.message,function(){
+					query();
+				});
+			});
+		}
+		
+		function audit(id,uid,orderAuditId){
+			 var diag = new top.Dialog();
+			 diag.Drag = true;
+			 diag.Title = "人工复审";
+			 diag.URL = contextPath + "order/order_audit?id=" + id + "&uid=" + uid + "&orderAuditId=" + orderAuditId;
+			 diag.Width = 1400;
+			 diag.Height = 800;
+			 diag.CancelEvent = function(){ //关闭事件
+				query();
+				diag.close();
+			 };
+			 diag.show();
+		}
+		
+		function getAuditOrderMessage(){
+			$.post(contextPath+"order/audit_order_message_ajax",{},function(data){
+				$("#syddfss").html(data.data.syddfss);
+				$("#jrfss").html(data.data.jrfss);
+				$("#zfss").html(data.data.zfss);
+				$("#jrtgl").html(data.data.jrtgl);
+				$("#ztgl").html(data.data.ztgl);
+				$("#jrjjl").html(data.data.jrjjl);
+				$("#zjjl").html(data.data.zjjl);
+			});
+		}
+	</script>
+</body>
+</html>
+

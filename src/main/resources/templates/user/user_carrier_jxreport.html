@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/html">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>互联网资信报告</title>
+		<meta charset="utf-8/">
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" th:href="@{/static/css/bootstrap.min.css}" media="screen" />
+		<style>
+			body {
+				margin: 4%;
+			}
+			.ali-title {
+				text-align: center;
+				font-size: 18px;
+			}
+			table.tablesorter {
+				font-family: arial;
+				margin: 10px 0pt 15px;
+				font-size: 12pt;
+				width: 100%;
+				text-align: left;
+			}
+			
+			table.tablesorter thead tr th,
+			table.tablesorter tfoot tr th {
+				background-color: #e6EEEE;
+				border: 1px solid #FFF;
+				font-size: 12pt;
+				padding: 4px;
+			}
+			
+			table.tablesorter thead tr .header {
+				background-image: url(/static/images/bg.gif);
+				background-repeat: no-repeat;
+				background-position: center right;
+				cursor: pointer;
+			}
+			
+			table.tablesorter tbody td {
+				color: #3D3D3D;
+				padding: 4px;
+				vertical-align: top;
+			}
+			
+			table.tablesorter tbody tr.odd td {
+				background-color: #F0F0F6;
+			}
+			
+			table.tablesorter thead tr .headerSortUp {
+				background-image: url(/static/images/asc.gif);
+			}
+			
+			table.tablesorter thead tr .headerSortDown {
+				background-image: url(/static/images/desc.gif);
+			}
+			
+			table.tablesorter thead tr .headerSortDown,
+			table.tablesorter thead tr .headerSortUp {
+				background-color: #8dbdd8;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="row-fluid">
+			<div class="block">
+				<div class="navbar block-header">
+					<div class="muted ali-title">互联网资信报告</div>
+				</div>
+				<div class="block-content collapse in" id="report">
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">互联网资信报告</td>
+						</tr>
+						<tr>
+							<th colspan="2">编号：<span v-text="report.rpt_id"></span></th>
+							<th colspan="2">报告时间：<span v-text="report.update_time"></span></th>
+						</tr>
+						</tbody>
+					</table>
+
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">用户申请表检测</td>
+						</tr>
+						<template v-for="(item,index) in applicationCheckList">
+							<template v-if="item.app_point == 'user_name'">
+								<tr class="success">
+									<th >姓名：<span v-text="item.check_points.key_value"></span></th>
+								</tr>
+							</template>
+							<template v-if="item.app_point == 'id_card'">
+								<tr class="success">
+									<th >身份证：<span v-text="item.check_points.key_value"></span>
+										<span>
+												<template v-if="item.check_points.court_blacklist.arised == false">
+													不在法院黑名单
+												</template>
+											    <template v-else >
+												   <font color="navy">在法院黑名单</font>
+											    </template>
+											</span>
+										<span>
+												<template v-if="item.check_points.financial_blacklist.arised == false">
+													不在金融机构黑名单
+												</template>
+											    <template v-else>
+												  <font color="#navy"> 在金融机构黑名单</font>
+												</template>
+										</span>
+									</th>
+								</tr>
+							</template>
+							<template v-if="item.app_point == 'cell_phone'">
+								<tr class="success">
+									<th>手机号：
+										<span v-text="item.check_points.key_value"></span>
+										<span v-text="item.check_points.website"></span>
+										<span v-text="item.check_points.reliability"></span>|
+										注册时间：<span v-text="item.check_points.reg_time"></span>
+									</th>
+								</tr>
+								<tr>
+									<td>
+										<span v-text="item.check_points.check_name"></span><br/>
+										<span v-text="item.check_points.check_idcard"></span><br/>
+										<span v-text="item.check_points.check_ebusiness"></span><br/>
+										<template v-if="item.check_points.financial_blacklist.arised == false">
+											不在金融机构黑名单
+										</template>
+										<template v-else>
+											<font color="#navy"> 在金融机构黑名单</font>
+										</template>
+									</td>
+								</tr>
+							</template>
+							<template v-if="item.app_point == 'home_addr'">
+								<tr class="success">
+									<th colspan="2">居住地址：<span v-text="item.check_points.key_value"></span></th>
+								</tr>
+							</template>
+						</template>
+						</tbody>
+					</table>
+					<!--用户信息检测开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">用户信息检测</td>
+						</tr>
+						<tr>
+							<td colspan="10">联系人数据</td>
+						</tr>
+						<tr>
+							<td rowspan="9" class="hideborder" style="text-align: left;vertical-align: middle">
+								用户查询信息
+							</td>
+							<td >查询过该用户的相关企业数量</td>
+							<td><span v-text="userinfoCheck.check_search_info.searched_org_cnt"></span></td>
+						</tr>
+						<tr>
+							<td >查询过该用户的相关企业类型</td>
+							<td><span v-text="userinfoCheck.check_search_info.searched_org_type"></span></td>
+						</tr>
+						<tr>
+							<td >身份证组合过的其他姓名</td>
+							<td><span v-text="userinfoCheck.check_search_info.idcard_with_other_names"></span></td>
+						</tr>
+						<tr>
+							<td >身份证组合过其他电话</td>
+							<td><span v-text="userinfoCheck.check_search_info.idcard_with_other_phones"></span></td>
+						</tr>
+						<tr>
+							<td >电话号码组合过其他姓名</td>
+							<td><span v-text="userinfoCheck.check_search_info.phone_with_other_names"></span></td>
+						</tr>
+						<tr>
+							<td >电话号码组合过其他身份证</td>
+							<td><span v-text="userinfoCheck.check_search_info.phone_with_other_idcards"></span></th>
+						</tr>
+						<tr>
+							<td >电话号码注册过的相关企业数量</td>
+							<td><span v-text="userinfoCheck.check_search_info.register_org_cnt"></span></td>
+						</tr>
+						<tr>
+							<td >电话号码注册过的相关企业类型</td>
+							<td><span v-text="userinfoCheck.check_search_info.register_org_type"></span></td>
+						</tr>
+						<tr>
+							<td >电话号码出现过的公开信息网站	</td>
+							<td><span v-text="userinfoCheck.check_search_info.arised_open_web"></span></td>
+						</tr>
+						<tr>
+							<td colspan="10">黑名单</td>
+						</tr>
+						<tr>
+							<td rowspan="6" class="hideborder" style="text-align: left;vertical-align: middle">
+								黑名单信息
+							</td>
+							<td >黑中介分数</td>
+							<td><span v-text="userinfoCheck.check_black_info.phone_gray_score"></span>(分数范围0-100，40分以下为高危人群）</td>
+						</tr>
+						<tr>
+							<td >直接联系人中黑名单人数</td>
+							<td><span v-text="userinfoCheck.check_black_info.contacts_class1_blacklist_cnt"></span>(直接联系人：和被查询号码有通话记录)</td>
+						</tr>
+						<tr>
+							<td >间接联系人中黑名单人数</td>
+							<td><span v-text="userinfoCheck.check_black_info.contacts_class2_blacklist_cnt"></span>(和被查询人的直接联系人有通话记录)</td>
+						</tr>
+						<tr>
+							<td >直接联系人人数</td>
+							<td><span v-text="userinfoCheck.check_black_info.contacts_class1_cnt"></span>(直接联系人：和被查询号码有通话记录)</td>
+						</tr>
+						<tr>
+							<td >引起黑名单的直接联系人数量</td>
+							<td><span v-text="userinfoCheck.check_black_info.contacts_router_cnt"></span>(直接联系人有和黑名单用户的通讯记录的号码数量)</td>
+						</tr>
+						<tr>
+							<td >直接联系人中引起间接黑名单占比</td>
+							<td><span v-text="userinfoCheck.check_black_info.contacts_router_ratio*100"></span>%(直接联系人有和黑名单用户的通讯记录的号码数量在直接联系人数量中的百分比)</th>
+						</tr>
+					</table>
+					<!--用户行为检测开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="3">用户行为检测</td>
+						</tr>
+						<tr>
+							<td width="30%">检查项</td>
+							<td width="30%">结果</td>
+							<td width="40%">依据</td>
+						</tr>
+						<template v-for="(item,index) in behaviorCheckList">
+							<tr>
+								<td v-text="item.check_point_cn"></td>
+								<td v-text="item.result"></td>
+								<td v-text="item.evidence"></td>
+							</tr>
+						</template>
+						</tbody>
+					</table>
+					<!--运营商数据管理开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="11">运营商消费数据</td>
+						</tr>
+						<tr>
+							<th >运营商</th>
+							<th >号码</th>
+							<th >归属地</th>
+							<th >月份</th>
+							<th >呼叫次数</th>
+							<th >主叫次数</th>
+							<th >主叫时间(分钟)</th>
+							<th >被叫次数</th>
+							<th >被叫时间(分钟)</th>
+							<th >短信数量</th>
+							<th >话费消费(元)</th>
+						</tr>
+						<template v-for="(callBehavior,index) in callBehaviorList">
+							<template v-for="(item,index) in callBehavior.behavior">
+								<tr>
+									<td v-text="item.cell_operator_zh"></td>
+									<td v-text="item.cell_phone_num"></td>
+									<td v-text="item.cell_loc"></td>
+									<td v-text="item.cell_mth"></td>
+									<td v-text="item.call_cnt"></td>
+									<td v-text="item.call_out_cnt"></td>
+									<td v-text="item.call_out_time"></td>
+									<td v-text="item.call_in_cnt"></td>
+									<td v-text="item.call_in_time"></td>
+									<td v-text="item.sms_cnt"></td>
+									<td v-text="item.total_amount"></td>
+								</tr>
+							</template>
+						</template>
+						</tbody>
+					</table>
+
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">直接间接联系人信息</td>
+						</tr>
+						<tr  style="background-color:cornflowerblue">
+							<th >直接联系人：<span v-text="userInfo.directContact"></span></th>
+							<th >直接联系人姓名：<span v-text="userInfo.directContactName"></span></th>
+							<th >直接联系人tel：<span v-text="userInfo.directContactPhone"></span></th>
+						</tr>
+						<tr style="background-color:yellow">
+							<th >间接联系人：<span v-text="userInfo.othersContact"></span></th>
+							<th >间接联系人姓名：<span v-text="userInfo.othersContactName"></span></th>
+							<th >间接联系人tel：<span v-text="userInfo.othersContactPhone"></span></th>
+						</tr>
+						</tbody>
+					</table>
+
+					<!--运营商数据被叫分析-->
+					<div id="zhongxin" style="float: left;width: 50%"  >
+					<h3>通话呼入数据分析</h3>
+					<table class="table table-bordered tablesorter"   id="call_in_table" >
+						<thead>
+						<tr>
+							<th>姓名</th>
+							<th>号码</th>
+							<th>互联网标识</th>
+							<th>需求类型</th>
+							<th>归属地</th>
+							<th>联系时间(分)</th>
+							<th>被叫次数</th>
+						</tr>
+						</thead>
+						<tbody>
+						<template v-for="(item,index) in callInList">
+							<template v-if="item.phone_num == userInfo.directContactPhone">
+								<tr style="background-color:cornflowerblue">
+									<td ><span v-text="userInfo.directContact"></span><span v-text="userInfo.directContactName"></span>:<span v-text="item.name"></span></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_in_len"></td>
+									<td v-text="item.call_in_cnt"></td>
+								</tr>
+							</template>
+							<template v-else-if="item.phone_num == userInfo.othersContactPhone">
+								<tr style="background-color:yellow">
+									<td ><span v-text="userInfo.othersContact"></span><span v-text="userInfo.othersContactName"></span>:<span v-text="item.name"></span></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_in_len"></td>
+									<td v-text="item.call_in_cnt"></td>
+								</tr>
+							</template>
+							<template v-else>
+								<tr >
+									<td v-text="item.name"></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_in_len"></td>
+									<td v-text="item.call_in_cnt"></td>
+								</tr>
+							</template>
+						</template>
+						</tbody>
+					</table>
+					</div>
+
+					<!--运营商数据主叫分析-->
+					<div id="zhongxin" style="float: left;width: 50%"  >
+					<h3>通话呼出数据分析</h3>
+					<table class="table table-bordered tablesorter"    id="call_out_table" >
+						<thead>
+						<tr>
+							<th>姓名</th>
+							<th>号码</th>
+							<th>互联网标识</th>
+							<th>需求类型</th>
+							<th>归属地</th>
+							<th>联系时间(分)</th>
+							<th>主叫次数</th>
+						</tr>
+						</thead>
+						<tbody>
+						<template v-for="(item,index) in callOutList">
+							<template v-if="item.phone_num == userInfo.directContactPhone">
+								<tr style="background-color:cornflowerblue">
+									<td ><span v-text="userInfo.directContact"></span><span v-text="userInfo.directContactName"></span>：<span v-text="item.name"></span></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_out_len"></td>
+									<td v-text="item.call_out_cnt"></td>
+								</tr>
+							</template>
+
+							<template v-else-if="item.phone_num == userInfo.othersContactPhone">
+								<tr style="background-color:yellow">
+									<td ><span v-text="userInfo.othersContact"></span><span v-text="userInfo.othersContactName"></span>：<span v-text="item.name"></span></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_out_len"></td>
+									<td v-text="item.call_out_cnt"></td>
+								</tr>
+							</template>
+
+							<template v-else>
+								<tr>
+									<td v-text="item.name"></td>
+									<td v-text="item.phone_num"></td>
+									<td v-text="item.contact_name"></td>
+									<td v-text="item.needs_type"></td>
+									<td v-text="item.phone_num_loc"></td>
+									<td v-text="item.call_out_len"></td>
+									<td v-text="item.call_out_cnt"></td>
+								</tr>
+							</template>
+						</template>
+						</tbody>
+					</table>
+				</div>
+
+					<!--联系人区域汇总开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">联系人区域数据</td>
+						</tr>
+						<tr>
+							<th width="80px;">地区</th>
+							<th width="">号码次数</th>
+							<th width="">呼入次数</th>
+							<th width="">呼出次数</th>
+							<th width="">呼入时间(分钟)</th>
+							<th width="">呼出时间(分钟)</th>
+							<!--<th width="">平均呼入时间</th>-->
+							<!--<th width="">平均呼出时间</th>-->
+							<th width="">呼入次数百分比</th>
+							<th width="">呼出次数百分比</th>
+							<th width="">呼入时间百分比</th>
+							<th width="">呼出时间百分比</th>
+						</tr>
+						<template v-for="(item,index) in contactRegionList">
+							<tr>
+								<td v-text="item.region_loc"></td>
+								<td v-text="item.region_uniq_num_cnt"></td>
+								<td v-text="item.region_call_in_cnt"></td>
+								<td v-text="item.region_call_out_cnt"></td>
+								<td v-text="item.region_call_in_time"></td>
+								<td v-text="item.region_call_out_time"></td>
+								<td v-text="item.region_call_in_cnt_pct*100"></td>
+								<td v-text="item.region_call_out_cnt_pct*100"></td>
+								<td v-text="item.region_call_in_time_pct*100"></td>
+								<td v-text="item.region_call_out_time_pct*100"></td>
+								<!--<td v-text="item.region_call_out_time_pct*100"></td>-->
+							</tr>
+						</template>
+						</tbody>
+					</table>
+
+					<!--送货地址数据分析开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">地址信息</td>
+						</tr>
+						<tr>
+							<th>地址</th>
+							<th>总消费金额</th>
+							<th>收货人姓名</th>
+							<th>收货人手机</th>
+						</tr>
+						<template v-for="(item,index) in deliverAdderssList">
+							<tr>
+								<td v-text="item.address"></td>
+								<td v-text="item.total_amount"></td>
+								<td v-text="item.receiver"></td>
+								<td v-text="item.receiver"></td>
+							</tr>
+						</template>
+						</tbody>
+					</table>
+
+					<!--电商＃ 电商数据分析开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">电商消费记录</td>
+						</tr>
+						<tr>
+							<th>月份</th>
+							<th>全部消费笔数</th>
+							<th>全部消费金额(元)</th>
+							<th>品类分析</th>
+						</tr>
+						<template v-for="(item,index) in ebusinessExpenseList">
+							<tr>
+								<td v-text="item.trans_mth"></td>
+								<td v-text="item.all_count"></td>
+								<td v-text="item.all_amount"></td>
+							</tr>
+						</template>
+						</tbody>
+					</table>
+
+					<!--出行数据分析开始-->
+					<table class="table table-bordered">
+						<tbody>
+						<tr class="success">
+							<td colspan="10">出行数据</td>
+						</tr>
+						<tr>
+							<th>时间段</th>
+							<th>出发时间</th>
+							<th>回程时间</th>
+							<th>出发地</th>
+							<th>目的地</th>
+						</tr>
+						<template v-for="(item,index) in tripInfoList">
+							<tr>
+								<td v-text="item.trip_type"></td>
+								<td v-text="item.trip_start_time"></td>
+								<td v-text="item.trip_end_time"></td>
+								<td v-text="item.trip_leave"></td>
+								<td v-text="item.trip_dest"></td>
+							</tr>
+						</template>
+						</tbody>
+					</table>
+			</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+		<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+		<script type="text/javascript" src="/static/js/jquery.tablesorter.min.js" th:src="@{/static/js/jquery.tablesorter.min.js}"></script>
+		<script type="text/javascript">
+			var contextPath = "[[@{/}]]";
+			var taskId = "[[${taskId}]]";
+			new Vue({
+				el: '#report',
+				data: {
+					report: {},
+                    applicationCheckList: [],
+                    userinfoCheck: [],
+                    behaviorCheckList: [],
+                    callBehaviorList: [],
+                    contactRegionList: [],
+                    callInList: {},
+                    callOutList: {},
+                    mineServicesList: {},
+                    deliverAdderssList: {},
+                    ebusinessExpenseList: {},
+                    collectionContactList: {},
+                    tripInfoList: {},
+                    userInfo:{}
+				},
+				methods: {
+
+				},
+				updated:function(){
+					$("#call_in_table").tablesorter({
+						headers: { 0: { sorter: false}, 1: { sorter: false}, 3: {sorter: false}, 4: {sorter: false} },
+						sortList: [ [6,1] ]
+						
+					}); 
+					$("#call_out_table").tablesorter({
+						headers: { 0: { sorter: false}, 1: { sorter: false}, 3: {sorter: false}, 4: {sorter: false} },
+						sortList: [ [6,1] ]
+					}); 
+			    },
+				created() {
+					var _that = this;
+					$.ajax({
+						type: "post",
+						url: contextPath + "user/user_carrier_jxreport_ajax",
+						dataType: "json",
+						data: {
+                            taskId: taskId
+						},
+						success: function(result) {
+                            var carrierReport = result.data.carrierReport;
+							_that.report = carrierReport.report;
+							_that.applicationCheckList = carrierReport.application_check;
+							_that.userinfoCheck =  carrierReport.user_info_check;
+							_that.behaviorCheckList =  carrierReport.behavior_check;
+							_that.callBehaviorList = carrierReport.cell_behavior;
+							_that.contactRegionList =  carrierReport.contact_region;
+							_that.mineServicesList =  carrierReport.main_service;
+							_that.deliverAdderssList = carrierReport.deliver_address;
+							_that.ebusinessExpenseList = carrierReport.ebusiness_expense;
+							_that.collectionContactList = carrierReport.collection_contact;
+							_that.tripInfoList = carrierReport.trip_info;
+							_that.userInfo = result.data.userInfo;
+                            _that.callInList = result.data.callInList;
+                            _that.callOutList = result.data.callOutList;
+						}
+					});
+				}
+			})
+		</script>
+	</body>
+
+</html>

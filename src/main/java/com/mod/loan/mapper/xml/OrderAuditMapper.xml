@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.OrderAuditMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.OrderAudit">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="order_id" jdbcType="BIGINT" property="orderId" />
+		<result column="audit_id" jdbcType="BIGINT" property="auditId" />
+		<result column="audit_name" jdbcType="VARCHAR" property="auditName" />
+		<result column="fail_reason" jdbcType="VARCHAR" property="failReason" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="crete_time" jdbcType="TIMESTAMP" property="creteTime" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+	</resultMap>
+	
+	<select id="orderAuditCount" resultType="int">
+	select count(1) from tb_order_audit oa
+	left join tb_order o on o.id = oa.order_id
+	left join tb_user u on o.uid = u.id
+	<where>
+		<if test="merchant != null">
+			and oa.merchant = #{merchant}
+		</if>
+		<if test="userPhone != null">
+			and u.user_phone = #{userPhone}
+		</if>
+		<if test="status != null">
+			and oa.status = #{status}
+		</if>
+		<if test="auditName != null">
+			and oa.audit_name = #{auditName}
+		</if>
+		<if test="startTime != null">
+			and oa.crete_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and oa.crete_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+		</if>
+	</where>
+	</select>
+	
+	<select id="findOrderAuditList" resultType="map">
+	select u.user_name,u.user_phone,oa.status,oa.audit_id,oa.audit_name,oa.crete_time,oa.fail_reason,o.uid from tb_order_audit oa
+	left join tb_order o on o.id = oa.order_id
+	left join tb_user u on o.uid = u.id
+	<where>
+		<if test="merchant != null">
+			and oa.merchant = #{merchant}
+		</if>
+		<if test="userPhone != null">
+			and u.user_phone = #{userPhone}
+		</if>
+		<if test="status != null">
+			and oa.status = #{status}
+		</if>
+		<if test="auditName != null">
+			and oa.audit_name = #{auditName}
+		</if>
+		<if test="startTime != null">
+			and oa.crete_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and oa.crete_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+		</if>
+	</where>
+	order by oa.id desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="findAuditListByUid"  resultType="map">
+		SELECT a.audit_name,a.`status`,a.fail_reason,a.crete_time FROM `tb_order_audit` a,tb_order o where a.order_id=o.id and o.uid = #{uid} and a.merchant=#{merchant};
+	</select>
+	
+	<select id="countAuditOrderMessage" resultType="map">
+	SELECT
+	COUNT(CASE WHEN (STATUS != 2 AND crete_time >= CURRENT_DATE()) THEN id END) AS 'jrfss',
+	COUNT(CASE WHEN (STATUS != 2) THEN id END) AS 'zfss',
+	COUNT(CASE WHEN (STATUS = 0 AND crete_time >= CURRENT_DATE()) THEN id END) AS 'jrtgl',
+	COUNT(CASE WHEN (STATUS = 0) THEN id END) AS 'ztgl',
+	COUNT(CASE WHEN (STATUS = 1 AND crete_time >= CURRENT_DATE()) THEN id END) AS 'jrjjl',
+	COUNT(CASE WHEN (STATUS = 1) THEN id END) AS 'zjjl'
+	FROM tb_order_audit
+	where audit_id = #{auditId} and merchant = #{merchant}
+	</select>
+
+	<select id="findOrderAuditNameList" resultType="map">
+		select DISTINCT(audit_name) as auditName from tb_order_audit
+		WHERE merchant = #{merchant}
+	</select>
+</mapper>

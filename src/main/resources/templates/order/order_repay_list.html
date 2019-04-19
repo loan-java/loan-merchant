@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+					<!-- 检索  -->
+					<div>
+						<span>还款类型:</span>
+						<select id="repayType" name="repayType" class="form-control" onchange="this.blur()">
+							<option value="">全部</option>
+							<option value="1">银行卡</option>
+							<option value="2">支付宝</option>
+							<option value="3">微信</option>
+							<option value="4">线下转账</option>
+							<option value="5">富友银行卡</option>
+							<option value="6">汇聚银行卡</option>
+						</select>
+						<span>还款状态:</span>
+						<select id="repayStatus" name="repayStatus" class="form-control" onchange="this.blur()">
+							<option value="">全部</option>
+							<option value="0">初始状态</option>
+							<option value="1">受理成功</option>
+							<option value="2">受理失败</option>
+							<option value="3"  selected="selected">还款成功</option>
+							<option value="4">还款失败</option>
+						</select>
+					    <span>用户手机:</span>
+					    <input id="userPhone" name="userPhone" type="text"/>
+						<br>
+						<span>还款时间:</span>
+						<input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+						~
+						<input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+						<button class="btn btn-small btn-success" onclick="exportReport()">EXCEL导出</button>
+					</div>
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center">还款流水号</th>
+								<th class="center">用户姓名</th>
+								<th class="center">还款类型</th>
+								<th class="center">还款状态</th>
+								<th class="center">支付金额(元)</th>
+								<th class="center">还款银行</th>
+								<th class="center">还款卡号</th>
+								<th class="center">凭证</th>
+								<th class="center">备注</th>
+								<th class="center">还款时间</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		var myTable = new MaxTable();
+		var submitTime = laydate.now(0, 'YYYY-MM-DD');
+		$("#startTime").attr('value',submitTime);
+		$("#endTime").attr('value',submitTime);
+		myTable.initialize({
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"order/order_repay_list_ajax",
+			headerColumns : [{
+		            id : "repay_no",
+		            renderer : function(idValue,value,record){
+		            	return value ? value : "---" ;
+				    }
+        		},{
+		            id : "user_name",
+		            renderer : function(idValue,value,record){
+		            	return value ? value + "(" + record.user_phone + ")" : "---" ;
+				    }
+	        	},{
+		            id : "repay_type",
+		            renderer : function(idValue,value,record){
+			            if (value == 1){
+							return "银行卡";
+						}
+		            	if (value == 2){
+							return "支付宝";
+						}
+		            	if (value == 3){
+							return "微信";
+						}
+		            	if (value == 4){
+							return "线下转账";
+						}
+                        if (value == 5){
+                            return "富友银行卡";
+                        }
+                        if (value == 6){
+                            return "汇聚银行卡";
+                        }
+			            return "---";
+			        }
+	        	},{
+		            id : "repay_status",
+		            renderer : function(idValue,value,record){
+		            	if(value == 0){
+							return "<font color='orange'>初始状态</font>";
+						}
+			            if (value == 1){
+							return "<font color='green'>受理成功</font>";
+						}
+		            	if (value == 2){
+							return "<font color='red'>受理失败</font>";
+						}
+		            	if (value == 3){
+							return "<font color='green'>还款成功</font>";
+						}
+		            	if (value == 4){
+							return "<font color='red'>还款失败</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "repay_money",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "bank",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "bank_no",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "repay_cert",
+		            renderer : function(idValue,value,record){
+		            	return value ?  "<img src='[(${ALI_OSS_FILE_URL})]" + value + "' width='100'  />" : "---";
+				   	}
+	        	},{
+		            id : "remark",
+		            renderer : function(idValue,value,record){
+		            	return value ?  value : "---";
+				   	}
+	        	},{
+	        		id : "create_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	}]
+		});
+
+		function query() {
+			myTable.page.totalRowNum = 0;
+			myTable.onLoad({
+				userPhone : $("#userPhone").val(),
+				startTime : $("#startTime").val(),
+				endTime : $("#endTime").val(),
+				repayType : $("#repayType").val(),
+				repayStatus : $("#repayStatus").val()
+			});
+		}
+		query();
+		function search() {
+			myTable.page.pageNo = 1;
+			var day1 = $("#startTime").val();
+			day1 = new Date(day1.replace(/-/g, "/"));
+			var day2 = $("#endTime").val();
+			day2 = new Date(day2.replace(/-/g, "/"));
+			var days = day2.getTime()-day1.getTime();
+			var time = parseInt(days/(1000*60*60*24));
+			if (time >7) {
+				$("#startTime").tips({
+					side:3,
+					msg:"选择时间区间请少于7天！",
+					bg:"#AE81FF",
+					time:2
+				});
+				$("#startTime").focus();
+				$("#endTime").tips({
+					side:3,
+					msg:"选择时间区间请少于7天！",
+					bg:"#AE81FF",
+					time:2
+				});
+				$("#endTime").focus();
+				return false;
+			}
+			query();
+		}
+
+	    function secondSecurityVerify(){
+	    	var diag = new top.Dialog();
+	        diag.Drag = true;
+	        diag.Title = "安全校验";
+	        diag.URL = contextPath + "user_security";
+	        diag.Width = 1400;
+	        diag.Height = 800;
+	        diag.CancelEvent = function () { //关闭事件
+	            diag.close();
+	        };
+	        diag.show();
+	    }
+		
+		function exportReport() {
+			$.ajax({
+				url : contextPath+"system/security_first_verify",
+				type : "POST",
+				dataType : "json",
+				data : {},
+				beforeSend : function(){
+		            maskScreen();
+		        },
+				success : function(jsonObject) {
+					if(jsonObject.status != 2000){
+						secondSecurityVerify();
+					}else{
+						Dialog.confirm("确认按条件导出还款列表吗？",function () {
+							location.href = contextPath + "order/export_report_repay?reportName=order_repay_list&startTime=" + $("#startTime").val()
+									+ "&endTime=" + $("#endTime").val()
+									+ "&repayStatus=" + $("#repayStatus").val()
+									+ "&userPhone=" + $("#userPhone").val()
+									+ "&repayType=" + $("#repayType").val();
+						});
+					}
+				},
+				complete : function(){
+					unMaskScreen();
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>
+

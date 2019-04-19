@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.RecycleGroupMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.RecycleGroup">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <select id="findRecycleGroupList" parameterType="map" resultType="map">
+        SELECT id,status,group_name,create_time FROM tb_recycle_group
+        <where>
+            <if test="groupName != null and groupName != ''">
+                and group_name = #{groupName}
+            </if>
+            <if test="merchant != null">
+                and merchant = #{merchant}
+            </if>
+        </where>
+        order by status asc limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="recycleGroupCount" resultType="int">
+        SELECT COUNT(1) FROM tb_recycle_group
+        <where>
+            <if test="groupName != null and groupName != ''">
+                and group_name = #{groupName}
+            </if>
+            <if test="merchant != null">
+                and merchant = #{merchant}
+            </if>
+        </where>
+    </select>
+</mapper>

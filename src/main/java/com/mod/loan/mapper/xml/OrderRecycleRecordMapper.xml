@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.OrderRecycleRecordMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.OrderRecycleRecord">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="uid" jdbcType="BIGINT" property="uid"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="follow_status" jdbcType="TINYINT" property="followStatus"/>
+        <result column="follow_user_id" jdbcType="BIGINT" property="followUserId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+    </resultMap>
+
+    <select id="findOverdueList" resultType="map">
+        select
+        a.id,a.uid,a.borrow_day,a.borrow_money,a.actual_money,a.overdue_day,a.overdue_fee,a.should_repay,a.reduce_money,a.status,a.user_type,
+        a.arrive_time,a.repay_time,a.real_repay_time,b.user_phone,b.user_name,c.user_name as
+        follow_name,a.real_repay_time,a.recycle_type
+        from tb_order a left join tb_user b on a.uid=b.id left join tb_merchant_manager c on a.follow_user_id=c.id
+        <where>
+            <if test="orderStatus !=null">
+                and a.status=#{orderStatus}
+            </if>
+            <if test="followUserId !=null">
+                and a.follow_user_id=#{followUserId}
+            </if>
+            <if test="merchant !=null">
+                and a.merchant=#{merchant}
+            </if>
+            <if test="overdueDayDown !=null">
+                and a.overdue_day>=#{overdueDayDown}
+            </if>
+            <if test="overdueDayUp !=null">
+                and a.overdue_day &lt;=#{overdueDayUp}
+            </if>
+            <if test="repayTimeDown !=null">
+                and a.repay_time>=#{repayTimeDown}
+            </if>
+            <if test="repayTimeUp !=null">
+                and a.repay_time &lt;=#{repayTimeUp}
+            </if>
+            <if test="userType !=null">
+                and a.user_type=#{userType}
+            </if>
+            <if test="userPhone !=null">
+                and b.user_phone=#{userPhone}
+            </if>
+        </where>
+        order by
+        <choose>
+            <when test="orderStatus ==42">
+                a.real_repay_time desc
+            </when>
+            <otherwise>
+                a.id desc
+            </otherwise>
+        </choose>
+        limit #{startIndex},#{pageSize}
+    </select>
+    
+    <select id="countOverdueList" resultType="int">
+        select count(0) from tb_order a
+        <where>
+            <if test="orderStatus !=null">
+                and a.status=#{orderStatus}
+            </if>
+            <if test="followUserId !=null">
+                and a.follow_user_id=#{followUserId}
+            </if>
+            <if test="merchant !=null">
+                and a.merchant=#{merchant}
+            </if>
+            <if test="overdueDayDown !=null">
+                and a.overdue_day>=#{overdueDayDown}
+            </if>
+            <if test="overdueDayUp !=null">
+                and a.overdue_day &lt;=#{overdueDayUp}
+            </if>
+            <if test="repayTimeDown !=null">
+                and a.repay_time>=#{repayTimeDown}
+            </if>
+            <if test="repayTimeUp !=null">
+                and a.repay_time &lt;=#{repayTimeUp}
+            </if>
+            <if test="userType !=null">
+                and a.user_type=#{userType}
+            </if>
+            <if test="userPhone !=null">
+                and a.uid = (select id from tb_user u where u.user_phone=#{userPhone} and u.merchant = #{merchant})
+            </if>
+        </where>
+    </select>
+
+    <select id="findRecycleList" resultType="map">
+        select a.id,a.follow_status,a.type,a.remark,a.create_time, b.user_name as follow_name
+        from tb_order_recycle_record a left join tb_merchant_manager b on a.follow_user_id =b.id
+        <where>
+            <if test="merchant !=null ">
+                and a.merchant=#{merchant}
+            </if>
+            <if test="orderId !=null ">
+                and a.order_id=#{orderId}
+            </if>
+            <if test="uid !=null ">
+                and a.uid=#{uid}
+            </if>
+        </where>
+        ORDER BY id desc
+    </select>
+    
+    <select id="findAllRecycleList" resultType="map">
+        select a.uid,c.user_name,c.user_phone,a.id, b.user_name as
+        follow_name,a.follow_status,a.remark,a.create_time,a.type
+        from tb_order_recycle_record a left join tb_merchant_manager b on a.follow_user_id =b.id left join tb_user c on
+        a.uid=c.id
+        <where>
+            <if test="merchant !=null ">
+                and a.merchant=#{merchant}
+            </if>
+            <if test="userPhone !=null and userPhone != ''">
+                and c.user_phone=#{userPhone}
+            </if>
+            <if test="createTimeUp != null">
+                and a.create_time &gt;= #{createTimeUp}
+            </if>
+            <if test="createTimeDown != null" >
+                and a.create_time &lt; date_add(#{createTimeDown},interval 1 day)
+            </if>
+        </where>
+        ORDER BY a.id desc limit #{startIndex},#{pageSize}
+    </select>
+    
+    <select id="countAuditList" resultType="int">
+        select count(*)
+        from tb_order_recycle_record a left join tb_merchant_manager b on a.follow_user_id =b.id left join tb_user c on
+        a.uid=c.id
+        <where>
+            <if test="merchant !=null">
+                and a.merchant=#{merchant}
+            </if>
+            <if test="userPhone !=null and userPhone != ''">
+                and c.user_phone=#{userPhone}
+            </if>
+            <if test="createTimeUp != null">
+                and a.create_time &gt;= #{createTimeUp}
+            </if>
+            <if test="createTimeDown != null" >
+                and a.create_time &lt; date_add(#{createTimeDown},interval 1 day)
+            </if>
+        </where>
+    </select>
+    
+	<select id="selectOverdueUserMessageCount" resultType="int">
+		select count(distinct(o.uid))
+		from tb_order o
+		left join tb_user u on u.id = o.uid
+		left join tb_user_info ui on ui.uid = o.uid
+		left join tb_moxie_mobile mm on mm.uid = o.uid
+		left join tb_user_address_list ual on ual.uid = o.uid
+		left join tb_merchant m on m.merchant_alias = o.merchant
+        <where>
+            <if test="orderStatus !=null">
+                and o.status=#{orderStatus}
+            </if>
+            <if test="followUserId !=null">
+                and o.follow_user_id=#{followUserId}
+            </if>
+            <if test="merchant !=null">
+                and m.merchant_alias=#{merchant}
+            </if>
+            <if test="overdueDayDown !=null">
+                and o.overdue_day>=#{overdueDayDown}
+            </if>
+            <if test="overdueDayUp !=null">
+                and o.overdue_day &lt;=#{overdueDayUp}
+            </if>
+            <if test="repayTimeDown !=null">
+                and o.repay_time>=#{repayTimeDown}
+            </if>
+            <if test="repayTimeUp !=null">
+                and o.repay_time &lt;=#{repayTimeUp}
+            </if>
+            <if test="userType !=null">
+                and o.user_type=#{userType}
+            </if>
+            <if test="userPhone !=null">
+                and u.user_phone=#{userPhone}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAuditOverdueList" resultType="map">
+        SELECT
+        IFNULL(t.audit_name, '风控系统') 'audit',
+        count(0) 'order_apply_cnt',
+        sum(t.is_pass) 'order_pass_cnt',
+        sum(t.is_pass)/count(0) 'pass_rate',
+        sum(case when t.dq_days>=0 and t.overdue_cur>0 then 1 else 0 end)/sum(case when t.dq_days>=0 then 1 else 0 end) 'current_overdue_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>0 then 1 else 0 end)/sum(case when t.dq_days>0 then 1 else 0 end) 'first_overdue_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>2 then 1 else 0 end)/sum(case when t.dq_days>2 then 1 else 0 end) 'overdue_3_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>3 then 1 else 0 end)/sum(case when t.dq_days>3 then 1 else 0 end) 'overdue_4_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>6 then 1 else 0 end)/sum(case when t.dq_days>6 then 1 else 0 end) 'overdue_7_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>14 then 1 else 0 end)/sum(case when t.dq_days>14 then 1 else 0 end) 'overdue_15_rate',
+        sum(case when t.dq_days>0 and t.overdue_day>29 then 1 else 0 end)/sum(case when t.dq_days>29 then 1 else 0 end) 'overdue_30_rate'
+        from
+        (SELECT
+        cr.create_time,repay_time,real_repay_time,tad.audit_name,cr.overdue_day,
+        case when cr.status &gt; 20 and cr.status &lt;50 then 1 else 0 end is_pass,
+        case when repay_time is not null then DATEDIFF(NOW(),repay_time) else null end as dq_days,
+        case when cr.status in (33,34) then 1 else null end as overdue_cur
+        from tb_order cr
+        LEFT JOIN tb_order_audit tad on cr.id = tad.order_id
+        <where>
+            <if test="startTime != null">
+                and cr.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and cr.create_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+            <if test="merchant != null">
+                and cr.merchant = #{merchant}
+            </if>
+            <if test="userType != null">
+                and cr.user_type = #{userType}
+            </if>
+        </where>
+        )t
+        GROUP BY 1
+    </select>
+
+    <select id="findRecycleRepayList" resultType="map">
+        SELECT
+        mm.user_name as 'recycled_name',
+        sum(case when follow_user_id&lt;&gt;0 then 1 else 0 end) 'recycle_cnt',
+        sum(case when real_repay_time is null then 1 else 0 end)'not_return_cnt',
+        sum(case when real_repay_time is null then 1 else 0 end)/count(0) 'current_rate',
+        sum(case when overdue_day&gt;0 and overdue_day&lt;2 and follow_user_id&lt;&gt;0 and real_repay_time is not null then 1 else 0 end)/sum(case when overdue_day&gt;0 then 1 else 0 end) 'repay_1_rate',
+        sum(case when overdue_day&gt;1 and overdue_day&lt;4 and follow_user_id&lt;&gt;0 and real_repay_time is not null then 1 else 0 end)/sum(case when overdue_day&gt;0 then 1 else 0 end) 'repay_3_rate',
+        sum(case when overdue_day&gt;3 and overdue_day&lt;8 and follow_user_id&lt;&gt;0 and real_repay_time is not null then 1 else 0 end)/sum(case when overdue_day&gt;0 then 1 else 0 end) 'repay_7_rate',
+        sum(case when overdue_day&gt;7 and overdue_day&lt;61 and follow_user_id&lt;&gt;0 and real_repay_time is not null then 1 else 0 end)/sum(case when overdue_day&gt;0 then 1 else 0 end) 'repay_60_rate',
+        sum(case when follow_user_id != 0 and real_repay_time is not null then 1 else 0 end)/sum(case when overdue_day&gt;0 then 1 else 0 end) 'sum_repay_rate'
+        from
+        tb_order cr
+        left join tb_merchant_manager mm on cr.follow_user_id = mm.id
+        <where>
+            <if test="userType != null">
+                and cr.user_type = #{userType}
+            </if>
+            <if test="merchant != null">
+                and cr.merchant = #{merchant}
+            </if>
+            <if test="startTime != null">
+                and cr.repay_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and cr.repay_time &lt; DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+            and cr.follow_user_id != 0
+        </where>
+        GROUP BY 1
+    </select>
+</mapper>

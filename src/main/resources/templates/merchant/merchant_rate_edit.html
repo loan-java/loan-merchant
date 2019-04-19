@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form name="myForm" id="myForm">
+			<fieldset>
+				<legend>修改</legend>
+			</fieldset>
+			<table>
+				<tbody>
+					<tr>
+						<td>
+							<label class="control-label">产品名称</label>
+						</td>
+						<td>
+							<input id="id" name="id" type="hidden" />
+							<input name="productName" id="productName" maxlength="30" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">借款期限(天)</label>
+						</td>
+						<td>
+							<input name="productDay" id="productDay" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">借款金额(元)</label>
+						</td>
+						<td>
+							<input name="productMoney" id="productMoney" maxlength="4" class="form-control" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">状态</label>
+						</td>
+						<td>
+							<select name="productStatus" id="productStatus" class="form-control">
+								<option value="0">停用</option>
+								<option value="1">启用</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">综合费率(%)</label>
+						</td>
+						<td>
+							<input name="totalRate" id="totalRate" maxlength="2" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">逾期费率(%)</label>
+						</td>
+						<td>
+							<input name="overdueRate" id="overdueRate" maxlength="2" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="control-label">借款次数</label>
+						</td>
+						<td>
+							<select name="borrowType" id="borrowType" class="form-control">
+								<option value="0">首次</option>
+								<option value="1">第二次</option>
+								<option value="2">第三次</option>
+								<option value="3">第四次</option>
+								<option value="4">第五次</option>
+								<option value="99">其他</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+			<br/>
+			<font color="red">提示：借款次数为“其他”的费率必须配。</font>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var id = [[${id}]];
+		var contextPath="[[@{/}]]";
+		
+		function getAllMessage(){
+			$.post(contextPath+"merchant/merchant_rate_detail_ajax",{"id":id},function(data){
+				var obj = data.data;
+				$("#id").val(obj.id);
+				$("#productName").val(obj.productName);
+				$("#productDay").val(obj.productDay);
+				$("#productMoney").val(obj.productMoney);
+				$("#productStatus").val(obj.productStatus);
+				$("#productLevel").val(obj.productLevel);
+				$("#totalRate").val(obj.totalRate);
+				$("#overdueRate").val(obj.overdueRate);
+				$("#productType").val(obj.productType);
+				$("#borrowType").val(obj.borrowType);
+			});
+		}
+		getAllMessage();
+		
+		$(top.hangge());
+		$("#saveButton").unbind();
+		$("#saveButton").bind("click",function(){
+			$.ajax({
+        		url : contextPath+"merchant/merchant_rate_edit_ajax",
+        		type : "POST",
+				dataType : "json",
+				data : $("#myForm").serialize(),
+				success : function(data) {
+					if(data.status == 2000){
+						Dialog.alert("操作成功",function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(data.message);
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

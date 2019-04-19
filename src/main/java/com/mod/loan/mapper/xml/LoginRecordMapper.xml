@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.LoginRecordMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.LoginRecord">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="manager_id" jdbcType="BIGINT" property="managerId" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+		<result column="login_name" jdbcType="VARCHAR" property="loginName" />
+		<result column="user_name" jdbcType="VARCHAR" property="userName" />
+		<result column="login_ip" jdbcType="VARCHAR" property="loginIp" />
+		<result column="user_ua" jdbcType="VARCHAR" property="userUa" />
+		<result column="user_host" jdbcType="VARCHAR" property="userHost" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	
+	<select id="selectRecentlyIps" resultType="String">
+		select login_ip from tb_merchant_login_record
+		where manager_id = #{managerId} and merchant = #{merchant} and create_time > DATE_SUB(create_time,INTERVAL 3 DAY)
+		order by create_time desc limit 5
+	</select>
+</mapper>

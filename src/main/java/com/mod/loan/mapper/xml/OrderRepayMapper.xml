@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.OrderRepayMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.OrderRepay">
+		<!-- WARNING - @mbg.generated -->
+		<id column="repay_no" jdbcType="VARCHAR" property="repayNo" />
+		<result column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="order_id" jdbcType="BIGINT" property="orderId" />
+		<result column="repay_type" jdbcType="TINYINT" property="repayType" />
+		<result column="repay_status" jdbcType="INTEGER" property="repayStatus" />
+		<result column="repay_money" jdbcType="DECIMAL" property="repayMoney" />
+		<result column="repay_cert" jdbcType="VARCHAR" property="repayCert" />
+		<result column="bank" jdbcType="VARCHAR" property="bank" />
+		<result column="bank_no" jdbcType="VARCHAR" property="bankNo" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<select id="orderRepayCount" resultType="int">
+	select count(1) from tb_order_repay op left join tb_user u on op.uid = u.id
+	<where>
+		<if test="merchant != null">
+			and u.merchant = #{merchant}
+		</if>
+		<if test="userPhone != null">
+			and u.user_phone = #{userPhone}
+		</if>
+		<if test="startTime != null">
+			and op.create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and op.create_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+		</if>
+		<if test="repayType != null">
+			and op.repay_type = #{repayType}
+		</if>
+		<if test="repayStatus != null">
+			and op.repay_status = #{repayStatus}
+		</if>
+	</where>
+	</select>
+
+	<select id="findOrderRepayList" resultType="map">
+	select op.*,u.user_name,u.user_phone from tb_order_repay op left join tb_user u on op.uid = u.id
+	<where>
+		<if test="merchant != null">
+			and u.merchant = #{merchant}
+		</if>
+		<if test="userPhone != null">
+			and u.user_phone = #{userPhone}
+		</if>
+		<if test="startTime != null">
+			and op.create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and op.create_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+		</if>
+		<if test="repayType != null">
+			and op.repay_type = #{repayType}
+		</if>
+		<if test="repayStatus != null">
+			and op.repay_status = #{repayStatus}
+		</if>
+	</where>
+	order by op.create_time desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="exportReport" resultType="map">
+		select op.*,u.user_name,u.user_phone from tb_order_repay op left join tb_user u on op.uid = u.id
+		<where>
+			<if test="merchant != null">
+				and u.merchant = #{merchant}
+			</if>
+			<if test="userPhone != null">
+				and u.user_phone = #{userPhone}
+			</if>
+			<if test="repayType != null">
+				and op.repay_type = #{repayType}
+			</if>
+			<if test="repayStatus != null">
+				and op.repay_status = #{repayStatus}
+			</if>
+			<if test="startTime != null">
+				and op.create_time &gt;= #{startTime}
+			</if>
+			<if test="endTime != null">
+				and op.create_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+			</if>
+		</where>
+		order by op.create_time desc limit 0,5000
+	</select>
+</mapper>

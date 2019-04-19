@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<body>
+	<div id="page-content">
+		<div id="" class="alert alert-block alert-success">
+			<button type="button" class="close" data-dismiss="alert">
+				<i class="icon-remove"></i>
+			</button>
+			<i class="icon-ok green"></i> 欢迎使用
+			<strong class="green">
+				管理系统<small>(v1.0)</small>
+			</strong>
+		</div>
+		<div>
+			<span>注册页面链接：</span>
+			<a id="registerPage" href="" target="_blank"></a>
+		</div>
+		<br>
+		<div>
+			<span>下载页面链接：</span>
+			<a id="downloadPage" href="" target="_blank"></a>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		$(top.hangge());
+		var contextPath="[[@{/}]]";
+		function getUrl(){
+			$.post(contextPath+"system/main_ajax",{},function(jsonObject){
+				var merchant = jsonObject.data.merchant;
+				var server_h5_url_register="[(${server_h5_url})]"+"register/"+merchant+".html";
+				var server_h5_url_download="[(${server_h5_url})]"+"register/"+"guide_"+merchant+".html";
+				$("#registerPage").attr("href",server_h5_url_register);
+				$("#registerPage").html(server_h5_url_register);
+				$("#downloadPage").attr("href",server_h5_url_download);
+				$("#downloadPage").html(server_h5_url_download);
+			});
+		}
+		getUrl();
+	</script>
+</body>
+</html>

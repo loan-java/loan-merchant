@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+<style type="text/css">
+ .my_label_checkbox {
+      display:inline-block; 
+      width:100px;
+      float:left;
+ }
+</style>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+			<fieldset>
+				<legend>渠道关联</legend>
+				<div id="origin"></div>
+			</fieldset>
+			<br><br>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(top.hangge());
+		var contextPath="[[@{/}]]";
+		var managerId="[(${managerId})]";
+		$.ajax({
+			url : contextPath+"origin/manager_origin_list",
+			type : "POST",
+			dataType : "json",
+			data : {
+				managerId:managerId
+			},
+			beforeSend : function(){
+				maskScreen();
+			},
+			success : function(result) {
+				var managerOriginList=result.data.managerOriginList;
+				var originList=result.data.originList;
+				var html="";
+				for(var i=0;i<originList.length;i++){
+					var flag=false;
+					for(var j=0;j<managerOriginList.length;j++){
+						if(originList[i].id==managerOriginList[j].id){
+							flag=true;
+							break;
+						}
+					}
+					if(flag){
+						html +='<label class="my_label_checkbox"><input value="'+originList[i].id+'" type="checkbox" checked/><span class="lbl">'+originList[i].originName+'</span></label>';
+					}else{
+						html +='<label class="my_label_checkbox"><input value="'+originList[i].id+'" type="checkbox" /><span class="lbl">'+originList[i].originName+'</span></label>';
+					}
+				}
+				$("#origin").html(html);			
+			},
+			complete : function(){
+				unMaskScreen();
+			}
+		});
+		
+		$("#saveButton").bind("click",function(){
+			var stateStack = new Array();
+			var tmp = $("input:checked");
+			if(tmp) {
+				tmp.each(function() {
+					stateStack.push($(this).val());
+				});
+			}
+			var ids=stateStack.join(",");
+			$.ajax({
+				url : contextPath+"origin/manager_origin_update",
+				type : "POST",
+				dataType : "json",
+				data : {
+					managerId:managerId,
+					ids:ids
+				},
+				beforeSend : function(){
+					maskScreen();
+				},
+				success : function(jsonObject) {
+					unMaskScreen();
+					if(jsonObject.status == "2000"){
+							Dialog.close();
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

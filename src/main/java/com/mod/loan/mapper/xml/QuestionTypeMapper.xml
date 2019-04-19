@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.QuestionTypeMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.QuestionType">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="idx" jdbcType="INTEGER" property="idx" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	
+	<select id="quetionTypeCount" resultType="int">
+	select count(1) from tb_question_type
+	<where>
+		<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+	</where>
+	</select>
+	
+	<select id="findQuestionTypeList" resultType="map">
+	select id,name,status,idx,create_time from tb_question_type
+	<where>
+			<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+	</where>
+	order by idx desc, id desc limit #{startIndex},#{pageSize}
+	</select>
+	
+</mapper>

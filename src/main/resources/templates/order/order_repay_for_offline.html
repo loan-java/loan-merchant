@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form name="myForm" id="myForm">
+			<fieldset>
+				<legend>线下还款</legend>
+			</fieldset>
+				<table>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">还款凭证</label>
+						</td>
+						<td>
+							<label id="imgSample"></label>
+							<input id="orderId" name="orderId" type="hidden" />
+							<input name="repayCert" id="repayCert" type="hidden" required="required" />
+						</td>
+						<td>
+							<input type="file" name="file_productImg" id="file_productImg" style="display:none;" />
+							<a class="btn btn-mini btn-info" title="上传图片" onclick="uploadFile('file_productImg','repayCert')">上传图片</a>
+							<img src="/static/images/loadingi.gif" id="jzdh" style="opacity: 0;" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">用户姓名</label>
+						</td>
+						<td>
+							<input name="userName" id="userName" maxlength="30" class="form-control" readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">用户手机</label>
+						</td>
+						<td>
+							<input name="userPhone" id="userPhone" maxlength="30" class="form-control" readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">应还金额</label>
+						</td>
+						<td>
+							<input name="shouldRepay" id="shouldRepay" maxlength="9" class="form-control" readonly="readonly" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">还款金额</label>
+						</td>
+						<td>
+							<input name="repayMoney" id="repayMoney" maxlength="9" class="form-control" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">备注</label>
+						</td>
+						<td>
+							<input name="remark" id="remark" maxlength="30" class="form-control" />
+						</td>
+					</tr>
+				</table>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var id = [[${id}]];
+		var contextPath="[[@{/}]]";
+
+		function getAllMessage() {
+			$.post(contextPath+"order/order_repay_user_detail_ajax",{"id":id},function(data){
+				var obj = data.data;
+				$.each(obj,function(i){
+					$("#userPhone").val(this.userPhone);
+					$("#userName").val(this.userName);
+					$("#shouldRepay").val(this.shouldRepay);
+				});
+			});
+		}
+		getAllMessage();
+
+
+		$("#orderId").val(id);
+		$(top.hangge());
+		$("#saveButton").unbind();
+		$("#saveButton").bind("click",function(){
+			var repayCert = $("#repayCert").val();
+	        var repayMoney = $("#repayMoney").val();
+	        if(repayCert == ""){
+	        	Dialog.alert("请上传还款凭证。");
+	        	return false;
+	        }
+	        if(repayMoney == ""){
+	        	$("#repayMoney").tips({
+					side:3,
+			        msg:"请输入还款金额。",
+			        bg:"#AE81FF",
+			        time:2
+			    });
+				$("#repayMoney").focus();
+				return false;
+	        }
+	        Dialog.confirm("是否确认还款？",function(){
+				$.ajax({
+	        		url : contextPath+"order/order_repay_for_offline_ajax",
+	        		type : "POST",
+					dataType : "json",
+					data : $("#myForm").serialize(),
+					beforeSend: function() {
+						$("#saveButton").hide();
+					},
+					success : function(data) {
+						if(data.status == 2000){
+							Dialog.alert("操作成功",function(){
+								Dialog.close();
+							});
+						}else{
+							Dialog.alert(data.message);
+							$("#saveButton").show();
+						}
+					}
+				});
+	        });
+		});
+		
+		//上传方法
+		function uploadFile(fileId,target){
+			$("#" + fileId).off("change").on("change", function (e) {
+	        	var file = e.target.files[0];
+	            // 显示加载动画
+	            $("#jzdh").attr("style","opacity: 1;");
+	            uploadFileOSS(file,function(data){
+	            	// 隐藏加载动画
+	                $("#jzdh").attr("style","opacity: 0;");
+	             	// 置空文件选择器
+					$("#" + fileId).val("");
+	            	if(data.status == 2000){
+						Dialog.alert("上传成功",function(){
+			                //成功后回显图片
+			                $("#imgSample").html("<img src='"+data.data.absolutePath+ "' width='200' />");
+			                $("#"+target).val(data.data.relativePath);
+						});
+					}else{
+						Dialog.alert(data.message);
+					}
+	            });
+	        });
+			
+			setTimeout(function(){
+				$("#" + fileId).click();
+			}, 0);
+		}
+	</script>
+</body>
+</html>

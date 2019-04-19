@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.QuestionRefMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.QuestionRef">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="type_id" jdbcType="BIGINT" property="typeId" />
+		<result column="article_id" jdbcType="BIGINT" property="articleId" />
+		<result column="idx" jdbcType="INTEGER" property="idx" />
+	</resultMap>
+	
+	<select id="questionRefCount" resultType="int">
+	select count(1) from tb_question_ref question_ref left join tb_app_article app_article on question_ref.article_id = app_article.id
+	<where>
+		<if test="typeId != null">
+			and question_ref.type_id = #{typeId}
+		</if>
+	</where>
+	</select>
+	
+	<select id="findQuestionRefList" resultType="map">
+	select question_ref.id,question_ref.type_id,question_ref.article_id,question_ref.idx,app_article.article_title,app_article.create_time
+	from tb_question_ref question_ref left join tb_app_article app_article on question_ref.article_id = app_article.id
+	<where>
+		<if test="typeId != null">
+			and question_ref.type_id = #{typeId}
+		</if>
+	</where>
+	order by question_ref.idx desc, question_ref.id desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="selectMaxIdxByTypeId" resultType="int">
+	select max(idx) from tb_question_ref
+	<where>
+		<if test="typeId != null">
+			and type_id = #{typeId}
+		</if>
+	</where>
+	</select>
+	
+</mapper>

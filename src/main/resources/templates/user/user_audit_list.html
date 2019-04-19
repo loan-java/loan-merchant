@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+	<div class="container-fluid" id="main-container">
+		<div id="page-content" class="clearfix">
+  			<div class="row-fluid">
+				<div class="row-fluid">
+					<!-- 检索  -->
+					<table id="table_report" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th class="center">序列号</th>
+								<th class="center">信审人员</th>
+								<th class="center">结果</th>
+								<th class="center">原因</th>
+								<th class="center">审核时间</th>
+							</tr>
+						</thead>
+						<tbody id="myTable"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 返回顶部  -->
+	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+		<i class="icon-double-angle-up icon-only"></i>
+	</a>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+        var id = "[[${id}]]";
+		$(top.hangge());
+		var myTable = new MaxTable();
+		myTable.initialize({
+            showPageInfo:false,
+			table : "myTable",
+			id : "id",
+			queryUrl : contextPath+"user/user_audit_list_ajax",
+            beforeSend : function(){
+                maskScreen();
+            },
+            complete : function(){
+                unMaskScreen();
+            },
+			headerColumns : [{
+  			   		id : "id",
+  			   		renderer : numRenderer
+				},{
+		            id : "audit_name",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "status",
+		            renderer : function(idValue,value,record){
+		            	if (value == 0){
+							return "<font color='green'>审核通过</font>";
+						}
+			            if (value == 1){
+							return "审核失败";
+						}
+		            	if (value == 2){
+							return "<font color='red'>人工复审中ing</font>";
+						}
+			            return "---";
+			        }
+	        	},{
+		            id : "fail_reason",
+		            renderer : function(idValue,value,record){
+			            return value ? value : "---" ;
+			        }
+	        	},{
+		            id : "crete_time",
+		            renderer : function(idValue,value,record){
+			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+			        }
+	        	}]
+		});
+
+        function query() {
+            myTable.page.totalRowNum = 0;
+            myTable.onLoad({
+                id:id
+            });
+        }
+        query();
+        function search(){
+            myTable.page.pageNo= 1;
+            query();
+        }
+
+	</script>
+</body>
+</html>
+

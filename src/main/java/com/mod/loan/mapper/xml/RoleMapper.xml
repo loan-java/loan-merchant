@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mod.loan.mapper.RoleMapper" >
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.Role" >
+		<!-- WARNING - @mbg.generated -->
+	    <id column="id" jdbcType="BIGINT" property="id" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+		<result column="role_name" jdbcType="VARCHAR" property="roleName" />
+		<result column="role_remark" jdbcType="VARCHAR" property="roleRemark" />
+		<result column="role_status" jdbcType="INTEGER" property="roleStatus" />
+	</resultMap>
+  
+	<select id="findRoleList" resultMap="BaseResultMap" >
+	 	select * from tb_merchant_role
+		<where>
+			<if test="roleType != null ">
+				and role_type=#{roleType}
+			</if>
+			<if test="roleStatus != null">
+				and role_status=#{roleStatus}
+			</if>
+			<if test="merchant != null">
+				and merchant=#{merchant}
+			</if>
+		</where>
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+</mapper>

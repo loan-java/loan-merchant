@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportOrderLoanMapper">
+<resultMap id="BaseResultMap" type="com.mod.loan.model.ReportOrderLoan">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="day_key" jdbcType="DATE" property="dayKey" />
+    <result column="merchant" jdbcType="VARCHAR" property="merchant" />
+    <result column="arrive_cnt" jdbcType="INTEGER" property="arriveCnt" />
+    <result column="arrive_amount" jdbcType="DECIMAL" property="arriveAmount" />
+    <result column="first_cnt" jdbcType="INTEGER" property="firstCnt" />
+    <result column="first_amount" jdbcType="DECIMAL" property="firstAmount" />
+    <result column="second_cnt" jdbcType="INTEGER" property="secondCnt" />
+    <result column="second_amount" jdbcType="DECIMAL" property="secondAmount" />
+    <result column="old_cnt" jdbcType="INTEGER" property="oldCnt" />
+    <result column="old_amount" jdbcType="DECIMAL" property="oldAmount" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+	<select id="reportOrderLoanCount" resultType="int">
+	select count(1) from report_order_loan
+	<where>
+	     <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	</select>
+	
+	<select id="findReportOrderLoanList" resultType="map">
+	select * from report_order_loan
+	<where>
+	 <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	order by day_key desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="exportReport" resultType="map">
+	select * from report_order_loan
+	<where>
+	 <if test="merchant != null">
+			and merchant = #{merchant}
+		</if>
+		<if test="startTime != null">
+			and day_key &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and day_key &lt;= #{endTime}
+		</if>
+	</where>
+	order by day_key
+	</select>
+	
+</mapper>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<body>
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">操作人</th>
+                        <th class="center">状态</th>
+                        <th class="center">导出时间</th>
+                        <th class="center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    $(top.hangge());
+    var myTable = new MaxTable();
+    myTable.initialize({
+        showPageInfo:false,
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "recycle/recycle_download_list_ajax",
+        headerColumns: [{
+            id: "user_name",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        },{
+            id: "status",
+            renderer: function (idValue, value, record) {
+                if (value == 0) {
+                    return "<font color='orange'>正在进行</font>";
+                }
+                if (value == 1) {
+                    return "<font color='green'>已完成</font>";
+                }
+                return  "---";
+            }
+        }, {
+            id: "create_time",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        },{
+            id : "id",
+            renderer : function(idValue,value,record){
+                var html = "<div class='btn-group'>";
+                if (record.status == 1) {
+                    html += "<a class='btn btn-mini btn-info' title='下载' onclick=\"downloadExcel(" + record.id + ");\">下载</a>";
+                }
+                html += "</div>";
+                return html;
+            }
+        }]
+    });
+    function query() {
+        myTable.onLoad({
+        });
+    }
+    query();
+    
+    function downloadExcel(id) {
+        location.href = contextPath + "recycle/download_ajax?id=" + id
+    }
+
+</script>
+</body>
+</html>
+

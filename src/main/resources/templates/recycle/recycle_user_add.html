@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form id="myForm">
+			<fieldset>
+				<legend>新增</legend>
+			</fieldset>
+			<table>
+				<tr>
+					<td><label class="col-sm-2 control-label">催收组名</label></td>
+					<td>
+						<select id="groupId" name="groupId" class="form-control">
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="col-sm-2 control-label">催收人员</label>
+					</td>
+					<td>
+						<input name="followUserId" id="followUserId" type="hidden" />
+						<input name="userName" id="userName" class="form-control" readonly="readonly" />
+					</td>
+					<td>
+						<a class="btn btn-mini btn-info" title="选择催收人员" onclick="chooseUser()">选择催收人员</a>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="col-sm-2 control-label">备注</label></td>
+					<td>
+						<input id="remark" name="remark" class="form-control" maxlength="50" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label class="col-sm-2 control-label">状态</label>
+					</td>
+					<td>
+						<select name="status" id="status" class="form-control">
+							<option value="0">正常</option>
+							<option value="1">停用</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(top.hangge());
+		var contextPath="[[@{/}]]";
+		function getGroupList(){
+			$.post(contextPath+"recycle/group_list_ajax",{},function(jsonObject){
+				var groupList = jsonObject.data;
+				$.each(groupList,function(i){
+					$("#groupId").append("<option value='" + this.id + "'>" + this.groupName + "</option>");
+				});
+			});
+		}
+		getGroupList();
+
+		$("#saveButton").unbind();
+        $("#saveButton").bind("click",function(){
+			$.ajax({
+	        	url : contextPath+"recycle/recycle_user_edit_ajax",
+				type : "POST",
+				dataType : "json",
+				data : $("#myForm").serialize(),
+				success : function(jsonObject) {
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				}
+			});
+		});
+
+		function chooseUser(){
+			var diag = new top.Dialog();
+			diag.Drag = true;
+			diag.Title = "选择催收人员";
+			diag.URL = contextPath+"recycle/recycle_user_select";
+			diag.Width = 1200;
+			diag.Height = 600;
+			diag.CancelEvent = function(){ //关闭事件
+				//获取用户列表弹窗内选取的用户id与userName
+				var followUserId = diag.innerFrame.contentWindow.document.getElementById("followUserId").value;
+				var userName = diag.innerFrame.contentWindow.document.getElementById("userName").value;
+				diag.close();
+				$("#followUserId").val(followUserId);
+				$("#userName").val(userName);
+			};
+			diag.show();
+		}
+
+	</script>
+</body>
+</html>

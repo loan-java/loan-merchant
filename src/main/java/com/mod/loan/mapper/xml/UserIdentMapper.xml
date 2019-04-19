@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.UserIdentMapper">
+	<resultMap id="BaseResultMap"
+		type="com.mod.loan.model.UserIdent">
+		<!-- WARNING - @mbg.generated -->
+		<id column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="real_name" jdbcType="TINYINT" property="realName" />
+		<result column="real_name_time" jdbcType="TIMESTAMP" property="realNameTime" />
+		<result column="address_book" jdbcType="TINYINT" property="addressBook" />
+		<result column="address_book_time" jdbcType="TIMESTAMP" property="addressBookTime" />
+		<result column="user_details" jdbcType="TINYINT" property="userDetails" />
+		<result column="user_details_time" jdbcType="TIMESTAMP" property="userDetailsTime" />
+		<result column="bindbank" jdbcType="TINYINT" property="bindbank" />
+		<result column="bindbank_time" jdbcType="TIMESTAMP" property="bindbankTime" />
+		<result column="mobile" jdbcType="TINYINT" property="mobile" />
+		<result column="mobile_time" jdbcType="TIMESTAMP" property="mobileTime" />
+		<result column="liveness" jdbcType="TINYINT" property="liveness" />
+		<result column="liveness_time" jdbcType="TIMESTAMP" property="livenessTime" />
+		<result column="alipay" jdbcType="TINYINT" property="alipay" />
+		<result column="alipay_time" jdbcType="TIMESTAMP" property="alipayTime" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+</mapper>

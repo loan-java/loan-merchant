@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+	<div id="zhongxin" align="center">
+		<hr />
+		<form action="" name="myForm" id="myForm" method="post">
+			<fieldset>
+				<legend>新增渠道</legend>
+				<table>
+					<tr>
+						<td>
+							<label class="col-sm-2 control-label">渠道别名</label>
+						</td>
+						<td>
+							<input name="originName" id="originName" maxlength="32" class="form-control" />
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+		<div>
+			<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+			<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var contextPath="[[@{/}]]";
+		$(top.hangge());
+		$("#saveButton").unbind();
+		$("#saveButton").bind("click",function(){
+			if(!$("#originName").val()){
+				Dialog.alert("请输入渠道别名");
+				return;
+			}
+			$.ajax({
+        		url : contextPath+"origin/origin_add_ajax",
+        		type : "POST",
+				dataType : "json",
+				data : $("#myForm").serialize(),
+				success : function(jsonObject) {
+					if(jsonObject.status == "2000"){
+						Dialog.alert(jsonObject.message,function(){
+							Dialog.close();
+						});
+					}else{
+						Dialog.alert(jsonObject.message);
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

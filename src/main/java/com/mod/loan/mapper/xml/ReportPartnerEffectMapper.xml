@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.ReportPartnerEffectMapper">
+    <resultMap id="BaseResultMap" type="com.mod.loan.model.ReportPartnerEffect">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="day_key" jdbcType="DATE" property="dayKey"/>
+        <result column="user_origin" jdbcType="VARCHAR" property="userOrigin"/>
+        <result column="reg_cnt" jdbcType="INTEGER" property="regCnt"/>
+        <result column="real_name_cnt" jdbcType="INTEGER" property="realNameCnt"/>
+        <result column="login_cnt" jdbcType="INTEGER" property="loginCnt"/>
+        <result column="submit_order_cnt" jdbcType="INTEGER" property="submitOrderCnt"/>
+        <result column="first_submit_cnt" jdbcType="INTEGER" property="firstSubmitCnt"/>
+        <result column="first_submit_amount" jdbcType="DECIMAL" property="firstSubmitAmount"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+    </resultMap>
+
+    <select id="reportPartnerEffectCount" resultType="int">
+        select count(1) from report_partner_effect
+        <where>
+            <if test="merchant != null">
+                and merchant = #{merchant}
+            </if>
+            <if test="userOrigin != null">
+                and user_origin = #{userOrigin}
+            </if>
+            <if test="startTime != null">
+                and day_key &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and day_key &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="findReportPartnerEffectList" resultType="map">
+        select * from report_partner_effect pe left join tb_merchant_origin mo on pe.user_origin = mo.id
+        <where>
+            <if test="merchant != null">
+                and pe.merchant = #{merchant}
+            </if>
+            <if test="userOrigin != null">
+                and user_origin = #{userOrigin}
+            </if>
+            <if test="startTime != null">
+                and pe.day_key &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and pe.day_key &lt;= #{endTime}
+            </if>
+        </where>
+        order by pe.id desc limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="exportReport" resultType="map">
+        select pe.day_key,ifnull(mo.origin_name,pe.user_origin) as 'user_origin',pe.reg_cnt,pe.real_name_cnt,
+        pe.submit_order_cnt,pe.first_submit_cnt,pe.login_cnt,pe.first_submit_amount from report_partner_effect pe left
+        join tb_merchant_origin mo on pe.user_origin = mo.id
+        <where>
+            <if test="merchant != null">
+                and pe.merchant = #{merchant}
+            </if>
+            <if test="userOrigin != null">
+                and pe.user_origin = #{userOrigin}
+            </if>
+            <if test="startTime != null">
+                and pe.day_key &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and pe.day_key &lt;= #{endTime}
+            </if>
+        </where>
+        order by pe.id
+    </select>
+
+</mapper>

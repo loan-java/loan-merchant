@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.UserDeviceMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.UserDevice">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="deviceid" jdbcType="VARCHAR" property="deviceid" />
+		<result column="ip" jdbcType="VARCHAR" property="ip" />
+		<result column="location" jdbcType="VARCHAR" property="location" />
+		<result column="city" jdbcType="VARCHAR" property="city" />
+		<result column="net_type" jdbcType="VARCHAR" property="netType" />
+		<result column="phone_brand" jdbcType="VARCHAR" property="phoneBrand" />
+		<result column="phone_model" jdbcType="VARCHAR" property="phoneModel" />
+		<result column="phone_system" jdbcType="VARCHAR" property="phoneSystem" />
+		<result column="phone_resolution" jdbcType="VARCHAR" property="phoneResolution" />
+		<result column="phone_memory" jdbcType="VARCHAR" property="phoneMemory" />
+		<result column="isp" jdbcType="VARCHAR" property="isp" />
+		<result column="client_alias" jdbcType="VARCHAR" property="clientAlias" />
+		<result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	
+	<select id="selectOneByUid" resultMap="BaseResultMap">
+	select phone_brand,phone_model,phone_system,client_alias,client_version from tb_user_device where uid = #{uid} order by id desc limit 1
+	</select>
+	
+</mapper>

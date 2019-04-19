@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mod.loan.mapper.StartupMapper">
+	<resultMap id="BaseResultMap" type="com.mod.loan.model.Startup">
+		<!-- WARNING - @mbg.generated -->
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="ad_imgurl" jdbcType="VARCHAR" property="adImgurl" />
+		<result column="ad_url" jdbcType="VARCHAR" property="adUrl" />
+		<result column="ad_idx" jdbcType="INTEGER" property="adIdx" />
+		<result column="ad_status" jdbcType="TINYINT" property="adStatus" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="merchant" jdbcType="VARCHAR" property="merchant" />
+	</resultMap>
+	
+	<select id="findStartupList" resultType="map">
+	select id,ad_imgurl,ad_url,ad_status,ad_idx,create_time from tb_app_startup
+	<where>
+		<if test="adStatus != null">
+			and ad_status = #{adStatus}
+		</if>
+		<if test="merchant !=null">
+			and merchant = #{merchant}
+		</if>
+	</where>
+	order by ad_status desc,ad_idx desc,id desc limit #{startIndex},#{pageSize}
+	</select>
+	
+</mapper>

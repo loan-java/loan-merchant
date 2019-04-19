@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+	<link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet"  th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+</head>
+<body>
+<div id="zhongxin" align="center">
+	<hr />
+	<form name="myForm" id="myForm">
+		<fieldset>
+			<legend>加入黑名单</legend>
+		</fieldset>
+		<table>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">用户姓名</label>
+				</td>
+				<td>
+					<input name="uid" id="uid" type="hidden"  th:value="${user.id}" />
+					<input name="name" id="name" class="form-control" readonly="readonly"   th:value="${user.userName}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">用户电话</label>
+				</td>
+				<td>
+					<input name="tel" id="tel" class="form-control" readonly="readonly"  th:value="${user.userPhone}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">身份证</label>
+				</td>
+				<td>
+					<input name="certNo" id="certNo" class="form-control" readonly="readonly"  th:value="${user.userCertNo}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">类型</label>
+				</td>
+				<td>
+					<select name="type" id="type" class="form-control" onchange="changeType()">
+						<option value="1">灰名单</option>
+						<option value="2"  selected>永久黑名单</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">标签</label>
+				</td>
+				<td>
+					<select name="tag" id="tag" class="form-control">
+						<option value="2">老赖</option>
+						<option value="3">代偿</option>
+						<option value="4">特殊行业</option>
+						<option value="5">学生</option>
+						<option value="6">高负债</option>
+						<option value="7">欺诈(欠款本人欺诈)</option>
+						<option value="8">非本人(身份信息被冒用)</option>
+						<option value="9">故意拖欠</option>
+						<option value="10">疾病或死亡</option>
+						<option value="11">其他</option>
+					</select>
+				</td>
+			</tr>
+			<tr id="daysLable" >
+				<td>
+					<label class="col-sm-2 control-label">关小黑屋天数</label>
+				</td>
+				<td>
+					<input name="days" id="days" maxlength="10" class="form-control" onkeyup="value=/^\d{0,9}$/.test(value)?value:''" onblur="value=/^\d{0,9}$/.test(value)?value:''" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="col-sm-2 control-label">备注</label>
+				</td>
+				<td>
+					<textarea name="remark" id="remark" maxlength="100" class="form-control" style="resize:none; width: 300px; height: 117px;"></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+	<div>
+		<a class="btn btn-mini btn-primary" id="saveButton">保存</a>
+		<a class="btn btn-mini btn-danger" onclick="top.Dialog.close()">取消</a>
+	</div>
+</div>
+<script type="text/javascript">
+	var contextPath="[[@{/}]]";
+	$(top.hangge());
+	$("#saveButton").unbind();
+	$("#saveButton").bind("click",function(){
+		var name = $("#name").val();
+		var days = $("#days").val();
+		var type = $("#type").val();
+		if(type == 1 && days == ""){
+			$("#days").tips({
+				side:3,
+				msg:"请输入关小黑屋天数。",
+				bg:"#AE81FF",
+				time:2
+			});
+			$("#days").focus();
+			return false;
+		}
+
+		$.ajax({
+			url : contextPath+"user/blacklist_edit_ajax",
+			type : "POST",
+			dataType : "json",
+			data : $("#myForm").serialize(),
+			beforeSend : function(){
+				maskScreen();
+			},
+			success : function(data) {
+				if(data.status == 2000){
+					Dialog.alert("操作成功",function(){
+						Dialog.close();
+					});
+				}else{
+					Dialog.alert(data.message);
+				}
+			},
+			complete : function(){
+				unMaskScreen();
+			}
+		});
+	});
+	changeType();
+	function changeType(){
+		var type = $("#type").val();
+		if(type == 1){
+			$("#daysLable").show();
+		}else if(type == 2){
+			$("#daysLable").hide();
+		}
+	}
+</script>
+</body>
+</html>
