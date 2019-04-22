@@ -167,7 +167,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
                 jsonObject.put("payType", payType);
-                rabbitTemplate.convertAndSend("queue_order_pay", jsonObject);
+                rabbitTemplate.convertAndSend("baofoo_queue_order_pay", jsonObject);
             }
         }
     }
