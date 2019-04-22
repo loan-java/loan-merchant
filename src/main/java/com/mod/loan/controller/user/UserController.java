@@ -28,18 +28,14 @@ import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.config.Constant;
 import com.mod.loan.mapper.MoxieMobileMapper;
-import com.mod.loan.mapper.MoxieZfbMapper;
 import com.mod.loan.mapper.OrderAuditMapper;
 import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserBankMapper;
-import com.mod.loan.mapper.UserDeviceMapper;
 import com.mod.loan.mapper.UserIdentMapper;
 import com.mod.loan.mapper.UserInfoMapper;
 import com.mod.loan.model.MoxieMobile;
-import com.mod.loan.model.MoxieZfb;
 import com.mod.loan.model.User;
 import com.mod.loan.model.UserBank;
-import com.mod.loan.model.UserDevice;
 import com.mod.loan.model.UserIdent;
 import com.mod.loan.model.UserInfo;
 import com.mod.loan.model.moxie.CallInContactList;
@@ -64,13 +60,9 @@ public class UserController {
     @Autowired
     private UserInfoMapper userInfoMapper;
     @Autowired
-    private UserDeviceMapper userDeviceMapper;
-    @Autowired
     private UserBankMapper userBankMapper;
     @Autowired
     private UserIdentMapper userIdentMapper;
-    @Autowired
-    private MoxieZfbMapper moxieZfbMapper;
     @Autowired
     private MoxieMobileMapper moxieMobileMapper;
     @Autowired
@@ -119,14 +111,10 @@ public class UserController {
         data.put("user", user);
         UserInfo userInfo = userInfoMapper.selectByPrimaryKey(id);
         data.put("userInfo", userInfo);
-        UserDevice userDevice = userDeviceMapper.selectOneByUid(id);
-        data.put("userDevice", userDevice);
         UserBank userBank = userBankMapper.selectOneByUid(id);
         data.put("userBank", userBank);
         UserIdent userIdent = userIdentMapper.selectByPrimaryKey(id);
         data.put("userIdent", userIdent);
-        MoxieZfb moxieZfb = moxieZfbMapper.selectLastOne(id);
-        data.put("moxieZfbTaskId", moxieZfb != null ? moxieZfb.getTaskId() : null);
         MoxieMobile moxieMobile = moxieMobileMapper.selectLastOne(id);
         data.put("moxieMobileTaskId", moxieMobile != null ? moxieMobile.getTaskId() : null);
         // 共债记录
