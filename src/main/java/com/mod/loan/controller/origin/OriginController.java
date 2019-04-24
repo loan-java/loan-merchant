@@ -10,6 +10,8 @@ import com.mod.loan.service.OriginService;
 import com.mod.loan.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-import static com.mod.loan.controller.question.QuestionRefController.logger;
-
 @RestController
 @RequestMapping(value = "origin")
 public class OriginController {
+
+    private static Logger logger = LoggerFactory.getLogger(OriginController.class);
 
     @Autowired
     OriginService originService;
@@ -77,7 +79,7 @@ public class OriginController {
 
     @RequestMapping(value = "origin_detail_ajax")
     public ResultMessage origin_detail_ajax(MerchantOrigin merchantOrigin) {
-        return new ResultMessage(ResponseEnum.M2000,originService.selectByPrimaryKey(merchantOrigin.getId()));
+        return new ResultMessage(ResponseEnum.M2000, originService.selectByPrimaryKey(merchantOrigin.getId()));
     }
 
     @RequestMapping(value = "manager_origin_list")
@@ -175,7 +177,7 @@ public class OriginController {
         param.put("startTime", StringUtils.isNotEmpty(startTime) ? startTime : null);
         param.put("endTime", StringUtils.isNotEmpty(endTime) ? endTime : null);
         param.put("managerId", RequestThread.get().getUid());
-        return new ResultMessage(ResponseEnum.M2000,originService.findCurrentOriginStatisticsList(param,page),page);
+        return new ResultMessage(ResponseEnum.M2000, originService.findCurrentOriginStatisticsList(param, page), page);
     }
 
     @RequestMapping(value = "export_origin_order_statistics_list")

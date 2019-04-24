@@ -21,9 +21,8 @@
 </style>
 </head>
 <body>
-	<a class="btn btn-info" target='_blank' id="moxieZfbMXReport" style="display:none;">支付宝报告</a>
 	<a class="btn btn-info" target='_blank' id="carrierJxReport" style="display:none;">运营商资信报告</a>
-	<a class="btn btn-info" target='_blank' id="magicWandReport" style="display:none;">魔杖报告</a>
+	<!--<a class="btn btn-info" target='_blank' id="magicWandReport" style="display:none;">魔杖报告</a>-->
 	<a class="btn btn-info" href='javascript:void(0);' id="auditList" style="display:none;" onclick='userAuditList()'>用户信审记录</a>
 	<a class="btn btn-info" href='javascript:void(0);' id="recycleList" style="display:none;" onclick='userRecycleList()'>用户催收记录</a>
 	<div id="zhongxin" align="center">
@@ -117,26 +116,6 @@
 			</tr>
 		</table>
 
-		<template v-if="userDevice != null">
-		<h4 align="left">设备信息</h4>
-		<table class="table table-striped table-bordered table-hover">
-			<tr>
-				<td>手机品牌</td>
-				<td><span v-text="userDevice.phoneBrand"></span></td>
-				<td>手机型号</td>
-				<td><span v-text="userDevice.phoneModel"></span></td>
-				<td>系统版本号</td>
-				<td><span v-text="userDevice.phoneSystem"></span></td>
-	        </tr>
-	        <tr>
-				<td>应用名称</td>
-				<td colspan="2"><span v-text="userDevice.clientAlias"></span></td>
-				<td>应用版本</td>
-				<td colspan="2"><span v-text="userDevice.clientVersion"></span></td>
-	        </tr>
-		</table>
-		</template>
-		
 		<template v-if="userBank != null">
 		<h4 align="left">绑卡信息</h4>
 		<table class="table table-striped table-bordered table-hover">
@@ -184,12 +163,6 @@
 				<td><span v-text="formatDate(userIdent.mobileTime)"></span></td>
 	        </tr>
 	        <tr>
-				<td>支付宝认证</td>
-				<td><span v-html="getIdentValue(userIdent.alipay)"></span></td>
-				<td>支付宝认证时间</td>
-				<td><span v-text="formatDate(userIdent.alipayTime)"></span></td>
-	        </tr>
-	        <tr>
 				<td>绑卡</td>
 				<td><span v-html="getIdentValue(userIdent.bindbank)"></span></td>
 				<td>绑卡时间</td>
@@ -197,61 +170,6 @@
 	        </tr>
 		</table>
 		
-		<h4 align="left">共债记录</h4>
-		<table class="table table-striped table-bordered table-hover">
-			<tr>
-				<td>提单总数</td>
-				<td><span v-text="orderNum"></span></td>
-				<td>催收过的订单数</td>
-				<td><span v-text="pressNum"></span></td>
-			</tr>
-			<tr>
-				<td>在借平台个数</td>
-				<td><span v-text="onLoanAppNum"></span></td>
-				<td>当前逾期平台数</td>
-				<td><span v-text="overdueNum"></span></td>
-			</tr>
-		</table>
-		
-		<h4 align="left">提单历史</h4>
-		<table class="table table-striped table-bordered table-hover">
-			<tr>
-				<td>当前平台提单总次数</td>
-				<td><span v-text="countUserOrder"></span></td>
-	        	<td>已完成次数</td>
-				<td><span v-text="countUserOrderSuccess"></span></td>
-			</tr>
-			<tr>
-				<td>人工复审拒绝次数</td>
-				<td><span v-text="countUserOrderFail"></span></td>
-				<td>风控拒绝次数</td>
-				<td><span v-text="countUserOrderFailByRisk"></span></td>
-			</tr>
-		</table>
-		
-		<template v-if="feedbackList">
-			<h4 align="left">用户反馈</h4>
-			<table class="table table-striped table-bordered table-hover">
-				<thead>
-					<tr>
-						<th class="center">用户</th>
-						<th class="center">问题描述</th>
-						<th class="center">创建时间</th>
-						<th class="center">详情</th>
-					</tr>
-				</thead>
-				<tbody>
-					<template v-for="(item,index) in feedbackList">
-						<tr>
-							<td class="center"><span v-html="item.user_name + '(' + item.user_phone + ')'"></span></td>
-							<td class="center"><span v-text="item.question_desc"></span></td>
-							<td class="center"><span v-text="formatDate(item.create_time)"></span></td>
-							<td class="center"><span v-html='"<a class=\"btn btn-mini btn-info\" title=\"详情\" onclick=\"feedbackDetail(" + item.id + ")\">详情</a>"'></span></td>
-						</tr>
-					</template>
-				</tbody>
-			</table>
-		</template>
 	</div>
 	<!-- 蒙层 -->
 	<div class="over"></div>
@@ -277,21 +195,12 @@
 					success: function(result) {
 						_that.user = result.data.user;
 						_that.userBank = result.data.userBank;
-						_that.userDevice = result.data.userDevice;
 						_that.userIdent = result.data.userIdent;
 						_that.userInfo = result.data.userInfo;
 						_that.imgFace = result.data.user.imgFace ? "<img class='photo' width='200px' height='100px' alt='人脸识别' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgFace + "' />" : null;
 						_that.imgCertFront = result.data.user.imgCertFront ? "<img class='photo' width='200px' height='100px' alt='身份证前' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgCertFront + "' />" : null;
 						_that.imgCertBack = result.data.user.imgCertBack ? "<img class='photo' width='200px' height='100px' alt='身份证后' src='[(${ALI_OSS_FILE_URL})]" + result.data.user.imgCertBack + "' />" : null;
-						_that.onLoanAppNum = result.data.onLoanAppNum;
-						_that.overdueNum = result.data.overdueNum;
-						_that.pressNum = result.data.pressNum;
-						_that.orderNum = result.data.orderNum;
-						_that.countUserOrder = result.data.countUserOrder;
-						_that.countUserOrderSuccess = result.data.countUserOrderSuccess;
-						_that.countUserOrderFail = result.data.countUserOrderFail;
-						_that.countUserOrderFailByRisk = result.data.countUserOrderFailByRisk;
-						
+
 						if(result.data.countUserOrder > 0){
 		                    $("#auditList").show();
 		                    $("#recycleList").show();
@@ -301,17 +210,6 @@
 		                       var moxieMobileTaskId = result.data.moxieMobileTaskId;
 		                       $("#carrierJxReport").attr("href",contextPath + "user/user_carrier_jxreport?taskId="+moxieMobileTaskId);
 		                       $("#carrierJxReport").show();
-
-							   $("#magicWandReport").attr("href",contextPath + "user/user_magic_wand_report?taskId="+moxieMobileTaskId);
-							   $("#magicWandReport").show();
-
-		        		}
-						
-						if(result.data.moxieZfbTaskId){
-		        			var moxieZfbTaskId = result.data.moxieZfbTaskId;
-		       				$("#moxieZfbMXReport").attr("href",contextPath + "user/user_zfb_mxreport?taskId="+moxieZfbTaskId);
-		       				$("#moxieZfbMXReport").show();
-
 		        		}
 					},
 					complete : function(){
@@ -333,21 +231,11 @@
 			data: {
 				user: {},
 				userBank: {},
-				userDevice: {},
 				userIdent: {},
 				userInfo: {},
 				imgFace: {},
 				imgCertFront: {},
 				imgCertBack: {},
-				onLoanAppNum: {},
-				overdueNum: {},
-				pressNum: {},
-				orderNum: {},
-				countUserOrder: {},
-				countUserOrderSuccess: {},
-				countUserOrderFail: {},
-				countUserOrderFailByRisk: {},
-				feedbackList: []
 			},
 			methods: {
 				getIdentValue(status){
@@ -381,7 +269,10 @@
                             bindTypes = "富友";
                             break;
                         case 3:
-                            bindTypes = "汇聚";
+                        bindTypes = "汇聚";
+                        break;
+                        case 4:
+                            bindTypes = "宝付";
                             break;
                     }
                     return bindTypes;
@@ -515,18 +406,6 @@
 			diag.show();
 		}
 		
-		function feedbackDetail(id){
-			 var diag = new top.Dialog();
-			 diag.Drag = true;
-			 diag.Title = "详情";
-			 diag.URL = contextPath + "operation/feedback_detail?id=" + id;
-			 diag.Width = 600;
-			 diag.Height = 600;
-			 diag.CancelEvent = function(){ //关闭事件
-				diag.close();
-			 };
-			 diag.show();
-		}
 	</script>
 </body>
 </html>
