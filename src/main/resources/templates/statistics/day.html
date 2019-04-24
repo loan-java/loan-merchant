@@ -9,7 +9,8 @@
         <div class="page-header">
             <div>
                 <span>查询时间:</span>
-                <input id="searchTime" name="searchTime" type="text" readonly="readonly" placeholder="查询时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                <input id="searchTime" name="searchTime" type="text" readonly="readonly" placeholder="查询时间"
+                       onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                 <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询
                 </button>
             </div>
@@ -19,18 +20,10 @@
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日注册(人)</h5>
+                            <h5 class="bigger lighter">当日注册人数</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countRegisterUserNumberToDay"></span>
-                        </div>
-                    </div>
-                    <div class="widget-box pricing-box-small">
-                        <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日绑卡(人)</h5>
-                        </div>
-                        <div class="widget-body index-number">
-                            <span id="countBindbankUserNumberToDay"></span>
                         </div>
                     </div>
                 </div>
@@ -65,15 +58,16 @@
                     </div>
                 </div>
                 <div class="pricing-span-index">
-                	<div class="widget-box pricing-box-small">
+                    <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日支付宝认证(人)</h5>
+                            <h5 class="bigger lighter">当日绑卡(人)</h5>
                         </div>
                         <div class="widget-body index-number">
-                            <span id="countAlipayUserNumberToDay"></span>
+                            <span id="countBindbankUserNumberToDay"></span>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div class="row">
@@ -81,7 +75,7 @@
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日提交订单(笔)</h5>
+                            <h5 class="bigger lighter">当日申请人数</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countOrderNumberToDay"></span>
@@ -95,23 +89,39 @@
                             <span id="countLoanOrderNumberToDay"></span>
                         </div>
                     </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">所有流量费</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countFlowAmount"></span>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日新客(人)</h5>
+                            <h5 class="bigger lighter">累计申请人数</h5>
                         </div>
                         <div class="widget-body index-number">
-                            <span id="countNewUserNumberToDay"></span>
+                            <span id="countAllOrderNumber"></span>
                         </div>
                     </div>
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日借出总金额(元)</h5>
+                            <h5 class="bigger lighter">当日放款金额(元)</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countLoanAmountToDay"></span>
+                        </div>
+                    </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">所有风控费</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRiskAmount"></span>
                         </div>
                     </div>
                 </div>
@@ -124,6 +134,14 @@
                             <span id="countSecondUserNumberToDay"></span>
                         </div>
                     </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">应收金额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countShouldRepayAmountToDay"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
@@ -134,52 +152,90 @@
                             <span id="countOldUserNumberToDay"></span>
                         </div>
                     </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">今日回款金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRepayAmountToDay"></span>
+                        </div>
+                    </div>
                 </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日新客(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countNewUserNumberToDay"></span>
+                        </div>
+                    </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">总逾期金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOverdueAmount"></span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-	$(top.hangge());
+    $(top.hangge());
     var contextPath = "[[@{/}]]";
     var submitTime = laydate.now(0, 'YYYY-MM-DD');
     $("#searchTime").attr('value', submitTime);
-    
+
     function getAllMessage() {
         var searchTime = $("#searchTime").val();
         $.ajax({
-			url : contextPath + "statistics/main_data_ajax",
-			type : "POST",
-			dataType : "json",
-			data : {"searchTime": searchTime},
-			beforeSend : function(){
-				maskScreen();
-			},
-			success : function(data) {
-				var info = data.data;
-	            if(data.status == 2000){
-		            $("#countRegisterUserNumberToDay").html(info.countRegisterUserNumberToDay);
-		            $("#countRealNameUserNumberToDay").html(info.countRealNameUserNumberToDay);
-		            $("#countAlipayUserNumberToDay").html(info.countAlipayUserNumberToDay);
-		            $("#countMobileUserNumberToDay").html(info.countMobileUserNumberToDay);
-		            $("#countBindbankUserNumberToDay").html(info.countBindbankUserNumberToDay);
-		            $("#countUserDetailsUserNumberToDay").html(info.countUserDetailsUserNumberToDay);
-		
-		            $("#countOrderNumberToDay").html(info.countOrderNumberToDay);
-		            $("#countLoanOrderNumberToDay").html(info.countLoanOrderNumberToDay);
-		            $("#countLoanAmountToDay").html(info.countLoanAmountToDay);
-		            $("#countNewUserNumberToDay").html(info.countNewUserNumberToDay);
-		            $("#countSecondUserNumberToDay").html(info.countSecondUserNumberToDay);
-		            $("#countOldUserNumberToDay").html(info.countOldUserNumberToDay);
-	            }else{
-	            	Dialog.alert(data.message);
-	            }
-			},
-			complete : function(){
-				unMaskScreen();
-			}
-		});
+            url: contextPath + "statistics/main_data_ajax",
+            type: "POST",
+            dataType: "json",
+            data: {"searchTime": searchTime},
+            beforeSend: function () {
+                maskScreen();
+            },
+            success: function (data) {
+                var info = data.data;
+                var countTotalFee = info.countTotalFee;
+                var countPeople = info.countPeople;
+                var countOverdueAmount = info.countOverdueAmount;
+                var countOverdueDays = info.countOverdueDays;
+                if (data.status == 2000) {
+                    $("#countRegisterUserNumberToDay").html(info.countRegisterUserNumberToDay);
+                    $("#countRealNameUserNumberToDay").html(info.countRealNameUserNumberToDay);
+                    $("#countAlipayUserNumberToDay").html(info.countAlipayUserNumberToDay);
+                    $("#countMobileUserNumberToDay").html(info.countMobileUserNumberToDay);
+                    $("#countBindbankUserNumberToDay").html(info.countBindbankUserNumberToDay);
+                    $("#countUserDetailsUserNumberToDay").html(info.countUserDetailsUserNumberToDay);
+
+                    $("#countFlowAmount").html(info.countFlowAmount * 32);
+                    $("#countRiskAmount").html(info.countFlowAmount * 10);
+                    $("#countAllOrderNumber").html(info.countAllOrderNumber);
+                    $("#countOrderNumberToDay").html(info.countOrderNumberToDay);
+                    $("#countLoanOrderNumberToDay").html(info.countLoanOrderNumberToDay);
+                    $("#countLoanAmountToDay").html(info.countLoanAmountToDay);
+                    $("#countNewUserNumberToDay").html(info.countNewUserNumberToDay);
+                    $("#countSecondUserNumberToDay").html(info.countSecondUserNumberToDay);
+                    $("#countOldUserNumberToDay").html(info.countOldUserNumberToDay);
+                    $("#countShouldRepayAmountToDay").html(info.countShouldRepayAmountToDay);
+                    $("#countOverdueAmount").html(info.countOverdueAmount);
+                    $("#countRepayAmountToDay").html(countTotalFee + countPeople * 21 + countOverdueDays * 21 + countOverdueAmount);
+                } else {
+                    Dialog.alert(data.message);
+                }
+            },
+            complete: function () {
+                unMaskScreen();
+            }
+        });
     }
+
     getAllMessage();
 
     function search() {

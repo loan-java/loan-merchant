@@ -1,5 +1,6 @@
 package com.mod.loan.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,10 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	Map<String, Object> countDebtRecord(@Param("userPhone") String userPhone);
 
 	int orderCount(Map<String, Object> param);
+
+	int countFlowAmount(@Param("merchant") String merchant);
+
+	BigDecimal countOverdueAmount(@Param("merchant") String merchant);
 
 //	int orderPassCount(Map<String, Object> param);
 

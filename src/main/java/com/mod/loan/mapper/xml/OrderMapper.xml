@@ -182,12 +182,18 @@
     <select id="countOrderMessageByDay" resultType="map">
     <![CDATA[
     SELECT
+    COUNT(id) as 'countAllOrderNumber',
 	COUNT(CASE WHEN (create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOrderNumberToDay',
 	COUNT(CASE WHEN (user_type = 1 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countNewUserNumberToDay',
 	COUNT(CASE WHEN (user_type = 2 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countSecondUserNumberToDay',
 	COUNT(CASE WHEN (user_type = 3 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOldUserNumberToDay',
 	COUNT(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countLoanOrderNumberToDay',
-	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN actual_money END),0.0) AS 'countLoanAmountToDay'
+	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN actual_money END),0.0) AS 'countLoanAmountToDay',
+	IFNULL(SUM(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN should_repay END),0.0) AS 'countShouldRepayAmountToDay',
+	IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status in (41,42)) THEN total_fee END),0) AS 'countTotalFee',
+    IFNULL(count(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status in (41,42)) THEN id END),0) AS 'countPeople',
+    IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status = 42) THEN overdue_fee END),0) AS 'countOverdueAmount',
+    IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status = 42) THEN overdue_day END),0) AS 'countOverdueDays'
 	FROM tb_order WHERE merchant = #{merchant}
 	]]>
 	</select>
@@ -278,4 +284,11 @@
         order by time_key desc
     </select>
 
+    <select id="countFlowAmount" resultType="int">
+        select count(id) from tb_order where merchant = #{merchant}
+    </select>
+
+    <select id="countOverdueAmount" resultType="decimal">
+        select sum(overdue_fee) from tb_order where merchant= #{merchant}
+    </select>
 </mapper>
