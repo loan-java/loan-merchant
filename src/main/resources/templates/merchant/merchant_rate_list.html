@@ -27,8 +27,9 @@
 								<th class="center">借款金额(元)</th>
 								<th class="center">状态</th>
 								<th class="center">综合费率(%)</th>
+								<th class="center">利率(%)</th>
 								<th class="center">逾期费率(%)</th>
-								<th class="center">借款次数</th>
+								<!--<th class="center">借款次数</th>-->
 								<th class="center">操作</th>
 							</tr>
 						</thead>
@@ -94,36 +95,13 @@
 			            return value ? value : "---";
 			        }
 	        	},{
+					id : "product_rate",
+					renderer : function(idValue,value,record){
+						return value ? value : "---";
+					}
+				},{
 		            id : "overdue_rate",
 		            renderer : function(idValue,value,record){
-			            return value ? value : "---";
-			        }
-	        	},{
-		            id : "borrow_type",
-		            renderer : function(idValue,value,record){
-		            	switch(value){
-		            	case 0:
-		            		return "首次";
-		            		break;
-		            	case 1:
-		            		return "第二次";
-		            		break;
-		            	case 2:
-		            		return "第三次";
-		            		break;
-		            	case 3:
-		            		return "第四次";
-		            		break;
-		            	case 4:
-		            		return "第五次";
-		            		break;
-		            	case 99:
-		            		return "<font color='blue'>其他</font>";
-		            		break;
-		            	default:
-		            		return "---";
-		            		break;
-		            	}
 			            return value ? value : "---";
 			        }
 	        	},{

@@ -41,7 +41,7 @@
 			and product_status = #{productStatus}
 		</if>
 	</where>
-	order by product_level desc,id desc limit #{startIndex},#{pageSize}
+	order by id desc limit #{startIndex},#{pageSize}
 	</select>
 	
 	<select id="selectByBorrowType" resultType="int">

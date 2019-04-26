@@ -59,27 +59,35 @@
 					</tr>
 					<tr>
 						<td>
+							<label class="control-label">利率(%)</label>
+						</td>
+						<td>
+							<input name="ProductRate" id="ProductRate" maxlength="4" class="form-control" required="required" />
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<label class="control-label">逾期费率(%)</label>
 						</td>
 						<td>
 							<input name="overdueRate" id="overdueRate" maxlength="2" class="form-control" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
 						</td>
 					</tr>
-					<tr>
-						<td>
-							<label class="control-label">借款次数</label>
-						</td>
-						<td>
-							<select name="borrowType" id="borrowType" class="form-control">
-								<option value="0">首次</option>
-								<option value="1">第二次</option>
-								<option value="2">第三次</option>
-								<option value="3">第四次</option>
-								<option value="4">第五次</option>
-								<option value="99">其他</option>
-							</select>
-						</td>
-					</tr>
+					<!--<tr>-->
+						<!--<td>-->
+							<!--<label class="control-label">借款次数</label>-->
+						<!--</td>-->
+						<!--<td>-->
+							<!--<select name="borrowType" id="borrowType" class="form-control">-->
+								<!--<option value="0">首次</option>-->
+								<!--<option value="1">第二次</option>-->
+								<!--<option value="2">第三次</option>-->
+								<!--<option value="3">第四次</option>-->
+								<!--<option value="4">第五次</option>-->
+								<!--<option value="99">其他</option>-->
+							<!--</select>-->
+						<!--</td>-->
+					<!--</tr>-->
 				</tbody>
 			</table>
 		</form>

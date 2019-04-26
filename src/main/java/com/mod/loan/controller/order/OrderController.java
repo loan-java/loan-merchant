@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.mod.loan.mapper.UserMapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ public class OrderController {
     private RedisMapper redisMapper;
     @Autowired
     private MerchantService merchantService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @RequestMapping(value = "order_list")
     public ModelAndView order_list(ModelAndView view) {
@@ -228,6 +232,7 @@ public class OrderController {
         record.setId(orderId);
         record.setStatus(Constant.ORDER_CANCLE);
         orderService.updateByPrimaryKeySelective(record);
+        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
         return new ResultMessage(ResponseEnum.M2000);
     }
 
