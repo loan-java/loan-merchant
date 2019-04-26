@@ -61,11 +61,11 @@ public class MerchantRateController {
 		if (merchantRate.getTotalRate() == null || new BigDecimal(30).compareTo(merchantRate.getTotalRate()) < 0) {
 			return new ResultMessage(ResponseEnum.M4000.getCode(), "综合费率不能大于30%");
 		}
-		if (merchantRate.getProductRate() == null || new BigDecimal(0.5).compareTo(merchantRate.getProductRate()) < 0) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "利率不能大于0.5%");
+		if (merchantRate.getProductRate() == null || new BigDecimal(5).compareTo(merchantRate.getProductRate()) < 0) {
+			return new ResultMessage(ResponseEnum.M4000.getCode(), "利率不能大于5%");
 		}
-		if (merchantRate.getOverdueRate() == null || new BigDecimal(6).compareTo(merchantRate.getOverdueRate()) < 0) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "逾期费率不能大于6%");
+		if (merchantRate.getOverdueRate() == null || new BigDecimal(8).compareTo(merchantRate.getOverdueRate()) < 0) {
+			return new ResultMessage(ResponseEnum.M4000.getCode(), "逾期费率不能大于8%");
 		}
 //		if (merchantRate.getBorrowType() == null
 //				|| (merchantRate.getBorrowType() > 4 && merchantRate.getBorrowType() != 99)) {
