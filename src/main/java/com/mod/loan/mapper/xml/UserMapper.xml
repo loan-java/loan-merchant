@@ -19,6 +19,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="merchant" jdbcType="VARCHAR" property="merchant"/>
+        <result column="common_info" jdbcType="VARCHAR" property="commonInfo"/>
     </resultMap>
 
     <select id="userCount" resultType="int">

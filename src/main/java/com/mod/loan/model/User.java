@@ -87,6 +87,8 @@ public class User {
 	 */
 	private String merchant;
 
+	private String commonInfo;
+
 	/**
 	 * @return id
 	 */
@@ -374,5 +376,13 @@ public class User {
 	 */
 	public void setMerchant(String merchant) {
 		this.merchant = merchant == null ? null : merchant.trim();
+	}
+
+	public String getCommonInfo() {
+		return commonInfo;
+	}
+
+	public void setCommonInfo(String commonInfo) {
+		this.commonInfo = commonInfo;
 	}
 }

@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mod.loan.common.enums.OrderStatusEnum;
+import com.mod.loan.common.enums.OrderTypeEnum;
+import com.mod.loan.common.enums.PayStatusEnum;
+import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.model.User;
+import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -163,6 +169,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
+                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
                 // 发送消息
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
@@ -211,6 +218,67 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             orderAudit.setMerchant(RequestThread.get().getMerchant());
             orderAuditMapper.insertSelective(orderAudit);
         }
+
+    }
+
+    public void orderCallBack(User user, String orderNo, Integer orderStatus) {
+
+        JSONObject object = JSONObject.parseObject(user.getCommonInfo());
+        object.put("orderNo", orderNo);
+        object.put("orderType", OrderTypeEnum.JK.getCode());
+        switch (orderStatus) {
+            case 21:
+                object.put("orderStatus", OrderStatusEnum.WAIT_PAY.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
+            case 22:
+                object.put("orderStatus", OrderStatusEnum.TO_PAY.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
+            case 23:
+                object.put("orderStatus", OrderStatusEnum.PAY_FAILED.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 31:
+                object.put("orderStatus", OrderStatusEnum.PAYED.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.REPAYING.getCode());
+                break;
+            case 33:
+                object.put("orderStatus", OrderStatusEnum.OVERDUE.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 34:
+                object.put("orderStatus", OrderStatusEnum.BAD_DEBT.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 41:
+                object.put("orderStatus", OrderStatusEnum.REPAYED.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.REPAYED.getCode());
+            case 42:
+                object.put("orderStatus", OrderStatusEnum.OVERDUEREPAYED.getCode());
+                object.put("payStatus", PayStatusEnum.PAYED.getCode());
+                object.put("repayStatus", RepayStatusEnum.OVERDUE_REPAY.getCode());
+            case 51:
+                object.put("orderStatus", OrderStatusEnum.AUDIT_REFUSE.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 52:
+                object.put("orderStatus", OrderStatusEnum.AUDIT_REFUSE.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            case 53:
+                object.put("orderStatus", OrderStatusEnum.CANCEL.getCode());
+                object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
+                object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+            default:
+                break;
+        }
+
+        CallBackJuHeUtil.callBack("", object);
     }
 
 }

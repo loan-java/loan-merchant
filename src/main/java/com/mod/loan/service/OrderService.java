@@ -6,6 +6,7 @@ import java.util.Map;
 import com.mod.loan.common.mapper.BaseService;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.model.Order;
+import com.mod.loan.model.User;
 
 public interface OrderService extends BaseService<Order, Long> {
 
@@ -57,5 +58,7 @@ public interface OrderService extends BaseService<Order, Long> {
      * @param getOrderNumber
      */
     void saveTakeOutOrder(Long getOrderNumber);
+
+    void orderCallBack(User user, String orderNo, Integer orderStatus);
 
 }

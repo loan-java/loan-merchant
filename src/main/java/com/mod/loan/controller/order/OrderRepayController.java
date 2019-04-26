@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.service.OrderService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -46,6 +48,12 @@ public class OrderRepayController {
 
 	@Autowired
 	private OrderMapper orderMapper;
+
+	@Autowired
+	private OrderService orderService;
+
+	@Autowired
+	private UserMapper userMapper;
 
 	@RequestMapping(value = "order_repay_list")
 	public ModelAndView order_repay_list(ModelAndView view) {
@@ -134,6 +142,7 @@ public class OrderRepayController {
 		orderRepay.setRemark(remark);
 		orderRepay.setUpdateTime(new Date());
 		orderRepayService.updateOrderOffline(record, orderRepay);
+		orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
 		return new ResultMessage(ResponseEnum.M2000);
 	}
 

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,12 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
     private OrderMapper orderMapper;
     @Autowired
     private OrderAuditMapper orderAuditMapper;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public List<Map<String, Object>> findOrderAuditList(Map<String, Object> param, Page page) {
@@ -60,12 +68,14 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_FOR_LENDING);
             orderMapper.updateByPrimaryKey(order);
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_AUDIT_FAIL);
             orderMapper.updateByPrimaryKey(order);
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
             // 更新审核记录
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
