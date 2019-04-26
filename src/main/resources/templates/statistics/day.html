@@ -203,13 +203,8 @@
             success: function (data) {
                 var info = data.data;
                 var countTotalFee = info.countTotalFee;
-                var countPeople = info.countPeople;
                 var countOverdueAmount = info.countOverdueAmount;
-                var countOverdueDays = info.countOverdueDays;
-                var rate = info.merchantRate.productRate;
-                var borrowMoney = info.merchantRate.productMoney / 1000;
-                var productDay = info.merchantRate.productDay;
-                var insertfee = rate * borrowMoney * productDay;
+                var insertfee = info.countInterestFee;
 
                 if (data.status == 2000) {
                     $("#countRegisterUserNumberToDay").html(info.countRegisterUserNumberToDay);
@@ -230,7 +225,7 @@
                     $("#countOldUserNumberToDay").html(info.countOldUserNumberToDay);
                     $("#countShouldRepayAmountToDay").html(info.countShouldRepayAmountToDay);
                     $("#countOverdueAmount").html(info.countOverdueAmount);
-                    $("#countRepayAmountToDay").html(countTotalFee + countPeople * insertfee + countOverdueDays * insertfee + countOverdueAmount);
+                    $("#countRepayAmountToDay").html(countTotalFee + insertfee + countOverdueAmount);
                 } else {
                     Dialog.alert(data.message);
                 }
