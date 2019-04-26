@@ -9,7 +9,8 @@ import com.mod.loan.common.enums.OrderStatusEnum;
 import com.mod.loan.common.enums.OrderTypeEnum;
 import com.mod.loan.common.enums.PayStatusEnum;
 import com.mod.loan.common.enums.RepayStatusEnum;
-import com.mod.loan.model.User;
+import com.mod.loan.mapper.*;
+import com.mod.loan.model.*;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,6 @@ import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.config.Constant;
 import com.mod.loan.config.redis.RedisConst;
 import com.mod.loan.config.redis.RedisMapper;
-import com.mod.loan.mapper.ManagerMapper;
-import com.mod.loan.mapper.OrderAuditMapper;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.mapper.OrderRecycleLogMapper;
-import com.mod.loan.mapper.UserMapper;
-import com.mod.loan.model.Manager;
-import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.OrderService;
 
 @Service
@@ -50,6 +43,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     private OrderAuditMapper orderAuditMapper;
     @Autowired
     OrderRecycleLogMapper orderRecycleLogMapper;
+    @Autowired
+    private MerchantRateMapper merchantRateMapper;
 
     @Override
     public void updateOrderFollowUser(Long followUserId, String merchant, Long... ids) {
@@ -185,6 +180,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         });
         if (data == null) {
             data = new HashMap<>();
+            data.put("merchantRate",merchantRateMapper.findByMerchant(RequestThread.get().getMerchant()));
             data.put("countRegisterUserNumberToDay", userMapper.countRegisterUserNumberToDay(merchant, searchTime));
             data.put("countRealNameUserNumberToDay", userMapper.countRealNameUserNumberToDay(merchant, searchTime));
             data.put("countUserDetailsUserNumberToDay", userMapper.countUserDetailsUserNumberToDay(merchant, searchTime));

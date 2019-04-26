@@ -63,7 +63,7 @@
 							<label class="control-label">利率(%)</label>
 						</td>
 						<td>
-							<input name="productRate" id="productRate" maxlength="4" class="form-control" required="required" />
+							<input name="productRate" id="productRate" maxlength="1" class="form-control" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
 						</td>
 					</tr>
 					<tr>
@@ -71,7 +71,7 @@
 							<label class="control-label">逾期费率(%)</label>
 						</td>
 						<td>
-							<input name="overdueRate" id="overdueRate" maxlength="2" class="form-control" required="required" />
+							<input name="overdueRate" id="overdueRate" maxlength="2" class="form-control" required="required" onkeyup="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" onblur="value=/^\d+\.?\d{0,2}$/.test(value)?value:''" />
 						</td>
 					</tr>
 					<!--<tr>-->

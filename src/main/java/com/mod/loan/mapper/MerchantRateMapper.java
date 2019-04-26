@@ -15,4 +15,6 @@ public interface MerchantRateMapper extends MyBaseMapper<MerchantRate> {
 	List<Map<String, Object>> findMerchantRateList(Map<String, Object> param);
 
 	int selectByBorrowType(@Param("borrowType") Integer borrowType, @Param("merchant") String merchant);
+
+	MerchantRate findByMerchant(@Param("merchant") String merchant);
 }

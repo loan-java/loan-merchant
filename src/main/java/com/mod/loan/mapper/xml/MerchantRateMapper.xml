@@ -29,7 +29,7 @@
 		</if>
 	</where>
 	</select>
-	
+
 	<select id="findMerchantRateList" resultType="map">
 	select id,product_name,product_day,product_money,product_level,product_status,borrow_type,product_rate,total_rate,
 	overdue_rate,create_time,update_time from tb_merchant_rate
@@ -54,6 +54,10 @@
 			and borrow_type = #{borrowType}
 		</if>
 	</where>
+	</select>
+
+	<select id="findByMerchant" resultMap="BaseResultMap">
+		select * from tb_merchant_rate where merchant = #{merchant} and product_status = 1 order by id desc limit 1
 	</select>
 	
 </mapper>
