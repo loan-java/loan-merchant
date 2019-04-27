@@ -175,7 +175,7 @@ public class SignUtil {
 	 */
 	public static String getSign(Map<String, Object> paramMap) {
 		String sign = getSignStr(paramMap);
-		return MD5.toMD5(sign);
+		return MD5Cap.toMD5(sign);
 	}
 
 	/**
