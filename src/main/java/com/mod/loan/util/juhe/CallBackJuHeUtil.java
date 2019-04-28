@@ -20,6 +20,7 @@ public class CallBackJuHeUtil {
 
         String url = host + "/apiext/orderCallback/orderInfo";
         String response = HttpUtils.restRequest(url, object.toJSONString(), "POST");
+        logger.info("聚合回调，request={}, response={}", JSON.toJSONString(object), response);
         JSONObject res = JSON.parseObject(response);
         if ("200".equals(res.getString("code"))) {
             boolean i = true;
