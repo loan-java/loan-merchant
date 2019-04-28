@@ -88,8 +88,7 @@
     </select>
 
     <select id="countMobileUserNumberToDay" resultType="int">
-        SELECT COUNT(mm.id) FROM tb_moxie_mobile mm LEFT JOIN tb_user u ON mm.uid = u.id
-		WHERE u.merchant = #{merchant} AND mm.status = 'report' AND mm.create_time BETWEEN #{searchTime} AND DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+        select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant} and ui.mobile_time &gt;= #{searchTime} and ui.mobile_time &lt; DATE_ADD (#{searchTime},INTERVAL 1 DAY)
 	</select>
 
     <select id="countBindbankUserNumberToDay" resultType="int">
