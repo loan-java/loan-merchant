@@ -216,17 +216,6 @@
 						unMaskScreen();
 					}
 				});
-				$.ajax({
-					type: "post",
-					url: contextPath + "operation/feedback_list_ajax",
-					dataType: "json",
-					data: {
-						"uid" : id
-					},
-					success: function(result) {
-						_that.feedbackList = result.data.length == 0 ? null : result.data;
-					}
-				});
 			},
 			data: {
 				user: {},
