@@ -65,15 +65,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     @Override
     public List<Map<String, Object>> findOrderPassList(Map<String, Object> param, Page page) {
-    	String key = "%s:%s:%s:%s";
-		key = String.format(key, param.get("merchant"), param.get("userType"), param.get("startTime"), param.get("endTime"));
-		List<Map<String, Object>> data = redisMapper.get(RedisConst.ORDER_PASS_STATISTICS + key, new TypeReference<List<Map<String, Object>>>() {
-		});
-		if (data == null) {
-			data = orderMapper.findOrderPassList(param);
-			redisMapper.set(RedisConst.ORDER_PASS_STATISTICS + key, data, 180);
-		}
-		return data;
+        String key = "%s:%s:%s:%s";
+        key = String.format(key, param.get("merchant"), param.get("userType"), param.get("startTime"), param.get("endTime"));
+        List<Map<String, Object>> data = redisMapper.get(RedisConst.ORDER_PASS_STATISTICS + key, new TypeReference<List<Map<String, Object>>>() {
+        });
+        if (data == null) {
+            data = orderMapper.findOrderPassList(param);
+            redisMapper.set(RedisConst.ORDER_PASS_STATISTICS + key, data, 180);
+        }
+        return data;
     }
 
     @Override
@@ -164,7 +164,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
-                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
+                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order.getOrderNo(), order.getStatus());
                 // 发送消息
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
@@ -180,7 +180,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         });
         if (data == null) {
             data = new HashMap<>();
-            data.put("merchantRate",merchantRateMapper.findByMerchant(RequestThread.get().getMerchant()));
+            data.put("merchantRate", merchantRateMapper.findByMerchant(RequestThread.get().getMerchant()));
             data.put("countRegisterUserNumberToDay", userMapper.countRegisterUserNumberToDay(merchant, searchTime));
             data.put("countRealNameUserNumberToDay", userMapper.countRealNameUserNumberToDay(merchant, searchTime));
             data.put("countUserDetailsUserNumberToDay", userMapper.countUserDetailsUserNumberToDay(merchant, searchTime));
@@ -274,7 +274,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 break;
         }
 
-        CallBackJuHeUtil.callBack("", object);
+        CallBackJuHeUtil.callBack(Constant.juheCallBackUrl, object);
     }
 
 }
