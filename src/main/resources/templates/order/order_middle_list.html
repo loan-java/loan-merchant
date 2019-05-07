@@ -265,12 +265,12 @@
             success: function (jsonObject) {
                 $("#payType").html("");
                 var payType = JSON.parse(jsonObject.data);
-                if (payType.baofoo && payType.baofoo == 1) {
-                    $("#payType").append("<option value='baofoo'>宝付</option>");
-                }
-                if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 1) {
-                    $("#payType").append("<option value='baofoo'>宝付</option>");
-                }
+                // if (payType.baofoo && payType.baofoo == 1) {
+                //     $("#payType").append("<option value='baofoo'>宝付</option>");
+                // }
+                // if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 1) {
+                //     $("#payType").append("<option value='baofoo'>宝付</option>");
+                // }
                 if (payType.kuaiqian && payType.kuaiqian == 1) {
                     $("#payType").append("<option value='baofoo'>快钱</option>");
                 }
