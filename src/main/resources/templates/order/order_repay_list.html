@@ -19,6 +19,7 @@
 							<option value="5">富友银行卡</option>
 							<option value="6">汇聚银行卡</option>
 							<option value="7">宝付银行卡</option>
+							<option value="8">快钱银行卡</option>
 						</select>
 						<span>还款状态:</span>
 						<select id="repayStatus" name="repayStatus" class="form-control" onchange="this.blur()">
@@ -109,6 +110,9 @@
                         }
                         if (value == 7){
                             return "宝付银行卡";
+                        }
+                        if (value == 8){
+                            return "快钱银行卡";
                         }
 			            return "---";
 			        }
