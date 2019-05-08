@@ -9,4 +9,5 @@ public interface UserAddressListMapper extends MyBaseMapper<UserAddressList> {
 
 	UserAddressList selectOneByUid(@Param("uid") Long uid);
 
+    UserAddressList findByUid(@Param("uid") Long id);
 }
