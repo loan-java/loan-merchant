@@ -35,6 +35,8 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 
 	int countFlowAmount(@Param("merchant") String merchant);
 
+	int otherFee(@Param("merchant") String merchant);
+
 	BigDecimal countOverdueAmount(@Param("merchant") String merchant);
 
 //	int orderPassCount(Map<String, Object> param);

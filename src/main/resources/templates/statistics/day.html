@@ -142,6 +142,14 @@
                             <span id="countShouldRepayAmountToDay"></span>
                         </div>
                     </div>
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">金融挂靠费(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="otherFee"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
@@ -226,6 +234,7 @@
                     $("#countShouldRepayAmountToDay").html(info.countShouldRepayAmountToDay);
                     $("#countOverdueAmount").html(info.countOverdueAmount);
                     $("#countRepayAmountToDay").html(countTotalFee + insertfee + countOverdueAmount);
+                    $("#otherFee").html(info.otherFee * 0.03);
                 } else {
                     Dialog.alert(data.message);
                 }

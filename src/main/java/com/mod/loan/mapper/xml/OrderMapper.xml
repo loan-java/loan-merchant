@@ -288,6 +288,10 @@
     </select>
 
     <select id="countOverdueAmount" resultType="decimal">
-        select sum(overdue_fee) from tb_order where merchant= #{merchant}
+        select sum(overdue_fee) from tb_order where merchant = #{merchant}
+    </select>
+
+    <select id="otherFee" resultType="int">
+        select sum(actual_money) from tb_order where merchant = #{merchant}
     </select>
 </mapper>
