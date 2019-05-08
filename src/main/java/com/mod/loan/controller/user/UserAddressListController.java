@@ -1,7 +1,5 @@
 package com.mod.loan.controller.user;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.common.model.ResultMessage;
@@ -42,8 +40,7 @@ public class UserAddressListController {
         User user = userMapper.selectByPrimaryKey(id);
         if (user != null && RequestThread.get().getMerchant().equals(user.getMerchant())) {
             UserAddressList addressList = userAddressListMapper.findByUid(user.getId());
-            JSONObject object = JSON.parseObject(addressList.getAddressList());
-            return new ResultMessage(ResponseEnum.M2000, object);
+            return new ResultMessage(ResponseEnum.M2000, addressList.getAddressList());
         }
         return new ResultMessage(ResponseEnum.M4000);
     }

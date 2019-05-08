@@ -9,19 +9,19 @@
 	<div id="zhongxin" align="center">
 		<h4>通讯录</h4><span>人数：<span id="num"></span></span>
 		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th class="center">重复名单</th>
-					<th class="center">电话</th>
-				</tr>
-			</thead>
-			<tbody id="three">
-			</tbody>
-			<tbody>
-			<tr style="height: 40px">
-				<td colspan="2"></td>
-			</tr>
-			</tbody>
+			<!--<thead>-->
+				<!--<tr>-->
+					<!--<th class="center">重复名单</th>-->
+					<!--<th class="center">电话</th>-->
+				<!--</tr>-->
+			<!--</thead>-->
+			<!--<tbody id="three">-->
+			<!--</tbody>-->
+			<!--<tbody>-->
+			<!--<tr style="height: 40px">-->
+				<!--<td colspan="2"></td>-->
+			<!--</tr>-->
+			<!--</tbody>-->
 			<thead>
 				<tr>
 					<th class="center">姓名</th>
@@ -49,25 +49,25 @@
 					var addressList = data.data;
 					if(addressList){
 						var arr = JSON.parse(addressList);
-						$("#num").text(arr.length)
+						$("#num").text(arr.length);
 						var tempMap={};
-						var rd = {}
+						var rd = {};
 						$.each(arr,function(i){
 							var name = this.userName;
 							var phone = this.mobile;
 							$("#addressList").append("<tr><td class='center'>" + name + "</td><td class='center'>" + phone + "</td></tr>");
-							rd[name] ? (rd[name]++) : (rd[name] = 1)
-							if(tempMap[name]!=0&&!tempMap[name]){
-								tempMap[name]=phone;
-							}else{
-								tempMap[name]=tempMap[name]+","+phone;
-							}
+							// rd[name] ? (rd[name]++) : (rd[name] = 1)
+							// if(tempMap[name]!=0&&!tempMap[name]){
+							// 	tempMap[name]=phone;
+							// }else{
+							// 	tempMap[name]=tempMap[name]+","+phone;
+							// }
 						});
-						for(key in rd){
-							if(rd[key] >=3) {
-								$("#three").append("<tr><td class='center'>" +"<font color='red'>"+key+"</font>"+ "</td><td class='center'>" + "<font color='red'>"+tempMap[key]+"</font>" + "</td></tr>");
-							}
-						}
+						// for(key in rd){
+						// 	if(rd[key] >=3) {
+						// 		$("#three").append("<tr><td class='center'>" +"<font color='red'>"+key+"</font>"+ "</td><td class='center'>" + "<font color='red'>"+tempMap[key]+"</font>" + "</td></tr>");
+						// 	}
+						// }
 					}
 				},
 				complete : function(){
