@@ -53,8 +53,8 @@
 						var tempMap={};
 						var rd = {}
 						$.each(arr,function(i){
-							var name = this.n;
-							var phone = this.p;
+							var name = this.userName;
+							var phone = this.mobile;
 							$("#addressList").append("<tr><td class='center'>" + name + "</td><td class='center'>" + phone + "</td></tr>");
 							rd[name] ? (rd[name]++) : (rd[name] = 1)
 							if(tempMap[name]!=0&&!tempMap[name]){
