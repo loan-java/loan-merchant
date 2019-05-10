@@ -1,30 +1,33 @@
 package com.mod.loan.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.mod.loan.common.enums.OrderStatusEnum;
 import com.mod.loan.common.enums.OrderTypeEnum;
 import com.mod.loan.common.enums.PayStatusEnum;
 import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.common.mapper.BaseServiceImpl;
+import com.mod.loan.common.model.Page;
+import com.mod.loan.common.model.RequestThread;
+import com.mod.loan.config.Constant;
+import com.mod.loan.config.rabbitmq.RabbitConst;
+import com.mod.loan.config.redis.RedisConst;
+import com.mod.loan.config.redis.RedisMapper;
 import com.mod.loan.mapper.*;
-import com.mod.loan.model.*;
+import com.mod.loan.model.Manager;
+import com.mod.loan.model.Order;
+import com.mod.loan.model.OrderAudit;
+import com.mod.loan.model.User;
+import com.mod.loan.service.OrderService;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.mod.loan.common.mapper.BaseServiceImpl;
-import com.mod.loan.common.model.Page;
-import com.mod.loan.common.model.RequestThread;
-import com.mod.loan.config.Constant;
-import com.mod.loan.config.redis.RedisConst;
-import com.mod.loan.config.redis.RedisMapper;
-import com.mod.loan.service.OrderService;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
@@ -169,13 +172,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
                 jsonObject.put("payType", payType);
-                if(Constant.payType == null) {
-                    rabbitTemplate.convertAndSend("kuaiqian_queue_order_pay", jsonObject);
+                if (Constant.payType == null) {
+                    rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
                 } else {
-                    if(Constant.payType.equals("baofoo")) {
-                        rabbitTemplate.convertAndSend("baofoo_queue_order_pay", jsonObject);
-                    }else if(Constant.payType.equals("kuaiqian")){
-                        rabbitTemplate.convertAndSend("kuaiqian_queue_order_pay", jsonObject);
+                    if (Constant.payType.equals("baofoo")) {
+                        rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
+                    } else if (Constant.payType.equals("kuaiqian")) {
+                        rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
                     }
                 }
 
