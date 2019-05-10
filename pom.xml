@@ -165,6 +165,20 @@
 				<profiles.active>online</profiles.active>
 			</properties>
 		</profile>
+		<profile>
+			<!-- 及时贷环境 -->
+			<id>jishidai</id>
+			<properties>
+				<profiles.active>jishidai</profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 华时贷环境 -->
+			<id>huashidai</id>
+			<properties>
+				<profiles.active>huashidai</profiles.active>
+			</properties>
+		</profile>
 	</profiles>
 	<build>
 		<finalName>${project.name}</finalName>
