@@ -110,6 +110,11 @@ public class Constant {
 
     public static String juheCallBackUrl;
 
+    public static String payType;
+
+    @Value("${pay.type}")
+    public static void setPayType(String payType) { Constant.payType = payType; }
+
     @Value("${juhe.call.back.url}")
     public void setJuheCallBackUrl(String juheCallBackUrl) {
         Constant.juheCallBackUrl = juheCallBackUrl;
