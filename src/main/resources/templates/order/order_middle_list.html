@@ -263,6 +263,7 @@
             dataType: "json",
             data: {},
             success: function (jsonObject) {
+                console.log("getPayTypeList获取返回结果：" + jsonObject)
                 $("#payType").html("");
                 var payType = JSON.parse(jsonObject.data);
                 // if (payType.baofoo && payType.baofoo == 1) {
