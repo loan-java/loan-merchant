@@ -266,7 +266,7 @@
                 console.log(jsonObject)
                 $("#payType").html("");
                 var payType = JSON.parse(jsonObject.data);
-                 if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 2) {
+                 if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 1) {
                      $("#payType").append("<option value='baofoo'>宝付</option>");
                  }
                  if (payType.kuaiqian && payType.kuaiqian.pay && payType.kuaiqian.pay == 1) {
