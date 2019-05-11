@@ -263,6 +263,7 @@
             dataType: "json",
             data: {},
             success: function (jsonObject) {
+                console.log(jsonObject)
                 $("#payType").html("");
                 var payType = JSON.parse(jsonObject.data);
                 // if (payType.baofoo && payType.baofoo == 1) {
