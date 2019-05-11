@@ -119,6 +119,7 @@ public class OrderPayController {
 
     @RequestMapping(value = "pay_type_list", method = {RequestMethod.POST})
     public ResultMessage pay_type_list() {
+        logger.info("merchant值：" + RequestThread.get().getMerchant());
         Merchant merchant = merchantService.findMerchantByAlias(RequestThread.get().getMerchant());
         if(merchant == null) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "配置信息不存在");
