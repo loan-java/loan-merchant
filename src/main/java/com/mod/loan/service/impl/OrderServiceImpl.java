@@ -172,16 +172,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
                 jsonObject.put("payType", payType);
-                if (Constant.payType == null) {
+                System.out.println("放款类型：" + Constant.payType);
+                System.out.println("==========================================");
+                if (Constant.payType.equals("baofoo")) {
+                    rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
+                } else if (Constant.payType.equals("kuaiqian")) {
                     rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
-                } else {
-                    if (Constant.payType.equals("baofoo")) {
-                        rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
-                    } else if (Constant.payType.equals("kuaiqian")) {
-                        rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
-                    }
                 }
-
             }
         }
     }
