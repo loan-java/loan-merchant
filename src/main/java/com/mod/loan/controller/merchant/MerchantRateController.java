@@ -2,6 +2,7 @@ package com.mod.loan.controller.merchant;
 
 import java.math.BigDecimal;
 
+import com.mod.loan.config.Constant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,6 +92,13 @@ public class MerchantRateController {
 			return new ResultMessage(ResponseEnum.M2000, merchantRate);
 		}
 		return new ResultMessage(ResponseEnum.M4000);
+	}
+
+	//测试配置文件参数是否生效
+	@RequestMapping(value = "/testPayType")
+	public String testPayType() {
+		System.out.println(Constant.payType);
+		return Constant.payType;
 	}
 
 }
