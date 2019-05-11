@@ -249,21 +249,24 @@
 					return identValue;
 		        },
                 getBindType(bindType) {
-                    var bindTypes = "快钱";
-                    // switch (bindType) {
-                    //     case 1:
-                    //         bindTypes = "合利宝";
-                    //         break;
-                    //     case 2:
-                    //         bindTypes = "富友";
-                    //         break;
-                    //     case 3:
-                    //     bindTypes = "汇聚";
-                    //     break;
-                    //     case 4:
-                    //         bindTypes = "宝付";
-                    //         break;
-                    // }
+                    var bindTypes = "";
+                     switch (bindType) {
+                         case 1:
+                             bindTypes = "合利宝";
+                             break;
+                         case 2:
+                             bindTypes = "富友";
+                             break;
+                         case 3:
+							 bindTypes = "汇聚";
+                         break;
+                         case 4:
+                             bindTypes = "宝付";
+                             break;
+                         case 5:
+                             bindTypes = "快钱";
+                             break;
+                     }
                     return bindTypes;
                 },
 		        formatDate(date){
