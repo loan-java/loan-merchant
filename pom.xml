@@ -159,13 +159,6 @@
 			</activation>
 		</profile>
 		<profile>
-			<!-- 生产环境 -->
-			<id>online</id>
-			<properties>
-				<profiles.active>online</profiles.active>
-			</properties>
-		</profile>
-		<profile>
 			<!-- 及时贷环境 -->
 			<id>jishidai</id>
 			<properties>
