@@ -7,8 +7,11 @@ import com.mod.loan.common.mapper.BaseService;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.User;
+import com.mod.loan.model.dto.StrategyDTO;
 
 public interface OrderService extends BaseService<Order, Long> {
+
+    List<StrategyDTO> findOrderRiskStrategyList(long id);
 
     void updateOrderFollowUser(Long followUserId, String merchant, Long... ids);
 

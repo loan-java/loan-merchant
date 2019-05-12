@@ -30,20 +30,28 @@
                     <span>用户手机:</span>
                     <input id="userPhone" name="userPhone" type="text"/>
                     <span>下单时间:</span>
-                    <input id="startCreateTime" name="startCreateTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="startCreateTime" name="startCreateTime" type="text" readonly="readonly"
+                           placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     ~
-                    <input id="endCreateTime" name="endCreateTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
-                    <br />
+                    <input id="endCreateTime" name="endCreateTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <br/>
                     <span>应还日期:</span>
-                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     ~
-                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     <span>实际还款日期:</span>
-                    <input id="startRealRepayTime" name="startRealRepayTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="startRealRepayTime" name="startRealRepayTime" type="text" readonly="readonly"
+                           placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     ~
-                    <input id="endRealRepayTime" name="endRealRepayTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="endRealRepayTime" name="endRealRepayTime" type="text" readonly="readonly"
+                           placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     <br>
-                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i>
+                        查询
+                    </button>
                     <button class="btn btn-small btn-success" onclick="exportReport()">EXCEL导出</button>
                 </div>
                 <!-- 检索  -->
@@ -53,6 +61,7 @@
                         <th class="center">用户姓名</th>
                         <th class="center">借款期限</th>
                         <th class="center">状态</th>
+                        <th class="center">风控报告</th>
                         <th class="center">借款金额</th>
                         <th class="center">综合费</th>
                         <th class="center">实际到账金额</th>
@@ -90,10 +99,10 @@
         table: "myTable",
         id: "id",
         queryUrl: contextPath + "order/order_list_ajax",
-        beforeSend : function(){
+        beforeSend: function () {
             maskScreen();
         },
-        complete : function(){
+        complete: function () {
             unMaskScreen();
         },
         headerColumns: [{
@@ -152,6 +161,16 @@
                     return "<font color='red'>取消</font>";
                 }
                 return "---";
+            }
+        }, {
+            id: "strategyList",
+            renderer: function (idValue, value, record) {
+                if (value === undefined || value === null || value === '' || value.length === 0) return '---';
+
+                var html = "<div class='btn-group'>";
+                html += "<a class='btn btn-mini btn-info' title='查看' onclick=\"viewRiskReport('" + record.id + "');\">查看</a>";
+                html += "</div>";
+                return html;
             }
         }, {
             id: "borrow_money",
@@ -251,11 +270,13 @@
             status: $("#status").val()
         });
     }
-//    query();
+
+    //    query();
     function search() {
         myTable.page.pageNo = 1;
         query();
     }
+
     function detail(id) {
         var diag = new top.Dialog();
         diag.Drag = true;
@@ -269,9 +290,59 @@
         };
         diag.show();
     }
-    
-    function secondSecurityVerify(){
-    	var diag = new top.Dialog();
+
+    function viewRiskReport(oid) {
+
+        $.ajax({
+            type: "GET",
+            url: contextPath + "order/queryOrderRiskStrategyList?oid=" + oid,
+            dataType: "json",//返回的数据类型
+            success: function (data) {
+                var html = '<div style="width: 100%; height: 700px; overflow-x: hidden; overflow-y: scroll;"><table class="table table-striped table-bordered table-hover">';
+                html += '<tr><th class="center">规则名</th><th class="center">状态</th><th class="center">状态码</th><th class="center">分数</th></tr>';
+
+                for (var i = 0; i < data.length; i++) {
+                    var o = data[i];
+                    if (o.ruleResList === undefined || o.ruleResList === null || o.ruleResList.length === 0) continue;
+
+                    for (var j = 0; j < o.ruleResList.length; j++) {
+                        var oo = o.ruleResList[j];
+                        html += '<tr><td class="center">' + oo.rule_name + '</td><td class="center">' + oo.desc + '</td><td class="center">' + oo.code + '</td><td class="center">' + oo.score + '</td></tr>';
+                        // html += '<tr><td class="center">' + oo.rule_id + '</td><td class="center">' + oo.rule_name + '</td><td class="center">' + oo.desc + '</td><td class="center">' + oo.code + '</td><td class="center">' + oo.score + '</td></tr>';
+                    }
+                }
+
+                html += '</table></div>';
+
+                var diag = new top.Dialog();
+                diag.Drag = true;
+                diag.Title = "风控报告";
+                diag.InnerHtml = html;
+                diag.Width = 1200;
+                diag.Height = 760;
+                diag.CancelEvent = function () { //关闭事件
+                    query();
+                    diag.close();
+                };
+                diag.show();
+            },
+            error: function (data) {
+                var diag = new top.Dialog();
+                diag.Drag = true;
+                diag.Title = "风控报告";
+                diag.InnerHtml = '请求失败: ' + data;
+                diag.Width = 1200;
+                diag.Height = 760;
+                diag.CancelEvent = function () {
+                    diag.close();
+                };
+                diag.show();
+            }
+        });
+    }
+
+    function secondSecurityVerify() {
+        var diag = new top.Dialog();
         diag.Drag = true;
         diag.Title = "安全校验";
         diag.URL = contextPath + "user_security";
@@ -282,37 +353,37 @@
         };
         diag.show();
     }
-    
+
     function exportReport() {
-    	$.ajax({
-			url : contextPath+"system/security_first_verify",
-			type : "POST",
-			dataType : "json",
-			data : {},
-			beforeSend : function(){
-	            maskScreen();
-	        },
-			success : function(jsonObject) {
-				if(jsonObject.status != 2000){
-					secondSecurityVerify();
-				}else{
-					Dialog.confirm("确认按条件导出订单列表吗？",function(){
-				        location.href = contextPath + "order/export_report_order_list?reportName=order_list&userPhone=" + $("#userPhone").val() +
-				                "&status=" + $("#status").val() +
-				                "&startTime=" + $("#startTime").val() +
-				                "&endTime=" + $("#endTime").val() +
-				                "&startCreateTime=" + $("#startCreateTime").val() +
-				                "&endCreateTime=" + $("#endCreateTime").val() +
-				                "&startRealRepayTime=" + $("#startRealRepayTime").val() +
-				                "&endRealRepayTime=" + $("#endRealRepayTime").val();
-				        
-			    	});
-				}
-			},
-			complete : function(){
-				unMaskScreen();
-			}
-		});
+        $.ajax({
+            url: contextPath + "system/security_first_verify",
+            type: "POST",
+            dataType: "json",
+            data: {},
+            beforeSend: function () {
+                maskScreen();
+            },
+            success: function (jsonObject) {
+                if (jsonObject.status != 2000) {
+                    secondSecurityVerify();
+                } else {
+                    Dialog.confirm("确认按条件导出订单列表吗？", function () {
+                        location.href = contextPath + "order/export_report_order_list?reportName=order_list&userPhone=" + $("#userPhone").val() +
+                            "&status=" + $("#status").val() +
+                            "&startTime=" + $("#startTime").val() +
+                            "&endTime=" + $("#endTime").val() +
+                            "&startCreateTime=" + $("#startCreateTime").val() +
+                            "&endCreateTime=" + $("#endCreateTime").val() +
+                            "&startRealRepayTime=" + $("#startRealRepayTime").val() +
+                            "&endRealRepayTime=" + $("#endRealRepayTime").val();
+
+                    });
+                }
+            },
+            complete: function () {
+                unMaskScreen();
+            }
+        });
     }
 </script>
 </body>

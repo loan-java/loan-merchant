@@ -113,6 +113,11 @@ public class OrderController {
         return new ResultMessage(ResponseEnum.M2000, orderService.findOrderList(param, page), page);
     }
 
+    @RequestMapping("/queryOrderRiskStrategyList")
+    public Object queryOrderRiskStrategyList(long oid) {
+        return orderService.findOrderRiskStrategyList(oid);
+    }
+
     /**
      * 跳转信审工作台
      *
