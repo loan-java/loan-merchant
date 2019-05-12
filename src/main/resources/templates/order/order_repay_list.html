@@ -12,14 +12,10 @@
 						<span>还款类型:</span>
 						<select id="repayType" name="repayType" class="form-control" onchange="this.blur()">
 							<option value="">全部</option>
-							<option value="1">银行卡</option>
-							<option value="2">支付宝</option>
+							<option value="1">快钱银行卡</option>
+							<option value="2">宝付银行卡</option>
 							<option value="3">微信</option>
 							<option value="4">线下转账</option>
-							<option value="5">富友银行卡</option>
-							<option value="6">汇聚银行卡</option>
-							<option value="7">宝付银行卡</option>
-							<option value="8">快钱银行卡</option>
 						</select>
 						<span>还款状态:</span>
 						<select id="repayStatus" name="repayStatus" class="form-control" onchange="this.blur()">
@@ -91,10 +87,10 @@
 		            id : "repay_type",
 		            renderer : function(idValue,value,record){
 			            if (value == 1){
-							return "银行卡";
+							return "快钱银行卡";
 						}
 		            	if (value == 2){
-							return "支付宝";
+							return "宝付银行卡";
 						}
 		            	if (value == 3){
 							return "微信";
@@ -102,18 +98,6 @@
 		            	if (value == 4){
 							return "线下转账";
 						}
-                        if (value == 5){
-                            return "富友银行卡";
-                        }
-                        if (value == 6){
-                            return "汇聚银行卡";
-                        }
-                        if (value == 7){
-                            return "宝付银行卡";
-                        }
-                        if (value == 8){
-                            return "快钱银行卡";
-                        }
 			            return "---";
 			        }
 	        	},{
