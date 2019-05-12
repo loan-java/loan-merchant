@@ -94,11 +94,4 @@ public class MerchantRateController {
 		return new ResultMessage(ResponseEnum.M4000);
 	}
 
-	//测试配置文件参数是否生效
-	@RequestMapping(value = "/testPayType")
-	public String testPayType() {
-		System.out.println(Constant.payType);
-		return Constant.payType;
-	}
-
 }
