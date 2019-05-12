@@ -3,10 +3,7 @@ package com.mod.loan.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.mod.loan.common.enums.OrderStatusEnum;
-import com.mod.loan.common.enums.OrderTypeEnum;
-import com.mod.loan.common.enums.PayStatusEnum;
-import com.mod.loan.common.enums.RepayStatusEnum;
+import com.mod.loan.common.enums.*;
 import com.mod.loan.common.mapper.BaseServiceImpl;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
@@ -209,16 +206,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
                 jsonObject.put("payType", payType);
-                if (Constant.payType == null) {
+                System.out.println("放款类型：" + order.getPaymentType());
+                System.out.println("==========================================");
+                if (PaymentTypeEnum.BAOFOO.getCode().equals(order.getPaymentType())) {
+                    rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
+                } else if (PaymentTypeEnum.KUAIQIAN.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
-                } else {
-                    if (Constant.payType.equals("baofoo")) {
-                        rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
-                    } else if (Constant.payType.equals("kuaiqian")) {
-                        rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
-                    }
                 }
-
             }
         }
     }

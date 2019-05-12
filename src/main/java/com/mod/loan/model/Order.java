@@ -163,6 +163,17 @@ public class Order {
     @Column(name = "recycle_type")
     private Integer recycleType;
 
+
+    /**
+     * 第三方支付类型：baofoo   kuaiqian
+     */
+    @Column(name = "payment_type")
+    private String paymentType;
+
+    public String getPaymentType() { return paymentType; }
+
+    public void setPaymentType(String paymentType) { this.paymentType = paymentType; }
+
     /**
      * @return id
      */

@@ -31,6 +31,7 @@
         <result column="product_id" jdbcType="BIGINT" property="productId"/>
         <result column="user_type" jdbcType="INTEGER" property="userType"/>
         <result column="recycle_type" jdbcType="INTEGER" property="recycleType"/>
+        <result column="payment_type" jdbcType="VARCHAR" property="paymentType"/>
     </resultMap>
 
     <select id="orderCount" resultType="int">

@@ -2,6 +2,7 @@ package com.mod.loan.controller.merchant;
 
 import java.math.BigDecimal;
 
+import com.mod.loan.config.Constant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

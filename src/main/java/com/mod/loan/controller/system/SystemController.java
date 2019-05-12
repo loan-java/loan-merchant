@@ -294,7 +294,7 @@ public class SystemController {
 		temp.setMerchantAlias(merchantAlias);
 		temp.setMerchantStatus(1);
 		Merchant merchant = merchantMapper.selectOne(temp);
-		return new ResultMessage(ResponseEnum.M2000, merchant == null ? "" : merchant.getMerchantApp());
+		return new ResultMessage(ResponseEnum.M2000, merchant == null ? "" : merchant.getMerchantName());
 	}
 
 	private ResultMessage lockManager(Manager manager, String ip) {
