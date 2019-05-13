@@ -21,6 +21,8 @@ import com.mod.loan.service.OrderService;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ import java.util.*;
 
 @Service
 public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements OrderService {
+
+    public static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper;
@@ -323,103 +327,108 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     private List<StrategyDTO> bindStrategyDTOList(String strategy) {
 
-        strategy = strategy.substring(1);
-        strategy = strategy.substring(0, strategy.length() - 1);
+        try {
+            strategy = strategy.substring(1);
+            strategy = strategy.substring(0, strategy.length() - 1);
 
-        List<String> list = Arrays.asList(strategy.split("StrategyDTO\\("));
+            List<String> list = Arrays.asList(strategy.split("StrategyDTO\\("));
 
-        List<StrategyDTO> dtoList = new ArrayList<>();
+            List<StrategyDTO> dtoList = new ArrayList<>();
 
-        list.forEach(str -> {
-            str = replace(str);
+            list.forEach(str -> {
+                str = replace(str);
 
-            if (StringUtils.isBlank(str)) return;
+                if (StringUtils.isBlank(str)) return;
 
-            String[] arr = str.trim().split("ruleResList=");
-            if (arr.length == 0) return;
+                String[] arr = str.trim().split("ruleResList=");
+                if (arr.length == 0) return;
 
-            StrategyDTO strategyDTO = new StrategyDTO();
+                StrategyDTO strategyDTO = new StrategyDTO();
 
-            List<String> strategyList = Arrays.asList(arr[0].trim().split(","));
-            String code = null, desc = null, score = null, index = null;
+                List<String> strategyList = Arrays.asList(arr[0].trim().split(","));
+                String code = null, desc = null, score = null, index = null;
 
-            if (CollectionUtils.isNotEmpty(strategyList))
-                for (String st : strategyList) {
-                    if (StringUtils.isBlank(st)) return;
-                    st = st.trim();
-                    if (st.contains("code")) {
-                        code = subValue(st);
-                    } else if (st.contains("desc")) {
-                        desc = subValue(st);
-                    } else if (st.contains("score")) {
-                        score = subValue(st);
-                    } else if (st.contains("index")) {
-                        index = subValue(st);
-                    }
-                }
-
-            strategyDTO.setCode(StringUtils.equals(code, "null") ? null : code);
-            strategyDTO.setDesc(StringUtils.equals(desc, "null") ? null : desc);
-            strategyDTO.setScore(StringUtils.equals(score, "null") ? null : score);
-            strategyDTO.setIndex(StringUtils.equals(index, "null") ? null : index);
-
-            if (arr.length > 1) {
-                String ss = arr[1];
-                ss = ss.substring(1);
-                ss = ss.substring(0, ss.length() - 1);
-                List<String> r = Arrays.asList(ss.trim().split("RuleResDTO\\("));
-
-                List<StrategyDTO.RuleResDTO> ruleList = new ArrayList<>();
-
-                for (String rr : r) {
-
-                    rr = replace(rr);
-                    if (StringUtils.isBlank(rr)) continue;
-
-                    StrategyDTO.RuleResDTO rule = new StrategyDTO.RuleResDTO();
-
-                    List<String> ruleS = Arrays.asList(rr.trim().split(","));
-
-                    String code2 = null, desc2 = null, score2 = null, labelValue = null, isDefaultVal = null, ruleName = null, ruleId = null;
-
-                    if (CollectionUtils.isNotEmpty(ruleS))
-                        for (String rr2 : ruleS) {
-                            rr2 = replace(rr2);
-                            if (StringUtils.isBlank(rr2)) continue;
-
-                            if (rr2.contains("code")) {
-                                code2 = subValue(rr2);
-                            } else if (rr2.contains("desc")) {
-                                desc2 = subValue(rr2);
-                            } else if (rr2.contains("score")) {
-                                score2 = subValue(rr2);
-                            } else if (rr2.contains("labelValue")) {
-                                labelValue = subValue(rr2);
-                            } else if (rr2.contains("isDefaultVal")) {
-                                isDefaultVal = subValue(rr2);
-                            } else if (rr2.contains("rule_name")) {
-                                ruleName = subValue(rr2);
-                            } else if (rr2.contains("rule_id")) {
-                                ruleId = subValue(rr2);
-                            }
+                if (CollectionUtils.isNotEmpty(strategyList))
+                    for (String st : strategyList) {
+                        if (StringUtils.isBlank(st)) return;
+                        st = st.trim();
+                        if (st.contains("code")) {
+                            code = subValue(st);
+                        } else if (st.contains("desc")) {
+                            desc = subValue(st);
+                        } else if (st.contains("score")) {
+                            score = subValue(st);
+                        } else if (st.contains("index")) {
+                            index = subValue(st);
                         }
+                    }
 
-                    rule.setCode(StringUtils.equals(code2, "null") ? null : code2);
-                    rule.setDesc(StringUtils.equals(desc2, "null") ? null : desc2);
-                    rule.setScore(StringUtils.equals(score2, "null") ? null : score2);
-                    rule.setLabelValue(StringUtils.equals(labelValue, "null") ? null : Boolean.valueOf(labelValue));
-                    rule.setIsDefaultVal(StringUtils.equals(isDefaultVal, "null") ? null : isDefaultVal);
-                    rule.setRule_name(StringUtils.equals(ruleName, "null") ? null : ruleName);
-                    if (StringUtils.isNotBlank(ruleId) && !StringUtils.equals(ruleId, "null"))
-                        rule.setRule_id(ruleId.replaceAll("\\)", "").replaceAll("]", ""));
-                    ruleList.add(rule);
+                strategyDTO.setCode(StringUtils.equals(code, "null") ? null : code);
+                strategyDTO.setDesc(StringUtils.equals(desc, "null") ? null : desc);
+                strategyDTO.setScore(StringUtils.equals(score, "null") ? null : score);
+                strategyDTO.setIndex(StringUtils.equals(index, "null") ? null : index);
+
+                if (arr.length > 1) {
+                    String ss = arr[1];
+                    ss = ss.substring(1);
+                    ss = ss.substring(0, ss.length() - 1);
+                    List<String> r = Arrays.asList(ss.trim().split("RuleResDTO\\("));
+
+                    List<StrategyDTO.RuleResDTO> ruleList = new ArrayList<>();
+
+                    for (String rr : r) {
+
+                        rr = replace(rr);
+                        if (StringUtils.isBlank(rr)) continue;
+
+                        StrategyDTO.RuleResDTO rule = new StrategyDTO.RuleResDTO();
+
+                        List<String> ruleS = Arrays.asList(rr.trim().split(","));
+
+                        String code2 = null, desc2 = null, score2 = null, labelValue = null, isDefaultVal = null, ruleName = null, ruleId = null;
+
+                        if (CollectionUtils.isNotEmpty(ruleS))
+                            for (String rr2 : ruleS) {
+                                rr2 = replace(rr2);
+                                if (StringUtils.isBlank(rr2)) continue;
+
+                                if (rr2.contains("code")) {
+                                    code2 = subValue(rr2);
+                                } else if (rr2.contains("desc")) {
+                                    desc2 = subValue(rr2);
+                                } else if (rr2.contains("score")) {
+                                    score2 = subValue(rr2);
+                                } else if (rr2.contains("labelValue")) {
+                                    labelValue = subValue(rr2);
+                                } else if (rr2.contains("isDefaultVal")) {
+                                    isDefaultVal = subValue(rr2);
+                                } else if (rr2.contains("rule_name")) {
+                                    ruleName = subValue(rr2);
+                                } else if (rr2.contains("rule_id")) {
+                                    ruleId = subValue(rr2);
+                                }
+                            }
+
+                        rule.setCode(StringUtils.equals(code2, "null") ? null : code2);
+                        rule.setDesc(StringUtils.equals(desc2, "null") ? null : desc2);
+                        rule.setScore(StringUtils.equals(score2, "null") ? null : score2);
+                        rule.setLabelValue(StringUtils.equals(labelValue, "null") ? null : Boolean.valueOf(labelValue));
+                        rule.setIsDefaultVal(StringUtils.equals(isDefaultVal, "null") ? null : isDefaultVal);
+                        rule.setRule_name(StringUtils.equals(ruleName, "null") ? null : ruleName);
+                        if (StringUtils.isNotBlank(ruleId) && !StringUtils.equals(ruleId, "null"))
+                            rule.setRule_id(ruleId.replaceAll("\\)", "").replaceAll("]", ""));
+                        ruleList.add(rule);
+                    }
+
+                    strategyDTO.setRuleResList(ruleList);
                 }
-
-                strategyDTO.setRuleResList(ruleList);
-            }
-            dtoList.add(strategyDTO);
-        });
-        return dtoList;
+                dtoList.add(strategyDTO);
+            });
+            return dtoList;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     private String replace(String str) {
