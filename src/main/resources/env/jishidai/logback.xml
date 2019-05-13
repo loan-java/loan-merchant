@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<property name="PROJECT"  value="loan-merchant"/>
-    <property name="LOG_PATH" value="/home/developer/logs/${PROJECT}/${PROJECT}.log" />  <!-- 日志路径 -->
-	<property name="PATTERN" value="%d %p ${PID:- } --- [%thread] %c[%L]  : %m%n" />  
-    <property name="LOG_LEVEL" value="INFO" />  
+
+    <property name="LOG_PATH" value="/home/developer/logs/${PROJECT}/" />  <!-- 日志路径 -->
+    <property name="LOG_PATH_INFO" value="${LOG_PATH}/info.log" />
+	<property name="LOG_PATH_ERROR" value="${LOG_PATH}/error.log" />
+
+	<property name="PATTERN" value="%d %p ${PID:- } --- [%thread] %c[%L]  : %m%n" />
+    <property name="LOG_LEVEL" value="INFO" />
+
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>${PATTERN}</pattern>
 			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+	<!--<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_PATH}</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>${LOG_PATH}.%d{yyyy-MM-dd}.log
@@ -21,9 +27,52 @@
 			<pattern>${PATTERN}</pattern>
 			<charset>UTF-8</charset> 
 		</encoder>
+	</appender>-->
+
+	<appender name="INFO-OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH_INFO}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH_INFO}.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- 最大保存时间：30天-->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<!-- 日志级别过滤 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!-- 过滤的级别 -->
+			<level>INFO</level>
+			<!-- 匹配时的操作：接收（记录） -->
+			<onMatch>ACCEPT</onMatch>
+			<!-- 不匹配时的操作：拒绝（不记录） -->
+			<onMismatch>DENY</onMismatch>
+		</filter>
 	</appender>
+
+	<appender name="ERROR-OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH_ERROR}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH_ERROR}.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<!-- 日志级别过滤 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
 	<root level="${LOG_LEVEL}">
-		<appender-ref ref="CONSOLE"></appender-ref>
-		<appender-ref ref="FILE"></appender-ref>
+		<appender-ref ref="CONSOLE"/>
+		<!--<appender-ref ref="FILE"></appender-ref>-->
+		<appender-ref ref="INFO-OUT"/>
+		<appender-ref ref="ERROR-OUT"/>
 	</root>
 </configuration>  
