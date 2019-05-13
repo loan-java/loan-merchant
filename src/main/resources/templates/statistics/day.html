@@ -17,6 +17,7 @@
         </div>
         <div class="row">
             <div class="index-model">
+
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
@@ -190,6 +191,22 @@
 
             </div>
         </div>
+
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">账户余额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="balance"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <script type="text/javascript">
@@ -224,6 +241,7 @@
 
                     $("#countFlowAmount").html(info.countFlowAmount * 32);
                     $("#countRiskAmount").html(info.countFlowAmount * 10);
+                    $("#balance").html(info.balance);
                     $("#countAllOrderNumber").html(info.countAllOrderNumber);
                     $("#countOrderNumberToDay").html(info.countOrderNumberToDay);
                     $("#countLoanOrderNumberToDay").html(info.countLoanOrderNumberToDay);

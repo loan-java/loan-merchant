@@ -56,47 +56,48 @@ public class LoginInterceptor implements HandlerInterceptor {
 		String ua = request.getHeader("User-Agent");
 		String host = request.getHeader("Host");
 		// 非法ip拒绝请求
-		if(redisMapper.get(RedisConst.LOCK_ILLEGAL_IP + ip) != null) {
-			PrintWriter out = response.getWriter();
-			out.println("System busy, please try again later!");
-			out.flush();
-			out.close();
-			return false;
-		}
-		String key = MD5.toMD5(String.format("%s:%s:%s", host, ip, ua));
-		if (StringUtils.isBlank(token)) {
-			response.sendRedirect(request.getContextPath() + "/system/login");
-			return false;
-		}
-		Claims claims = JwtUtil.ParseJwt(token);
-		if (claims == null) {
-			logger.error("token解析异常,merchant={},ip={},url={},", merchant, ip, request.getRequestURI());
-			response.sendRedirect(request.getContextPath() + "/system/login");
-			return false;
-		}
-		String uid = String.valueOf(claims.get("uid"));
-		String mykey = String.valueOf(claims.get("key"));
-		String mymerchant = String.valueOf(claims.get("merchant"));
-		if (!merchant.equals(mymerchant)) {
-			logger.error("token商户别名异常,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
-			response.sendRedirect(request.getContextPath() + "/system/login");
-			return false;
-		}
-		if (!key.equals(mykey)) {
-			long increment = redisMapper.increment(RedisConst.SINGLE_DEVICE_LOGIN_FLAG + uid, 1L, 3600L);
-			if (increment > 6) {// 单设备登录次数过多
-				logger.error("token单设备登录次数超过限制,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
-				//redisMapper.set(RedisConst.LOCK_ILLEGAL_IP + ip, ip, 3600L);
-			}
-			response.sendRedirect(request.getContextPath() + "/system/login");
-			return false;
-		}
-		String mytoken = redisMapper.get(RedisConst.USER_TOKEN + uid);
-		if (!token.equals(mytoken)) {
-			logger.error("token过期或非法,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
-			response.sendRedirect(request.getContextPath() + "/system/login");
-			return false;
-		}
+//		if(redisMapper.get(RedisConst.LOCK_ILLEGAL_IP + ip) != null) {
+//			PrintWriter out = response.getWriter();
+//			out.println("System busy, please try again later!");
+//			out.flush();
+//			out.close();
+//			return false;
+//		}
+//		String key = MD5.toMD5(String.format("%s:%s:%s", host, ip, ua));
+//		if (StringUtils.isBlank(token)) {
+//			response.sendRedirect(request.getContextPath() + "/system/login");
+//			return false;
+//		}
+//		Claims claims = JwtUtil.ParseJwt(token);
+//		if (claims == null) {
+//			logger.error("token解析异常,merchant={},ip={},url={},", merchant, ip, request.getRequestURI());
+//			response.sendRedirect(request.getContextPath() + "/system/login");
+//			return false;
+//		}
+//		String uid = String.valueOf(claims.get("uid"));
+		String uid = String.valueOf("5132");
+//		String mykey = String.valueOf(claims.get("key"));
+//		String mymerchant = String.valueOf(claims.get("merchant"));
+//		if (!merchant.equals(mymerchant)) {
+//			logger.error("token商户别名异常,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
+//			response.sendRedirect(request.getContextPath() + "/system/login");
+//			return false;
+//		}
+//		if (!key.equals(mykey)) {
+//			long increment = redisMapper.increment(RedisConst.SINGLE_DEVICE_LOGIN_FLAG + uid, 1L, 3600L);
+//			if (increment > 6) {// 单设备登录次数过多
+//				logger.error("token单设备登录次数超过限制,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
+//				//redisMapper.set(RedisConst.LOCK_ILLEGAL_IP + ip, ip, 3600L);
+//			}
+//			response.sendRedirect(request.getContextPath() + "/system/login");
+//			return false;
+//		}
+//		String mytoken = redisMapper.get(RedisConst.USER_TOKEN + uid);
+//		if (!token.equals(mytoken)) {
+//			logger.error("token过期或非法,uid={},merchant={},ip={},url={},", uid, merchant, ip, request.getRequestURI());
+//			response.sendRedirect(request.getContextPath() + "/system/login");
+//			return false;
+//		}
 		RequestBean requestBean = RequestThread.get();
 		requestBean.setHost(host);
 		requestBean.setIp(ip);

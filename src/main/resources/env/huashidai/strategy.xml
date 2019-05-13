@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strategies xmlns="http://www.99bill.com/schema/asap/strategy"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:commons="http://www.99bill.com/schema/asap/commons"
+            xsi:schemaLocation="http://www.99bill.com/schema/asap/strategy http://www.99bill.com/schema/asap/strategy.xsd
+http://www.99bill.com/schema/asap/commons http://www.99bill.com/schema/asap/commons.xsd">
+
+    <!--支付、支付查询-->
+    <strategy>
+        <mpf>
+            <!-- 商户会员号 -->
+            <commons:member-code>10210461811</commons:member-code>
+            <!-- 策略编码，固定值 F41-->
+            <commons:feature-code>F41</commons:feature-code>
+        </mpf>
+        <crypto-strategy>
+            <type>signatureAndCrypto</type>
+            <available>true</available>
+            <algorithm-set>
+                <signature-alg>SHA1withRSA</signature-alg>
+                <symmetric-alg>AES/CBC/PKCS5Padding</symmetric-alg>
+                <asymmetric-alg>RSA/ecb/pkcs1Padding</asymmetric-alg>
+            </algorithm-set>
+        </crypto-strategy>
+        <key-strategy>
+            <!-- 快钱公钥路径-->
+            <bill99-public-key-file-path>99bill.cert.rsa.20340630.cer</bill99-public-key-file-path>
+            <mpf-keystore>
+                <!-- 商户私钥路径-->
+                <path>99bill-rsa.pfx</path>
+                <key-store-type>PKCS12</key-store-type>
+                <!-- 商户私钥密码-->
+                <key-store-password>123456</key-store-password>
+                <!-- 商户私钥别名-->
+                <alias>test-alias</alias>
+                <!-- 商户私钥密码-->
+                <key-password>123456</key-password>
+            </mpf-keystore>
+        </key-strategy>
+    </strategy>
+
+    <!--余额查询-->
+    <strategy>
+        <mpf>
+            <commons:member-code>10210461811</commons:member-code>
+            <commons:feature-code>F48</commons:feature-code>
+        </mpf>
+        <crypto-strategy>
+            <type>signatureAndCrypto</type>
+            <available>true</available>
+            <algorithm-set>
+                <signature-alg>SHA1withRSA</signature-alg>
+                <symmetric-alg>AES/CBC/PKCS5Padding</symmetric-alg>
+                <asymmetric-alg>RSA/ECB/PKCS1Padding</asymmetric-alg>
+            </algorithm-set>
+        </crypto-strategy>
+        <key-strategy>
+            <bill99-public-key-file-path>99bill.cert.rsa.20340630.cer</bill99-public-key-file-path>
+            <mpf-keystore>
+                <path>99bill-rsa.pfx</path>
+                <key-store-type>PKCS12</key-store-type>
+                <key-store-password>123456</key-store-password>
+                <alias>test-alias</alias>
+                <key-password>123456</key-password>
+            </mpf-keystore>
+        </key-strategy>
+    </strategy>
+
+</strategies>

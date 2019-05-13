@@ -17,7 +17,9 @@ import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
 import com.mod.loan.model.User;
 import com.mod.loan.model.dto.StrategyDTO;
+import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.MoneyUtil;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +29,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service
@@ -50,6 +53,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     OrderRecycleLogMapper orderRecycleLogMapper;
     @Autowired
     private MerchantRateMapper merchantRateMapper;
+    @Resource
+    private MerchantService merchantService;
 
     @Override
     public void updateOrderFollowUser(Long followUserId, String merchant, Long... ids) {
@@ -237,6 +242,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("countOverdueAmount", orderMapper.countOverdueAmount(merchant));
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
+            data.put("balance", MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant)));
+
             redisMapper.set(RedisConst.MAIN_STATISTICS + merchant + searchTime, data, 900);
         }
         return data;

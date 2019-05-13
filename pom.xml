@@ -148,6 +148,158 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.10</version>
+		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jibx</groupId>
+			<artifactId>jibx-run</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<!--本地jar导入-->
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/bcprov-jdk15.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>fo-jibx-commons</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/fo-jibx-commons.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>fo-jibx-pay2acct</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/fo-jibx-pay2acct.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>fo-jibx-pay2bank</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/fo-jibx-pay2bank.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-crypto-client</artifactId>
+			<version>2.0.1</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-crypto-client-2.0.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-crypto-metadata</artifactId>
+			<version>4.3.20</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-crypto-metadata-4.3.20.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-crypto-sdk</artifactId>
+			<version>4.3.19</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-crypto-sdk-4.3.19.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-framework</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-framework.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-jibx-schema-asap</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-jibx-schema-asap.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-jibx-schema-commons</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-jibx-schema-commons.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bill99</groupId>
+			<artifactId>if-util</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/if-util.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cfca</groupId>
+			<artifactId>PKIBASE</artifactId>
+			<version>2.0</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/src/main/resources/lib/PKIBASE-2.0.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 
 
@@ -192,6 +344,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<includeSystemScope>true</includeSystemScope>
 					<mainClass>com.mod.loan.Application</mainClass>
 				</configuration>
 			</plugin>
