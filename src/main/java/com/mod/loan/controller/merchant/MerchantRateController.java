@@ -52,8 +52,8 @@ public class MerchantRateController {
 		if (StringUtils.isBlank(merchantRate.getProductName())) {
 			return new ResultMessage(ResponseEnum.M4000.getCode(), "产品名称不能为空");
 		}
-		if (merchantRate.getProductDay() == null || merchantRate.getProductDay() != 7) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "产品期限限定为7天");
+		if (merchantRate.getProductDay() == null || merchantRate.getProductDay() != 6) {
+			return new ResultMessage(ResponseEnum.M4000.getCode(), "产品期限限定为6天");
 		}
 		if (merchantRate.getProductMoney() == null
 				|| new BigDecimal(2000).compareTo(merchantRate.getProductMoney()) < 0) {
