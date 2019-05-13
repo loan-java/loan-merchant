@@ -3,8 +3,8 @@
 	<property name="PROJECT"  value="loan-merchant"/>
 
     <property name="LOG_PATH" value="/home/developer/logs/${PROJECT}/" />  <!-- 日志路径 -->
-    <property name="LOG_PATH_INFO" value="${LOG_PATH}/info_${PROJECT}.log" />
-	<property name="LOG_PATH_ERROR" value="${LOG_PATH}/error_${PROJECT}.log" />
+    <property name="LOG_PATH_INFO" value="${LOG_PATH}/${PROJECT}-info.log" />
+	<property name="LOG_PATH_ERROR" value="${LOG_PATH}/${PROJECT}-error.log" />
 
 	<property name="PATTERN" value="%d %p ${PID:- } --- [%thread] %c[%L]  : %m%n" />
     <property name="LOG_LEVEL" value="INFO" />
