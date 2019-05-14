@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.mod.loan.util.AliOssStaticUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jsoup.Connection.Response;
@@ -48,6 +49,7 @@ import com.mod.loan.util.TimeUtils;
 import com.mod.loan.util.moxie.AddressListUtil;
 import com.mod.loan.util.moxie.ContactUtil;
 import com.mod.loan.util.moxie.MoxieOssUtil;
+import tk.mybatis.mapper.util.StringUtil;
 
 @RestController
 @RequestMapping(value = "user")
@@ -273,4 +275,43 @@ public class UserController {
 			logger.error("用户渠道列表报告导出异常。", e);
 		}
 	}
+
+	//===================================运营商相关数据以下=====================================================================
+    @RequestMapping(value = "user_carrier_info")
+    public ModelAndView user_carrier_info(ModelAndView view, String id) {
+        view.addObject("id", id);
+        String merchant = RequestThread.get().getMerchant();
+        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
+            view.setViewName("user/user_carrier_info");
+        }
+        return view;
+    }
+
+    @RequestMapping(value = "user_smses_info")
+    public ModelAndView user_smses_info(ModelAndView view, String id) {
+        view.addObject("id", id);
+        String merchant = RequestThread.get().getMerchant();
+        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
+            view.setViewName("user/user_smses_info");
+        }
+        return view;
+    }
+
+    @RequestMapping(value = "user_mobile_ajax", method = {RequestMethod.POST})
+    public ResultMessage user_mobile_ajax(Long id) {
+        if(id == null) return new ResultMessage(ResponseEnum.M4000,"缺少必要参数");
+        MoxieMobile moxieMobile = moxieMobileMapper.selectLastOne(id);
+        if(moxieMobile == null)  return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
+        if(StringUtil.isEmpty(moxieMobile.getRemark())) return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
+        String merchant = RequestThread.get().getMerchant();
+        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
+            String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(),Constant.bucket_name_mobile);
+            JSONObject jsonObject = JSON.parseObject(str);
+            return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
+        }
+        return new ResultMessage(ResponseEnum.M2000, null);
+    }
+
+  //===================================运营商相关数据以上=====================================================================
+
 }

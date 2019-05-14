@@ -78,7 +78,7 @@ public class AliOssStaticUtil {
             boolean found = ossClient.doesObjectExist(bucketName, objectName);
             logger.error("判断文件objectName=【" + objectName + "】在bucketName=【" + bucketName + "】是否存在【" + found + "】");
             if (!found) {
-                throw new RuntimeException();
+                throw new RuntimeException("当前查询数据不存在");
             }
             // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
             OSSObject ossObject = ossClient.getObject(bucketName, objectName);

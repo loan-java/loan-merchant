@@ -139,6 +139,14 @@
 				<td colspan="2"><a class="btn btn-info" href='javascript:void(0);' onclick='userAddressListDetail()'>通讯录</a></td>
 	        </tr>
 			<tr>
+				<td colspan="2">运营商</td>
+				<td colspan="2">
+					<a class="btn btn-info" href='javascript:void(0);' onclick='userCarrierInfor()'>基本信息</a>
+					&nbsp;&nbsp;&nbsp;
+					<a class="btn btn-info" href='javascript:void(0);' onclick='userSmsesInfor()'>短信信息</a>
+				</td>
+			</tr>
+			<tr>
 				<td>实名认证</td>
 				<td><span v-html="getIdentValue(userIdent.realName)"></span></td>
 				<td>实名认证时间</td>
@@ -397,7 +405,34 @@
 			};
 			diag.show();
 		}
-		
+
+		//运营商相关信息
+        function userCarrierInfor(){
+            var diag = new top.Dialog();
+            diag.Drag = true;
+            diag.Title = "基本信息";
+            diag.URL = contextPath + "user/user_carrier_info?id=" + id;
+            diag.Width = 800;
+            diag.Height = 600;
+            diag.CancelEvent = function(){ //关闭事件
+                diag.close();
+            };
+            diag.show();
+        }
+        function userSmsesInfor(){
+            var diag = new top.Dialog();
+            diag.Drag = true;
+            diag.Title = "短信信息";
+            diag.URL = contextPath + "user/user_smses_info?id=" + id;
+            diag.Width = 1000;
+            diag.Height = 600;
+            diag.CancelEvent = function(){ //关闭事件
+                diag.close();
+            };
+            diag.show();
+        }
+
+
 	</script>
 </body>
 </html>
