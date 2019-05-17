@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONArray;
 import com.mod.loan.common.enums.UserOriginEnum;
 import com.mod.loan.util.AliOssStaticUtil;
 import org.apache.commons.lang.StringUtils;
@@ -281,9 +282,13 @@ public class UserController {
     @RequestMapping(value = "user_carrier_info")
     public ModelAndView user_carrier_info(ModelAndView view, String id) {
         view.addObject("id", id);
-        String merchant = RequestThread.get().getMerchant();
-        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
+        if(id == null) new RuntimeException("缺少必要参数");
+        User user = userService.selectByPrimaryKey(Long.valueOf(id));
+        if(user == null) new RuntimeException("用户不存在");
+        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             view.setViewName("user/user_carrier_info");
+        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+            view.setViewName("user/user_carrier_info_rz");
         }
         return view;
     }
@@ -294,7 +299,6 @@ public class UserController {
         if(id == null) new RuntimeException("缺少必要参数");
         User user = userService.selectByPrimaryKey(Long.valueOf(id));
         if(user == null) new RuntimeException("用户不存在");
-        String merchant = RequestThread.get().getMerchant();
         if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             view.setViewName("user/user_smses_info");
         }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
@@ -316,7 +320,10 @@ public class UserController {
         if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
         }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
-            return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("transactions"));
+            JSONArray jsonArray = jsonObject.getJSONArray("transactions");
+            if(jsonArray.size() > 0) {
+                return new ResultMessage(ResponseEnum.M2000, jsonArray.get(0));
+            }
         }
         return new ResultMessage(ResponseEnum.M2000, null);
     }

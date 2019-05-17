@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+    <link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet" th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+    <style>
+        .over {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .tempContainer {
+            position: fixed;
+            width: 100%;
+            text-align: center;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+<a class="btn btn-info" target='_blank' id="carrierJxReport" style="display:none;">基本信息</a>
+<div id="zhongxin" align="center">
+<h4 align="left">基本信息</h4>
+<table id="myTable" class="table table-striped table-bordered table-hover">
+    <tr>
+        <td>姓名</td>
+        <td><span v-text="carrierUserInfo.real_name"></span></td>
+        <td>手机号码</td>
+        <td><span v-text="carrierUserInfo.cell_phone"></span></td>
+    </tr>
+    <tr>
+        <td>证件号</td>
+        <td><span v-text="carrierUserInfo.idcard"></span></td>
+        <td>入网时间</td>
+        <td><span v-text="carrierUserInfo.reg_time"></span></td>
+    </tr>
+    <tr>
+        <td>最近一次更新时间</td>
+        <td><span v-text="carrierUserInfo.update_time"></span></td>
+    </tr>
+</table>
+</div>
+<!-- 蒙层 -->
+<div class="over"></div>
+<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+<script type="text/javascript">
+    var id = [[${id}]];
+    var contextPath = "[[@{/}]]";
+
+    new Vue({
+        el: '#zhongxin',
+        data: {
+            carrierUserInfo: {}
+        },
+        created() {
+            var _that = this;
+            $.ajax({
+                type: "post",
+                url: contextPath + "user/user_mobile_ajax",
+                dataType: "json",
+                data: {
+                    "id": id
+                },
+                beforeSend: function () {
+                    maskScreen();
+                },
+                success: function (result) {
+                    console.log(result)
+                    _that.carrierUserInfo = result.basic;
+                },
+                complete: function () {
+                    unMaskScreen();
+                }
+            });
+        }
+    });
+
+</script>
+</body>
+</html>
