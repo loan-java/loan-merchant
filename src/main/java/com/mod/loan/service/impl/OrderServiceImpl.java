@@ -301,30 +301,37 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 object.put("orderStatus", OrderStatusEnum.OVERDUE.getCode());
                 object.put("payStatus", PayStatusEnum.PAYED.getCode());
                 object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
             case 34:
                 object.put("orderStatus", OrderStatusEnum.BAD_DEBT.getCode());
                 object.put("payStatus", PayStatusEnum.PAYED.getCode());
                 object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
             case 41:
                 object.put("orderStatus", OrderStatusEnum.REPAYED.getCode());
                 object.put("payStatus", PayStatusEnum.PAYED.getCode());
                 object.put("repayStatus", RepayStatusEnum.REPAYED.getCode());
+                break;
             case 42:
                 object.put("orderStatus", OrderStatusEnum.OVERDUEREPAYED.getCode());
                 object.put("payStatus", PayStatusEnum.PAYED.getCode());
                 object.put("repayStatus", RepayStatusEnum.OVERDUE_REPAY.getCode());
+                break;
             case 51:
                 object.put("orderStatus", OrderStatusEnum.AUDIT_REFUSE.getCode());
                 object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
                 object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
             case 52:
                 object.put("orderStatus", OrderStatusEnum.AUDIT_REFUSE.getCode());
                 object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
                 object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
             case 53:
                 object.put("orderStatus", OrderStatusEnum.CANCEL.getCode());
                 object.put("payStatus", PayStatusEnum.NOTPAY.getCode());
                 object.put("repayStatus", RepayStatusEnum.NOT_REPAY.getCode());
+                break;
             default:
                 break;
         }

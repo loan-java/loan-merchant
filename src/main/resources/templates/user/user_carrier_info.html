@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+    <link href="/static/css/bootstrap3.3.7.min.css" rel="stylesheet" th:href="@{/static/css/bootstrap3.3.7.min.css}"/>
+    <style>
+        .over {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .tempContainer {
+            position: fixed;
+            width: 100%;
+            text-align: center;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+<a class="btn btn-info" target='_blank' id="carrierJxReport" style="display:none;">基本信息</a>
+<div id="zhongxin" align="center">
+<h4 align="left">基本信息</h4>
+<table id="myTable" class="table table-striped table-bordered table-hover">
+    <tr>
+        <td>姓名</td>
+        <td><span v-text="carrierUserInfo.name"></span></td>
+        <td>手机号码</td>
+        <td><span v-text="carrierUserInfo.mobile"></span></td>
+    </tr>
+    <tr>
+        <td>证件号</td>
+        <td><span v-text="carrierUserInfo.idCard"></span></td>
+        <td>运营商</td>
+        <td><span v-text="carrierUserInfo.carrier"></span></td>
+    </tr>
+    <tr>
+        <td>所属省份</td>
+        <td><span v-text="carrierUserInfo.province"></span></td>
+        <td>所属城市</td>
+        <td><span v-text="carrierUserInfo.city"></span></td>
+    </tr>
+    <tr>
+        <td>地址</td>
+        <td><span v-text="carrierUserInfo.address"></span></td>
+        <td>帐号星级</td>
+        <td><span v-text="carrierUserInfo.level"></span></td>
+    </tr>
+    <tr>
+        <td>入网时间</td>
+        <td><span v-text="carrierUserInfo.openTime"></span></td>
+        <td>入网时长</td>
+        <td><span v-text="carrierUserInfo.openMonths"></span></td>
+    </tr>
+    <tr>
+        <td>套餐名称</td>
+        <td><span v-text="carrierUserInfo.packageName"></span></td>
+        <td>帐号状态</td>
+        <td><span v-text="carrierUserInfo.state"></span></td>
+    </tr>
+    <tr>
+        <td>当前可用余额（单位: 分）</td>
+        <td><span v-text="carrierUserInfo.availableBalance"></span></td>
+        <td>最近一次更新时间</td>
+        <td><span v-text="carrierUserInfo.lastModifyTime"></span></td>
+    </tr>
+</table>
+</div>
+<!-- 蒙层 -->
+<div class="over"></div>
+<script type="text/javascript" src="/static/js/vue.min.js" th:src="@{/static/js/vue.min.js}"></script>
+<script type="text/javascript">
+    var id = [[${id}]];
+    var contextPath = "[[@{/}]]";
+
+    new Vue({
+        el: '#zhongxin',
+        data: {
+            carrierUserInfo: {}
+        },
+        created() {
+            var _that = this;
+            $.ajax({
+                type: "post",
+                url: contextPath + "user/user_mobile_ajax",
+                dataType: "json",
+                data: {
+                    "id": id
+                },
+                beforeSend: function () {
+                    maskScreen();
+                },
+                success: function (result) {
+                    console.log(result)
+                    _that.carrierUserInfo = result.data.carrierUserInfo;
+                },
+                complete: function () {
+                    unMaskScreen();
+                }
+            });
+        }
+    });
+
+</script>
+</body>
+</html>

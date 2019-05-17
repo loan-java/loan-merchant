@@ -92,6 +92,8 @@ public class Constant {
 
     public static String bucket_name;
 
+    public static String bucket_name_mobile;
+
     public static String baidu_ak_value;
 
     public static String baidu_sn_value;
@@ -109,6 +111,11 @@ public class Constant {
     public static String moxie_address_list;
 
     public static String juheCallBackUrl;
+
+    @Value("${oss.static.bucket.name.mobile}")
+    public  void setBucket_name_mobile(String bucket_name_mobile) {
+        Constant.bucket_name_mobile = bucket_name_mobile;
+    }
 
     public static String rongZeRequestAppId;
     public static String rongZeCallbackUrl;
