@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.mod.loan.common.enums.UserOriginEnum;
 import com.mod.loan.util.AliOssStaticUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -290,9 +291,14 @@ public class UserController {
     @RequestMapping(value = "user_smses_info")
     public ModelAndView user_smses_info(ModelAndView view, String id) {
         view.addObject("id", id);
+        if(id == null) new RuntimeException("缺少必要参数");
+        User user = userService.selectByPrimaryKey(Long.valueOf(id));
+        if(user == null) new RuntimeException("用户不存在");
         String merchant = RequestThread.get().getMerchant();
-        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
+        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             view.setViewName("user/user_smses_info");
+        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+            view.setViewName("user/user_smses_info_rz");
         }
         return view;
     }
@@ -300,14 +306,17 @@ public class UserController {
     @RequestMapping(value = "user_mobile_ajax", method = {RequestMethod.POST})
     public ResultMessage user_mobile_ajax(Long id) {
         if(id == null) return new ResultMessage(ResponseEnum.M4000,"缺少必要参数");
+        User user = userService.selectByPrimaryKey(id);
+        if(user == null)  return new ResultMessage(ResponseEnum.M4000,"用户不存在");
         MoxieMobile moxieMobile = moxieMobileMapper.selectLastOne(id);
         if(moxieMobile == null)  return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
         if(StringUtil.isEmpty(moxieMobile.getRemark())) return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
-        String merchant = RequestThread.get().getMerchant();
-        if(merchant.equals("jishidai") || merchant.equals("huashidai")) {
-            String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(),Constant.bucket_name_mobile);
-            JSONObject jsonObject = JSON.parseObject(str);
+        String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(),Constant.bucket_name_mobile);
+        JSONObject jsonObject = JSON.parseObject(str);
+        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
+        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+            return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("transactions"));
         }
         return new ResultMessage(ResponseEnum.M2000, null);
     }
