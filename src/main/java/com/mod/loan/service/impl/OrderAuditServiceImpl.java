@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,8 @@ import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.OrderAuditService;
 
+import javax.annotation.Resource;
+
 @Service
 public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> implements OrderAuditService {
 
@@ -38,6 +42,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
 
     @Autowired
     private UserMapper userMapper;
+    @Resource
+    private CallBackRongZeService callBackRongZeService;
 
     @Override
     public List<Map<String, Object>> findOrderAuditList(Map<String, Object> param, Page page) {
@@ -64,7 +70,9 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
 			return false;
 		}
         // 复审通过
+        String riskCode = "", riskDesc = "";
         if (orderAudit.getStatus() == 0) {
+            riskCode = PolicyResultEnum.AGREE.getCode();
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_FOR_LENDING);
             orderMapper.updateByPrimaryKey(order);
@@ -72,6 +80,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
+            riskCode = PolicyResultEnum.REJECT.getCode();
+            riskDesc = "人工审核拒绝";
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_AUDIT_FAIL);
             orderMapper.updateByPrimaryKey(order);
@@ -80,6 +90,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
+
+        callBackRongZeService.pushRiskResult(order, riskCode, riskDesc);
         return true;
     }
 
