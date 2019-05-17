@@ -112,17 +112,17 @@ public class Constant {
 
     public static String juheCallBackUrl;
 
-    @Value("${oss.static.bucket.name.mobile}")
-    public  void setBucket_name_mobile(String bucket_name_mobile) {
-        Constant.bucket_name_mobile = bucket_name_mobile;
-    }
-
     public static String rongZeRequestAppId;
     public static String rongZeCallbackUrl;
     public static String rongZeQueryUrl;
     public static String rongZePublicKey;
 
     public static String orgPrivateKey;
+
+    @Value("${oss.static.bucket.name.mobile}")
+    public  void setBucket_name_mobile(String bucket_name_mobile) {
+        Constant.bucket_name_mobile = bucket_name_mobile;
+    }
 
     @Value("${rongze.request.app.id}")
     public void setRongZeRequestAppId(String rongZeRequestAppId) {
