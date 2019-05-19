@@ -33,7 +33,6 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             order = checkOrder(order);
             if (order == null) return;
 
-            unbindOrderNo(order);
             postOrderStatus(order);
         } catch (Exception e) {
             log.error("给融泽推送订单状态失败: " + e.getMessage(), e);
@@ -49,7 +48,6 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             order = checkOrder(order);
             if (order == null) return;
 
-            unbindOrderNo(order);
 
             //先推审批结果，再推订单状态，order_status=100（审批通过），order_status=110（审批拒绝）
             postRiskResult(order, riskCode, riskDesc);
@@ -151,11 +149,4 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
         RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 
-    private void unbindOrderNo(Order o) {
-        o.setOrderNo(unbindOrderNo(o.getOrderNo()));
-    }
-
-    private String unbindOrderNo(String orderNo) {
-        return BizDataUtil.unbindRZOrderNo(orderNo);
-    }
 }
