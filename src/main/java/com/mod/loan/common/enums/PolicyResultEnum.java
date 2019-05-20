@@ -22,6 +22,11 @@ public enum PolicyResultEnum {
     public static boolean isAgree(String code) {
         return AGREE.getCode().equals(code);
     }
+
+    public static boolean isReject(String code) {
+        return REJECT.getCode().equals(code);
+    }
+
     public static boolean isUnsettled(String code) {
         return UNSETTLED.getCode().equals(code);
     }

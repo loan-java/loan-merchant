@@ -7,7 +7,6 @@ import com.mod.loan.config.Constant;
 import com.mod.loan.model.Order;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.rongze.BizDataUtil;
 import com.mod.loan.util.rongze.RongZeRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +32,6 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             order = checkOrder(order);
             if (order == null) return;
 
-            unbindOrderNo(order);
             postOrderStatus(order);
         } catch (Exception e) {
             log.error("给融泽推送订单状态失败: " + e.getMessage(), e);
@@ -44,12 +42,11 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
     public void pushRiskResult(Order order, String riskCode, String riskDesc) {
         try {
             //只推审核通过跟审核拒绝
-            if (PolicyResultEnum.isUnsettled(riskCode)) return;
+            if (!(PolicyResultEnum.isAgree(riskCode) || PolicyResultEnum.isReject(riskCode))) return;
 
             order = checkOrder(order);
             if (order == null) return;
 
-            unbindOrderNo(order);
 
             //先推审批结果，再推订单状态，order_status=100（审批通过），order_status=110（审批拒绝）
             postRiskResult(order, riskCode, riskDesc);
@@ -68,30 +65,42 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
 
     private void postRiskResult(Order order, String riskCode, String riskDesc) throws Exception {
         String orderNo = order.getOrderNo();
-        String reapply = ""; //是否可再次申请
-        String reapplyTime = ""; //可再申请的时间
-        String remark = ""; //拒绝原因
 
-        Date now = new Date();
-        long refuseTime = now.getTime(); //审批拒绝时间
-        long approvalTime = now.getTime(); //审批通过时间
-        int conclusion = 10; //通过
+        String reapply = null; //是否可再次申请
+        String reapplyTime = null; //可再申请的时间
+        String remark = "审批中"; //拒绝原因
 
-        if (!PolicyResultEnum.isAgree(riskCode)) {
-            conclusion = 40; //拒绝
-            remark = riskDesc;
+        Long refuseTime = null; //审批拒绝时间
+        Long approvalTime = null; //审批通过时间
+        int conclusion = 30; //处理中
+        Integer proType = null; //单期产品
+        Integer amountType = null; //审批金额是否固定，0 - 固定
+        Integer termType = null; //审批期限是否固定，0 - 固定
+        Integer approvalAmount = null; //审批金额
+        Integer approvalTerm = null; //审批期限
+        Integer termUnit = null; //期限单位，1 - 天
+        String creditDeadline = null; //审批结果有效期，当前时间
+
+        if (PolicyResultEnum.isAgree(riskCode)) {
+            //通过
+            conclusion = 10;
+            approvalTime = System.currentTimeMillis();
+            creditDeadline = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+            proType = 1; //单期产品
+            amountType = 0; //审批金额是否固定，0 - 固定
+            termType = 0; //审批期限是否固定，0 - 固定
+            approvalAmount = 1500; //审批金额
+            approvalTerm = 6; //审批期限
+            termUnit = 1; //期限单位，1 - 天
+            remark = "通过";
+        } else {
+            //拒绝
+            refuseTime = System.currentTimeMillis();
+            conclusion = 40;
+            remark = StringUtils.isNotBlank(riskDesc) ? riskDesc : "拒绝";
             reapply = "1";
-
             reapplyTime = DateFormatUtils.format(refuseTime + (1000L * 3600 * 24 * 7), "yyyy-MM-dd");
         }
-
-        int proType = 1; //单期产品
-        int amountType = 0; //审批金额是否固定，0 - 固定
-        int termType = 0; //审批期限是否固定，0 - 固定
-        int approvalAmount = 1500; //审批金额
-        int approvalTerm = 6; //审批期限
-        int termUnit = 1; //期限单位，1 - 天
-        String creditDeadline = DateFormatUtils.format(now, "yyyy-MM-dd"); //审批结果有效期，当前时间
 
         Map<String, Object> map = new HashMap<>();
         map.put("order_no", orderNo);
@@ -151,11 +160,4 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
         RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 
-    private void unbindOrderNo(Order o) {
-        o.setOrderNo(unbindOrderNo(o.getOrderNo()));
-    }
-
-    private String unbindOrderNo(String orderNo) {
-        return BizDataUtil.unbindRZOrderNo(orderNo);
-    }
 }
