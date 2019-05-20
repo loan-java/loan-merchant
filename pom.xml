@@ -202,6 +202,11 @@
 			<artifactId>wsdl4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.9.2</version>
+		</dependency>
 
 		<!--本地jar导入-->
 		<dependency>
