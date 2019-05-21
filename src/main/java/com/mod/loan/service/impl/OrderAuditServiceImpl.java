@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.OrderAuditService;
+
+import javax.annotation.Resource;
 
 @Service
 public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> implements OrderAuditService {
