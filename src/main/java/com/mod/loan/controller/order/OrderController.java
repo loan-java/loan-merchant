@@ -237,7 +237,7 @@ public class OrderController {
         record.setId(orderId);
         record.setStatus(Constant.ORDER_CANCLE);
         orderService.updateByPrimaryKeySelective(record);
-        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
+        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order);
         return new ResultMessage(ResponseEnum.M2000);
     }
 

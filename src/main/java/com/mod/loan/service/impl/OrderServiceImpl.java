@@ -210,7 +210,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
-                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order.getOrderNo(), order.getStatus());
+                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
                 // 发送消息
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
@@ -272,12 +272,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     }
 
-    public void orderCallBack(User user, String orderNo, Integer orderStatus) {
+    public void orderCallBack(User user, Order order) {
 
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
-        object.put("orderNo", orderNo);
+        object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
-        switch (orderStatus) {
+        object.put("shouldRepayAmount",order.getShouldRepay());
+        switch (order.getStatus()) {
             case 21:
                 object.put("orderStatus", OrderStatusEnum.WAIT_PAY.getCode());
                 object.put("payStatus", PayStatusEnum.NOTPAY.getCode());

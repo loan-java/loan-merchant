@@ -142,7 +142,7 @@ public class OrderRepayController {
 		orderRepay.setRemark(remark);
 		orderRepay.setUpdateTime(new Date());
 		orderRepayService.updateOrderOffline(record, orderRepay);
-		orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order.getOrderNo(),order.getStatus());
+		orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order);
 		return new ResultMessage(ResponseEnum.M2000);
 	}
 

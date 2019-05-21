@@ -8,6 +8,7 @@ import com.mod.loan.common.model.Page;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.User;
 import com.mod.loan.model.dto.StrategyDTO;
+import org.aspectj.weaver.ast.Or;
 
 public interface OrderService extends BaseService<Order, Long> {
 
@@ -62,6 +63,6 @@ public interface OrderService extends BaseService<Order, Long> {
      */
     void saveTakeOutOrder(Long getOrderNumber);
 
-    void orderCallBack(User user, String orderNo, Integer orderStatus);
+    void orderCallBack(User user, Order order);
 
 }
