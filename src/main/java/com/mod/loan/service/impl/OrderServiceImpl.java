@@ -278,6 +278,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
         object.put("shouldRepayAmount",order.getShouldRepay());
+        object.put("accountId",order.getUid());
         switch (order.getStatus()) {
             case 21:
                 object.put("orderStatus", OrderStatusEnum.WAIT_PAY.getCode());
