@@ -336,7 +336,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             default:
                 break;
         }
-
         CallBackJuHeUtil.callBack(Constant.juheCallBackUrl, object);
     }
 
