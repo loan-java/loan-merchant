@@ -66,7 +66,7 @@ public class OperateController {
         record.setReduceMoney(money);
         record.setShouldRepay(order.getInterestFee().add(order.getBorrowMoney()).add(order.getOverdueFee()).subtract(money));
         orderMapper.updateByPrimaryKeySelective(record);
-        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
+        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
         return new ResultMessage(ResponseEnum.M2000);
     }
 }

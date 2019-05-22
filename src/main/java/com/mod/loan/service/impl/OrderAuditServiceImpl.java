@@ -77,7 +77,7 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_FOR_LENDING);
             orderMapper.updateByPrimaryKey(order);
-            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order);
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
@@ -86,7 +86,7 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_AUDIT_FAIL);
             orderMapper.updateByPrimaryKey(order);
-            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),order);
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
             // 更新审核记录
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);

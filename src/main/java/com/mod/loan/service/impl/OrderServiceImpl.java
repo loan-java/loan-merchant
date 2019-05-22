@@ -210,7 +210,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
-                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), order);
+                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(id));
                 // 发送消息
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
