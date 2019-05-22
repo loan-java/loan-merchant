@@ -52,7 +52,7 @@ public class OperateController {
         if (order == null || !order.getMerchant().equals(RequestThread.get().getMerchant())) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "非法操作");
         }
-        if (order.getStatus() > 30 && order.getStatus() < 40) {
+        if (order.getStatus() < 30 && order.getStatus() > 40) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "放款中以及逾期订单才能减免金额");
         }
         if (money.signum() < 0) {
