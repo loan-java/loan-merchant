@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -277,7 +278,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
         object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
-        object.put("shouldRepayAmount",order.getShouldRepay());
+        object.put("shouldRepayAmount",new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
         object.put("accountId",order.getUid());
         switch (order.getStatus()) {
             case 21:
@@ -337,7 +338,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             default:
                 break;
         }
-        CallBackJuHeUtil.callBack("http://www.huxinunion.com", object);
+        CallBackJuHeUtil.callBack(Constant.juheCallBackUrl, object);
     }
 
     private List<StrategyDTO> bindStrategyDTOList(String strategy) {
@@ -459,6 +460,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         if (!StringUtils.contains(str, "=")) return "";
 
         return str.substring(str.indexOf("=") + 1).trim();
+    }
+
+    public static void main(String[] args) {
+
+        User user = new User();
+        user.setCommonInfo("{\"timeStamp\":1558258582,\"accountId\":\"\",\"sign\":\"8B46CB7F8A962E5E4DD71669978DB357\",\"mobile\":\"15980981733\",\"intefaceType\":\"WCWOISnFvBAWDBA\",\"deviceCode\":\"00000000-6c31-b0d7-ffff-ffff89974fe1\",\"terminalId\":\"A\",\"source\":\"20190325158\",\"version\":\"3.1.3.2\",\"token\":\"\"}");
+        user.setId(1358L);
+        Order order = new Order();
+        order.setStatus(31);
+        order.setOrderNo("b20190518135840479485659");
+        order.setShouldRepay(new BigDecimal("1207.50"));
+        order.setUid(1358L);
+        OrderServiceImpl orderService = new OrderServiceImpl();
+        orderService.orderCallBack(user,order);
     }
 
 
