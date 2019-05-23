@@ -337,7 +337,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             default:
                 break;
         }
-        CallBackJuHeUtil.callBack(Constant.juheCallBackUrl, object);
+        CallBackJuHeUtil.callBack("http://www.huxinunion.com", object);
     }
 
     private List<StrategyDTO> bindStrategyDTOList(String strategy) {
