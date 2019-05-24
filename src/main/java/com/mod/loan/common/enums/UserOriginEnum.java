@@ -8,8 +8,8 @@ public enum UserOriginEnum {
     /**
      * 订单类型
      */
-    JH("1", "聚合"),
-    RZ("2", "融泽");
+    JH("0", "聚合"),
+    RZ("1", "融泽");
 
     private String code;
     private String msg;
