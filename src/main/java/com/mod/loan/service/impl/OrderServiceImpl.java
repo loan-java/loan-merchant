@@ -285,9 +285,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             double dff = countBackNumberAll*1;
             double zff = countBorrowMoneyAll*0.0033;
             int dxf = userSmsMapper.countUserSms();
-
-            double sum =  llf + fkf + jrgkf + jqf + dff +zff +dxf;
-            data.put("merchantBalance", sum);
+            if(MerchantEnum.isJiShiDai(merchant)) {
+                double sum =  llf + fkf +dxf;
+                data.put("merchantBalance", sum);
+            }else if(MerchantEnum.isHuaShiDai(merchant)){
+                double sum =  llf + fkf + jrgkf + jqf + dff +zff +dxf;
+                data.put("merchantBalance", sum);
+            }
 
             redisMapper.set(RedisConst.MAIN_STATISTICS + merchant + searchTime, data, 900);
         }

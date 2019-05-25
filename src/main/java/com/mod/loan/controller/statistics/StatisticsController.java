@@ -55,11 +55,13 @@ public class StatisticsController {
     }
 
     @RequestMapping(value = "report_register_order_list_ajax")
-    public ResultMessage report_register_order_list_ajax(String startTime, String endTime, Page page) {
+    public ResultMessage report_register_order_list_ajax(String startTime, String endTime, Page page, String repayStartTime, String repayEndTime) {
         Map<String, Object> param = new HashMap<>();
         param.put("merchant",RequestThread.get().getMerchant());
         param.put("startTime", StringUtils.isNotEmpty(startTime) ? startTime : null);
         param.put("endTime", StringUtils.isNotEmpty(endTime) ? endTime : null);
+//        param.put("repayStartTime", StringUtils.isNotEmpty(repayStartTime) ? endTime : null);
+//        param.put("repayEndTime", StringUtils.isNotEmpty(repayEndTime) ? endTime : null);
         return new ResultMessage(ResponseEnum.M2000,reportRegisterOrderService.findReportRegisterOrderList(param,page),page);
     }
 
