@@ -105,7 +105,7 @@ public class StatisticsController {
 
     @RequestMapping(value = "day")
     public ModelAndView main(ModelAndView view) {
-        view.setViewName("statistics/day");
+        view.setViewName("statistics/day_new");
         return view;
     }
 
