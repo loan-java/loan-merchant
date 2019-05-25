@@ -97,7 +97,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "order_list_ajax", method = {RequestMethod.POST})
-    public ResultMessage order_list_ajax(Order order, String userPhone, String startTime, String endTime, String startRealRepayTime, String endRealRepayTime, String startCreateTime, String endCreateTime, Page page) {
+    public ResultMessage order_list_ajax(Order order, String userPhone, String startTime, String endTime, String startRealRepayTime, String endRealRepayTime, String startCreateTime, String endCreateTime, Page page, String searchType) {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("id", order.getId() != null ? order.getId() : null);
         param.put("merchant", RequestThread.get().getMerchant());
@@ -110,6 +110,7 @@ public class OrderController {
         param.put("endRealRepayTime", StringUtils.isBlank(endRealRepayTime) ? null : endRealRepayTime);
         param.put("startCreateTime", StringUtils.isBlank(startCreateTime) ? null : startCreateTime);
         param.put("endCreateTime", StringUtils.isBlank(endCreateTime) ? null : endCreateTime);
+        param.put("searchType", StringUtils.isBlank(searchType) ? null : searchType);
         return new ResultMessage(ResponseEnum.M2000, orderService.findOrderList(param, page), page);
     }
 

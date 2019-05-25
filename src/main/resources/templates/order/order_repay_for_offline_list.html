@@ -17,6 +17,11 @@
 						</select>
 					    <span>用户手机:</span>
 					    <input id="userPhone" name="userPhone" type="text" />
+						<span>应还日期:</span>
+						<input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+						~
+						<input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+
 						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
 					</div>
 					<!-- 检索  -->
@@ -26,6 +31,7 @@
 								<th class="center">用户姓名</th>
 								<th class="center">借款期限(天)</th>
 								<th class="center">状态</th>
+								<th class="center">代扣结果</th>
 								<th class="center">借款金额(元)</th>
 								<th class="center">逾期天数(天)</th>
 								<th class="center">逾期费用(元)</th>
@@ -113,6 +119,30 @@
 			            return "---";
 			        }
 	        	},{
+                id : "repayStatus",
+                renderer : function(idValue,value,record){
+                    //0-初始；1:受理成功；2:受理失败； 3:还款成功；4:还款失败
+                    if(value == null){
+                        return "--";
+                    }
+                    if(value == 0){
+                        return "<font color='orange'>初始</font>";
+                    }
+                    if(value == 1){
+                        return "<font color='orange'>受理成功</font>";
+                    }
+                    if(value == 2){
+                        return "<font color='orange'>受理失败</font>";
+                    }
+                    if(value == 3){
+                        return "<font color='orange'>还款成功</font>";
+                    }
+                    if(value == 4){
+                        return "<font color='orange'>还款失败</font>";
+                    }
+                    return "---";
+                }
+            },{
 		            id : "borrow_money",
 		            renderer : function(idValue,value,record){
 			            return value ? value : "---" ;
@@ -167,12 +197,20 @@
 			        }
 	        	}]
 		});
+
+        var submitTime = laydate.now(0, 'YYYY-MM-DD');
+        $("#startTime").attr('value',submitTime);
+        $("#endTime").attr('value',submitTime);
+
 		
 		function query() {
 			myTable.page.totalRowNum = 0;
 			myTable.onLoad({
+                searchType : "1",
 				status : $("#status").val(),
-				userPhone : $("#userPhone").val()
+				userPhone : $("#userPhone").val(),
+                startTime : $("#startTime").val(),
+				endTime : $("#endTime").val()
 			});
 		}
 		query();

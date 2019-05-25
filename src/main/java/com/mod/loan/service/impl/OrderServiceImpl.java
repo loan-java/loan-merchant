@@ -15,6 +15,7 @@ import com.mod.loan.mapper.*;
 import com.mod.loan.model.Manager;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
+import com.mod.loan.model.OrderRepay;
 import com.mod.loan.model.User;
 import com.mod.loan.model.dto.StrategyDTO;
 import com.mod.loan.service.MerchantService;
@@ -56,6 +57,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     private MerchantRateMapper merchantRateMapper;
     @Resource
     private MerchantService merchantService;
+    @Autowired
+    private OrderRepayMapper orderRepayMapper;
 
     @Override
     public void updateOrderFollowUser(Long followUserId, String merchant, Long... ids) {
@@ -71,6 +74,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         param.put("startIndex", page.getStartIndex());
         param.put("pageSize", page.getPageSize());
         page.setTotalCount(orderMapper.orderCount(param));
+        String searchType = String.valueOf(param.get("searchType"));
         List<Map<String, Object>> list = orderMapper.findOrderList(param);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(map -> {
@@ -87,6 +91,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
                 map.put("strategies", null);
                 map.put("strategyList", strategyList);
+                //获取每个订单的代扣结果-由菜单决定
+                //searchType: 1-线下还款
+                if(searchType != null && searchType.equals("1")){
+                    Integer status =  orderRepayMapper.getLastRepayStatus(String.valueOf(map.get("id")));
+                    //0-初始；1:受理成功；2:受理失败； 3:还款成功；4:还款失败
+                    map.put("repayStatus", status);
+                }else{
+                    map.put("repayStatus", null);
+                }
             });
         }
         return list;

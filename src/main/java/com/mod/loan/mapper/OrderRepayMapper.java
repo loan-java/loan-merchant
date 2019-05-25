@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.mod.loan.common.mapper.MyBaseMapper;
 import com.mod.loan.model.OrderRepay;
+import org.apache.ibatis.annotations.Param;
 
 public interface OrderRepayMapper extends MyBaseMapper<OrderRepay> {
 
@@ -13,6 +14,9 @@ public interface OrderRepayMapper extends MyBaseMapper<OrderRepay> {
 	List<Map<String, Object>> findOrderRepayList(Map<String, Object> param);
 
 	List<Map<String, Object>> exportReport(Map<String, Object> param);
+
+
+	Integer getLastRepayStatus(@Param("orderId")String orderId);
 
 
 }

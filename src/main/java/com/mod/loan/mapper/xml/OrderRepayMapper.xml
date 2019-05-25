@@ -90,4 +90,14 @@
 		</where>
 		order by op.create_time desc limit 0,5000
 	</select>
+
+
+
+	<select id="getLastRepayStatus" resultType="java.lang.Integer">
+		select repay_status  from tb_order_repay op
+		where order_id = #{orderId}
+		order by op.create_time desc
+		limit 1
+	</select>
+
 </mapper>
