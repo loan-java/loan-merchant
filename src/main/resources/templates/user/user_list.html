@@ -79,7 +79,10 @@
 	        	},{
 		            id : "user_origin",
 		            renderer : function(idValue,value,record){
-			            return value;
+		                if(value != null && value == "1") {
+                            return "RZ";
+						}
+			            return "JH";
 			        }
 	        	},{
 		            id : "real_name",
