@@ -1,5 +1,6 @@
 package com.mod.loan.controller.system;
 
+import com.mod.loan.common.enums.SmsTemplate;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class SecurityController {
 		String randomNum = RandomUtils.generateRandomNum(6);
 		redisMapper.set(RedisConst.USER_SECURITY_CODE_SECOND + manager.getUserPhone(), randomNum, 300);
 		logger.info("merchant={},uid={},安全验证未通过,向手机={}发送短信验证码={}", manager.getMerchant(), manager.getId(), manager.getUserPhone(), randomNum);
-		rabbitTemplate.convertAndSend(RabbitConst.QUEUE_SMS, new SmsMessage(manager.getMerchant(), "1001", manager.getUserPhone(), randomNum + "|5分钟"));
+		rabbitTemplate.convertAndSend(RabbitConst.QUEUE_SMS, new SmsMessage(manager.getMerchant(), SmsTemplate.T002.getKey(), manager.getUserPhone(), randomNum + "|5分钟"));
 		return new ResultMessage(ResponseEnum.M2000);
 	}
 	
