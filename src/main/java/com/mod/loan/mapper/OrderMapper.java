@@ -60,6 +60,13 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	 */
 	Map<String, Object> countOrderMessageByDay(@Param("merchant") String merchant, @Param("searchTime") String searchTime);
 
+	/**
+	 * 累计金额统计
+	 * @param merchant
+	 * @return
+	 */
+	Map<String, Object> countAllOrderMessage(@Param("merchant") String merchant);
+
 	List<Map<String, Object>> exportReport(Map<String, Object> param);
 
 	Order selectOrderById(@Param("id") Long id);

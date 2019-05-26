@@ -46,6 +46,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     @Autowired
     private RedisMapper redisMapper;
     @Autowired
+    private UserSmsMapper userSmsMapper;
+    @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private ManagerMapper managerMapper;
@@ -252,11 +254,44 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("countUserDetailsUserNumberToDay", userMapper.countUserDetailsUserNumberToDay(merchant, searchTime));
             data.put("countMobileUserNumberToDay", userMapper.countMobileUserNumberToDay(merchant, searchTime));
             data.put("countBindbankUserNumberToDay", userMapper.countBindbankUserNumberToDay(merchant, searchTime));
-            data.put("countFlowAmount", orderMapper.countFlowAmount(merchant));
             data.put("countOverdueAmount", orderMapper.countOverdueAmount(merchant));
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
-            data.put("balance", MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant)));
+            data.putAll(orderMapper.countAllOrderMessage(merchant));
+            data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
+            data.put("countFlowAmount", orderMapper.countFlowAmount(merchant));//订单个数
+            /**
+             * hsd=流量费+风控费+金融挂靠费+银行卡权鉴+代付费+支付费+短信验证码费用
+             * 聚合费=32*完整注册  融泽流量费=1509*30%*30%
+             * 风控=10*申请人数
+             * 金融挂靠费=放款金额*0.3%（1050*0.3%）
+             * 权鉴费=0.5*绑卡人数
+             * 代付费=1*代付笔数（成功笔数）
+             * 支付费=支付金额*0.33%（协议支付成功笔数）
+             * 短信验证码费=下发条数*0.1
+             *
+             * jsd=流量费+风控费+短信费用
+             */
+            Integer countBindbankUserNumberToDay = (int)data.get("countBindbankUserNumberToDay");
+            Integer countFlowAmount = (int)data.get("countFlowAmount");
+            double countLoanAmountAll = Double.valueOf(data.get("countLoanAmountAll").toString());
+            double countBorrowMoneyAll = Double.valueOf(data.get("countBorrowMoneyAll").toString());
+            double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
+
+            int llf = countFlowAmount*32;
+            int fkf = countFlowAmount*10;
+            double jrgkf = countLoanAmountAll*0.003;
+            double jqf = countBindbankUserNumberToDay*0.5;
+            double dff = countBackNumberAll*1;
+            double zff = countBorrowMoneyAll*0.0033;
+            int dxf = userSmsMapper.countUserSms();
+            if(MerchantEnum.isJiShiDai(merchant)) {
+                double sum =  llf + fkf +dxf;
+                data.put("merchantBalance", sum);
+            }else if(MerchantEnum.isHuaShiDai(merchant)){
+                double sum =  llf + fkf + jrgkf + jqf + dff +zff +dxf;
+                data.put("merchantBalance", sum);
+            }
 
             redisMapper.set(RedisConst.MAIN_STATISTICS + merchant + searchTime, data, 900);
         }

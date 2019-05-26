@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="common/top :: head">
+</head>
+<head>
+<body>
+<div id="page-content">
+    <div class="index-model-h">
+        <div class="page-header">
+            <div>
+                <span>查询时间:</span>
+                <input id="searchTime" name="searchTime" type="text" readonly="readonly" placeholder="查询时间"
+                       onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询
+                </button>
+            </div>
+        </div>
+        <div class="page-header">商户信息：</div>
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index" style="width: 36%">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">支付账户余额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="balance"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index"  style="width: 36%">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">商户余额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="merchantBalance"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-header">资金信息：</div>
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日借出订单(笔)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countLoanOrderNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日放款金额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countLoanAmountToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日回款金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRepayAmountToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日应收金额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countShouldRepayAmountToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日应收本金(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countBorrowMoneyToDay"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计借出订单(笔)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countAllSuccessOrderNumber"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计放款金额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countLoanAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计回款金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRepayAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计应收金额(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countShouldRepayAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计应收本金(元)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countBorrowMoneyAll"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">总逾期金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOverdueAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">逾期本金</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOverdueBorrowAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">逾期率</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOverdueRate"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">未到期金额</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countPassTimeAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">未到期本金</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countPassTimeBorrowAmountAll"></span>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="pricing-span-index">-->
+                    <!--<div class="widget-box pricing-box-small">-->
+                        <!--<div class="widget-header header-color-red3">-->
+                            <!--<h5 class="bigger lighter">所有流量费</h5>-->
+                        <!--</div>-->
+                        <!--<div class="widget-body index-number">-->
+                            <!--<span id="countFlowAmount"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="pricing-span-index">-->
+                    <!--<div class="widget-box pricing-box-small">-->
+                        <!--<div class="widget-header header-color-red3">-->
+                            <!--<h5 class="bigger lighter">所有风控费</h5>-->
+                        <!--</div>-->
+                        <!--<div class="widget-body index-number">-->
+                            <!--<span id="countRiskAmount"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+        <div class="page-header">用户明细：</div>
+        <div class="row">
+            <div class="index-model">
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日申请人数</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOrderNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日老客(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countOldUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日新客(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countNewUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日次新(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countSecondUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">累计申请人数</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countAllOrderUserNumber"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日注册人数</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRegisterUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日实名认证(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countRealNameUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日通讯录认证(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countUserDetailsUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日运营商认证人(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countMobileUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pricing-span-index">
+                    <div class="widget-box pricing-box-small">
+                        <div class="widget-header header-color-red3">
+                            <h5 class="bigger lighter">当日绑卡(人)</h5>
+                        </div>
+                        <div class="widget-body index-number">
+                            <span id="countBindbankUserNumberToDay"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(top.hangge());
+    var contextPath = "[[@{/}]]";
+    var submitTime = laydate.now(0, 'YYYY-MM-DD');
+    $("#searchTime").attr('value', submitTime);
+
+    function getAllMessage() {
+        var searchTime = $("#searchTime").val();
+        $.ajax({
+            url: contextPath + "statistics/main_data_ajax",
+            type: "POST",
+            dataType: "json",
+            data: {"searchTime": searchTime},
+            beforeSend: function () {
+                maskScreen();
+            },
+            success: function (data) {
+                console.log(data);
+                var info = data.data;
+                var countTotalFee = info.countTotalFee;
+                var countOverdueAmount = info.countOverdueAmount;
+                var insertfee = info.countInterestFee;
+
+                if (data.status == 2000) {
+                    $("#countRegisterUserNumberToDay").html(info.countRegisterUserNumberToDay);
+                    $("#countRealNameUserNumberToDay").html(info.countRealNameUserNumberToDay);
+                    $("#countAlipayUserNumberToDay").html(info.countAlipayUserNumberToDay);
+                    $("#countMobileUserNumberToDay").html(info.countMobileUserNumberToDay);
+                    $("#countBindbankUserNumberToDay").html(info.countBindbankUserNumberToDay);
+                    $("#countUserDetailsUserNumberToDay").html(info.countUserDetailsUserNumberToDay);
+
+                    // $("#countFlowAmount").html(info.countFlowAmount * 32);//流量费
+                    // $("#countRiskAmount").html(info.countFlowAmount * 10);//风控费
+                    $("#balance").html((info.balance).toFixed(2));
+                    $("#merchantBalance").html(info.merchantBalance.toFixed(2));
+
+                    $("#countNewUserNumberToDay").html(info.countNewUserNumberToDay);
+                    $("#countSecondUserNumberToDay").html(info.countSecondUserNumberToDay);
+                    $("#countOldUserNumberToDay").html(info.countOldUserNumberToDay);
+
+                    $("#countAllOrderUserNumber").html(info.countAllOrderUserNumber);
+                    $("#countOrderNumberToDay").html(info.countOrderNumberToDay);
+                    $("#countLoanOrderNumberToDay").html(info.countLoanOrderNumberToDay);
+                    $("#countLoanAmountToDay").html(info.countLoanAmountToDay);
+                    $("#countShouldRepayAmountToDay").html(info.countShouldRepayAmountToDay);
+                    $("#countRepayAmountToDay").html(info.countRepayAmountToDay);
+
+                    $("#countAllSuccessOrderNumber").html(info.countAllSuccessOrderNumber.toFixed(0));
+                    $("#countLoanOrderNumberAll").html(info.countLoanOrderNumberAll);
+                    $("#countLoanAmountAll").html(info.countLoanAmountAll);
+                    $("#countShouldRepayAmountAll").html(info.countShouldRepayAmountAll);
+                    $("#countRepayAmountAll").html(info.countRepayAmountAll);
+                    $("#countBorrowMoneyAll").html(info.countBorrowMoneyAll);
+                    $("#countOverdueAmountAll").html(info.countOverdueAmountAll);
+                    $("#countOverdueBorrowAmountAll").html(info.countOverdueBorrowAmountAll);
+                    $("#countPassTimeAmountAll").html(info.countPassTimeAmountAll);
+                    $("#countPassTimeBorrowAmountAll").html(info.countPassTimeBorrowAmountAll);
+                    $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllOrderNumber*1.00).toFixed(0)+"%");
+
+                    $("#countOverdueAmount").html(info.countOverdueAmount);
+                    $("#otherFee").html(info.otherFee * 0.03);
+                } else {
+                    Dialog.alert(data.message);
+                }
+            },
+            complete: function () {
+                unMaskScreen();
+            }
+        });
+    }
+
+    getAllMessage();
+
+    function search() {
+        var searchTime = $("#searchTime").val();
+        if (new Date(searchTime) > new Date()) {
+            $("#searchTime").tips({
+                side: 3,
+                msg: "不能超过当天时间！",
+                bg: "#AE81FF",
+                time: 2
+            });
+            $("#searchTime").focus();
+            return false;
+        }
+        getAllMessage(searchTime);
+    }
+
+</script>
+</body>
+</html>
