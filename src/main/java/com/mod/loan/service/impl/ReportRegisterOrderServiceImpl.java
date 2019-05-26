@@ -24,7 +24,8 @@ public class ReportRegisterOrderServiceImpl extends BaseServiceImpl<ReportRegist
     public List<Map<String, Object>> findReportRegisterOrderList(Map<String, Object> param, Page page) {
         param.put("startIndex",page.getStartIndex());
         param.put("pageSize",page.getPageSize());
-        page.setTotalCount(reportRegisterOrderMapper.countReportRegisterOrder(param));
-        return reportRegisterOrderMapper.findReportRegisterOrderList(param);
+        page.setTotalCount(reportRegisterOrderMapper.countUserReport(param));
+        List<Map<String, Object>> map = reportRegisterOrderMapper.findUserReportList(param);
+        return map;
     }
 }

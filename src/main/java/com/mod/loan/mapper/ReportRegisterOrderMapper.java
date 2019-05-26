@@ -11,4 +11,8 @@ public interface ReportRegisterOrderMapper extends MyBaseMapper<ReportRegisterOr
     int countReportRegisterOrder(Map<String, Object> param);
 
     List<Map<String, Object>> findReportRegisterOrderList(Map<String, Object> param);
+
+    int countUserReport(Map<String, Object> param);
+
+    List<Map<String, Object>> findUserReportList(Map<String, Object> param);
 }

@@ -21,14 +21,10 @@
 					<thead>
 					<tr>
 						<th class="center">统计日期</th>
-						<th class="center">注册人数(人)</th>
-						<th class="center">实名认证人数(人)</th>
-						<th class="center">支付宝认证人数(人)</th>
-						<th class="center">运营商认证人数(人)</th>
-						<th class="center">总提单人数(人)</th>
-						<th class="center">新客人数(人)</th>
-						<th class="center">次客人数(人)</th>
-						<th class="center">老客人数(人)</th>
+						<th class="center">总注册人数</th>
+						<th class="center">总申请人数</th>
+						<th class="center">渠道1申请人数</th>
+						<th class="center">渠道2申请人数</th>
 					</tr>
 					</thead>
 					<tbody id="myTable"></tbody>
@@ -60,37 +56,17 @@
 				return value ? value : "---";
 			}
 		},{
-			id : "realname_cnt",
+			id : "apply_cnt",
 			renderer : function(idValue,value,record){
 				return value ? value : "---" ;
 			}
 		},{
-			id : "zfb_cnt",
+			id : "apply_one_cnt",
 			renderer : function(idValue,value,record){
 				return value ? value : "---" ;
 			}
 		},{
-			id : "mobile_cnt",
-			renderer : function(idValue,value,record){
-				return value ? value : "---" ;
-			}
-		},{
-			id : "order_cnt",
-			renderer : function(idValue,value,record){
-				return value ? value : "---" ;
-			}
-		},{
-			id : "first_cnt",
-			renderer : function(idValue,value,record){
-				return value ? value : "---" ;
-			}
-		},{
-			id : "second_cnt",
-			renderer : function(idValue,value,record){
-				return value ? value : "---" ;
-			}
-		},{
-			id : "old_cnt",
+			id : "apply_two_cnt",
 			renderer : function(idValue,value,record){
 				return value ? value : "---" ;
 			}
