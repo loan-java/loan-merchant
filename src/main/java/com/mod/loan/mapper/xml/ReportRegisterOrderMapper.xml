@@ -48,61 +48,41 @@
 
 
     <select id="findUserReportList" resultType="map">
-      select a.day_key,sum(register_cnt) as register_cnt,sum(apply_cnt) as apply_cnt,sum(apply_one_cnt) as apply_one_cnt,sum(apply_two_cnt) as apply_two_cnt
-      from (
-            select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,1 as register_cnt,0 as apply_cnt,0 as apply_one_cnt,0 as apply_two_cnt
-            from tb_user
-            where 1=1
-                <if test="startTime != null">
-                    and create_time &gt;= #{startTime}
-                </if>
-                <if test="endTime != null">
-                    and create_time &lt;= #{endTime}
-                </if>
-            UNION all
-            select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,0 as register_cnt,1 as apply_cnt,if(source=0,1,0) as apply_one_cnt,if(source=0,0,1) as apply_two_cnt
-            from tb_order
-            where `status` in (30,31,32,33,34,40,41,42)
-            <if test="startTime != null">
-                and create_time &gt;= #{startTime}
-            </if>
-            <if test="endTime != null">
-                and create_time &lt;= #{endTime}
-            </if>
-        ) as a
-        GROUP BY a.day_key
-        order by day_key desc
+        <include refid="searchSql"></include>
         limit #{startIndex},#{pageSize}
     </select>
 
     <select id="countUserReport" resultType="int">
     select count(*)
     from (
-        select a.day_key
-        from (
-                select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,1 as register_cnt,0 as apply_cnt,0 as apply_one_cnt,0 as apply_two_cnt
-                from tb_user
-                    where 1=1
-                    <if test="startTime != null">
-                        and create_time &gt;= #{startTime}
-                    </if>
-                    <if test="endTime != null">
-                        and create_time &lt;= #{endTime}
-                    </if>
-                UNION all
-                select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,0 as register_cnt,1 as apply_cnt,if(source=0,1,0) as apply_one_cnt,if(source=0,0,1) as apply_two_cnt
-                from tb_order
-                where `status` in (30,31,32,33,34,40,41,42)
-                    <if test="startTime != null">
-                        and create_time &gt;= #{startTime}
-                    </if>
-                    <if test="endTime != null">
-                        and create_time &lt;= #{endTime}
-                    </if>
-            ) as a
-        GROUP BY a.day_key
+         <include refid="searchSql"></include>
         ) aa
     </select>
 
+    <sql id="searchSql">
+        select a.day_key,sum(register_cnt) as register_cnt,sum(apply_cnt) as apply_cnt,sum(apply_one_cnt) as apply_one_cnt,sum(apply_two_cnt) as apply_two_cnt
+        from (
+        select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,1 as register_cnt,0 as apply_cnt,0 as apply_one_cnt,0 as apply_two_cnt
+        from tb_user
+        where 1=1
+        <if test="startTime != null">
+            and create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_time &lt;= #{endTime}
+        </if>
+        UNION all
+        select DATE_FORMAT(create_time,'%Y-%m-%d') as day_key,0 as register_cnt,1 as apply_cnt,if(source=0,1,0) as apply_one_cnt,if(source=0,0,1) as apply_two_cnt
+        from tb_order
+        where 1=1
+        <if test="startTime != null">
+            and create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_time &lt;= #{endTime}
+        </if>
+        ) as a
+        GROUP BY a.day_key
+    </sql>
 
 </mapper>
