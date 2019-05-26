@@ -245,7 +245,7 @@
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日老客(人)</h5>
+                            <h5 class="bigger lighter">当日老客</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countOldUserNumberToDay"></span>
@@ -255,7 +255,7 @@
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日新客(人)</h5>
+                            <h5 class="bigger lighter">当日新客</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countNewUserNumberToDay"></span>
@@ -265,7 +265,7 @@
                 <div class="pricing-span-index">
                     <div class="widget-box pricing-box-small">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日次新(人)</h5>
+                            <h5 class="bigger lighter">当日次新</h5>
                         </div>
                         <div class="widget-body index-number">
                             <span id="countSecondUserNumberToDay"></span>
@@ -278,7 +278,7 @@
                             <h5 class="bigger lighter">累计申请人数</h5>
                         </div>
                         <div class="widget-body index-number">
-                            <span id="countAllOrderUserNumber"></span>
+                            <span id="countAllOrderNumber"></span>
                         </div>
                     </div>
                 </div>
@@ -393,7 +393,7 @@
                     $("#countOverdueBorrowAmountAll").html(info.countOverdueBorrowAmountAll);
                     $("#countPassTimeAmountAll").html(info.countPassTimeAmountAll);
                     $("#countPassTimeBorrowAmountAll").html(info.countPassTimeBorrowAmountAll);
-                    $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllOrderNumber*1.00).toFixed(0)+"%");
+                    $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllSuccessOrderNumber*1.00).toFixed(0)+"%");
 
                     $("#countOverdueAmount").html(info.countOverdueAmount);
                     $("#otherFee").html(info.otherFee * 0.03);

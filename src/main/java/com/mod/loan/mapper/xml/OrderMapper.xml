@@ -186,40 +186,31 @@
     SELECT
     COUNT(id) as 'countAllOrderNumber',
     COUNT(distinct  uid) as 'countAllOrderUserNumber',
-	COUNT(CASE WHEN (create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN id END) AS 'countOrderNumberToDay',
+	COUNT(CASE WHEN (create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOrderNumberToDay',
 	COUNT(CASE WHEN (user_type = 1 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countNewUserNumberToDay',
 	COUNT(CASE WHEN (user_type = 2 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countSecondUserNumberToDay',
 	COUNT(CASE WHEN (user_type = 3 AND create_time >= #{searchTime} and create_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) THEN id END) AS 'countOldUserNumberToDay',
 
-	COUNT(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN id END) AS 'countLoanOrderNumberToDay',
-	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN actual_money END),0.0) AS 'countLoanAmountToDay',
-	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN borrow_money-actual_money+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountToDay',
-	IFNULL(SUM(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN should_repay END),0.0) AS 'countShouldRepayAmountToDay',
-	IFNULL(SUM(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42,50) THEN borrow_money END),0.0) AS 'countBorrowMoneyToDay',
+	COUNT(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42) THEN id END) AS 'countLoanOrderNumberToDay',
+	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42) THEN actual_money END),0.0) AS 'countLoanAmountToDay',
+	IFNULL(SUM(CASE WHEN (arrive_time >= #{searchTime} and arrive_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42) THEN borrow_money-actual_money+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountToDay',
+	IFNULL(SUM(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42) THEN should_repay END),0.0) AS 'countShouldRepayAmountToDay',
+	IFNULL(SUM(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY)) and status in(30,31,32,33,34,40,41,42) THEN borrow_money END),0.0) AS 'countBorrowMoneyToDay',
 
-	IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status in (41,42)) THEN total_fee END),0) AS 'countTotalFee',
-    IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status = 42) THEN overdue_fee END),0) AS 'countOverdueAmount',
-    IFNULL(sum(CASE WHEN (repay_time >= #{searchTime} and repay_time < DATE_ADD(#{searchTime},INTERVAL 1 DAY) and status in (41,42)) THEN interest_fee END),0) AS 'countInterestFee'
-	FROM tb_order WHERE merchant = #{merchant}
-	]]>
-	</select>
-
-    <!--统计所有-->
-    <select id="countAllOrderMessage" resultType="map">
-    <![CDATA[
-    SELECT
-	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42,50) THEN 1 ELSE 0 END),0.0) AS 'countAllSuccessOrderNumber',
-	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42,50) THEN actual_money ELSE 0 END),0.0) AS 'countLoanAmountAll',
-	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42,50) THEN borrow_money-actual_money+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountAll',
-	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42,50) THEN should_repay ELSE 0 END),0.0) AS 'countShouldRepayAmountAll',
-	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42,50) THEN borrow_money ELSE 0 END),0.0) AS 'countBorrowMoneyAll',
-	IFNULL(SUM(CASE WHEN status=42 THEN should_repay ELSE 0 END),0.0) AS 'countOverdueAmountAll',
-	IFNULL(SUM(CASE WHEN status=42 THEN borrow_money ELSE 0 END),0.0) AS 'countOverdueBorrowAmountAll',
-	IFNULL(SUM(CASE WHEN status in (31,31,32) THEN actual_money ELSE 0 END),0.0) AS 'countPassTimeAmountAll',
+    COUNT(CASE WHEN status in(30,31,32,33,34,40,41,42) THEN id END)  AS 'countAllSuccessOrderNumber',
+	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42) THEN actual_money ELSE 0 END),0.0) AS 'countLoanAmountAll',
+	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42) THEN borrow_money-actual_money+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountAll',
+	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42) THEN should_repay ELSE 0 END),0.0) AS 'countShouldRepayAmountAll',
+	IFNULL(SUM(CASE WHEN status in(30,31,32,33,34,40,41,42) THEN borrow_money ELSE 0 END),0.0) AS 'countBorrowMoneyAll',
+	IFNULL(SUM(CASE WHEN status in (33,42) THEN should_repay ELSE 0 END),0.0) AS 'countOverdueAmountAll',
+	IFNULL(SUM(CASE WHEN status in (33,42)  THEN borrow_money ELSE 0 END),0.0) AS 'countOverdueBorrowAmountAll',
+	COUNT(CASE WHEN status in (33,42)  THEN id END) AS 'countOverdueNumberAll',
+    IFNULL(SUM(CASE WHEN status in (31,31,32) THEN should_repay ELSE 0 END),0.0) AS 'countPassTimeAmountAll',
 	IFNULL(SUM(CASE WHEN status in (31,31,32) THEN borrow_money ELSE 0 END),0.0) AS 'countPassTimeBorrowAmountAll',
-	IFNULL(SUM(CASE WHEN status=42 THEN 1 ELSE 0 END),0.0) AS 'countOverdueNumberAll',
-	IFNULL(SUM(CASE WHEN status in (40,41,42) THEN 1 ELSE 0 END),0.0) AS 'countBackNumberAll'
+	COUNT(CASE WHEN status in (40,41,42)  THEN id END) AS  'countBackNumberAll'
+
 	FROM tb_order WHERE merchant = #{merchant}
+
 	]]>
 	</select>
 

@@ -257,7 +257,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("countOverdueAmount", orderMapper.countOverdueAmount(merchant));
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
-            data.putAll(orderMapper.countAllOrderMessage(merchant));
             data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
             data.put("countFlowAmount", orderMapper.countFlowAmount(merchant));//订单个数
             /**
