@@ -78,7 +78,8 @@
                 },
                 success: function (result) {
                     console.log(result)
-                    _that.smses = result.smses;
+                    _that.smses = result.data.smses;
+                    console.log( _that.smses)
                 },
                 complete: function () {
                     unMaskScreen();

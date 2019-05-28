@@ -70,7 +70,8 @@
                 },
                 success: function (result) {
                     console.log(result)
-                    _that.carrierUserInfo = result.basic;
+                    _that.carrierUserInfo = result.data.basic;
+                    console.log(_that.carrierUserInfo)
                 },
                 complete: function () {
                     unMaskScreen();
