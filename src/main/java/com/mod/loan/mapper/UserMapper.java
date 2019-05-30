@@ -38,7 +38,7 @@ public interface UserMapper extends MyBaseMapper<User> {
 	@Select("select count(*) from tb_user where merchant =#{merchant} and user_origin=#{userOrigin} ")
 	int countAllUser(@Param(value = "merchant") String merchant, @Param(value = "userOrigin") String userOrigin);
 
-	@Select(" select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant}")
+	@Select(" select count(uid) from tb_user_ident ui left join tb_user u on u.id = ui.uid where u.merchant = #{merchant} and bindbank != 0 ")
 	int countBindbankUserNumberAll(@Param(value = "merchant") String merchant);
 
 }

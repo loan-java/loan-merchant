@@ -306,8 +306,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             int successOrderRZ = orderMapper.sucessOrder(merchant,OrderSourceEnum.RONGZE.getSoruce());
             lif+=successOrderRZ*1509*0.3*0.3;
             //算聚合 32*完整注册
-            int successOrderJH = orderMapper.sucessOrder(merchant,OrderSourceEnum.JUHE.getSoruce());
-            lif+=successOrderJH*userMapper.countAllUser(merchant,UserOriginEnum.JH.getCode());
+            int countAllUser = userMapper.countAllUser(merchant,UserOriginEnum.JH.getCode());
+            lif+=32*countAllUser;
 
             if (MerchantEnum.isJiShiDai(merchant)) {
                 double sum = lif + fkf + dxf;
