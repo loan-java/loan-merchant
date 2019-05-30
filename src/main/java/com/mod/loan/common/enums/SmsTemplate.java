@@ -2,6 +2,7 @@ package com.mod.loan.common.enums;
 
 public enum SmsTemplate {
 
+    T001("001"),//普通消息
     T002("002"),//打款还款提示
     T005("005"),//逾期提示
     ;
