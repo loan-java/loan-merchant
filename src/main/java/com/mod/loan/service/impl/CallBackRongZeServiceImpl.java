@@ -122,7 +122,7 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
 
     private Map<String, Object> postOrderStatus(Order order) throws Exception {
         int status;
-        if (order.getStatus() == 23) status = 169; //放款失败
+        if (order.getStatus() == 23 || order.getStatus() == 53) status = 169; //放款失败或者取消
         else if (order.getStatus() == 31) status = 170; //放款成功
         else if (order.getStatus() == 21 || order.getStatus() == 22 || order.getStatus() == 11 || order.getStatus() == 12)
             status = 171; //放款处理中
