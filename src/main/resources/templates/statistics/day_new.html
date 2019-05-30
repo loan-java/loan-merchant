@@ -392,7 +392,14 @@
                     $("#countOverdueBorrowAmountAll").html(info.countOverdueBorrowAmountAll);
                     $("#countPassTimeAmountAll").html(info.countPassTimeAmountAll);
                     $("#countPassTimeBorrowAmountAll").html(info.countPassTimeBorrowAmountAll);
-                    $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllSuccessOrderNumber*1.00).toFixed(0)+"%");
+                    if(info.countAllSuccessOrderNumber == 0){
+                        $("#countOverdueRate").html("0%");
+                    }else{
+                        $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllSuccessOrderNumber*1.00).toFixed(0)+"%");
+                    }
+
+
+
 
                     $("#otherFee").html(info.otherFee * 0.03);
                 } else {
