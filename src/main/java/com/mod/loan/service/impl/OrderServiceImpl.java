@@ -285,12 +285,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             double countBorrowMoneyAll = Double.valueOf(data.get("countBorrowMoneyAll").toString());
             double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
 
+
             int llf = countFlowAmount * 32;
             int fkf = countFlowAmount * 10;
             double jrgkf = countLoanAmountAll * 0.003;
             double jqf = countBindbankUserNumberToDay * 0.5;
             double dff = countBackNumberAll * 1;
             double zff = countBorrowMoneyAll * 0.0033;
+
             int dxf = userSmsMapper.countUserSms();
             if (MerchantEnum.isJiShiDai(merchant)) {
                 double sum = llf + fkf + dxf;
