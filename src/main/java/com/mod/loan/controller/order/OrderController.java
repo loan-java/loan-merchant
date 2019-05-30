@@ -1,13 +1,23 @@
 package com.mod.loan.controller.order;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSONObject;
+import com.mod.loan.common.enums.ResponseEnum;
+import com.mod.loan.common.model.Page;
+import com.mod.loan.common.model.RequestThread;
+import com.mod.loan.common.model.ResultMessage;
+import com.mod.loan.config.Constant;
+import com.mod.loan.config.redis.RedisConst;
+import com.mod.loan.config.redis.RedisMapper;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.Merchant;
+import com.mod.loan.model.Order;
+import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.MerchantService;
+import com.mod.loan.service.OrderAuditService;
+import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
+import com.mod.loan.util.ExcelUtil;
+import com.mod.loan.util.TimeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -18,21 +28,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONObject;
-import com.mod.loan.common.enums.ResponseEnum;
-import com.mod.loan.common.model.Page;
-import com.mod.loan.common.model.RequestThread;
-import com.mod.loan.common.model.ResultMessage;
-import com.mod.loan.config.Constant;
-import com.mod.loan.config.redis.RedisConst;
-import com.mod.loan.config.redis.RedisMapper;
-import com.mod.loan.model.Merchant;
-import com.mod.loan.model.Order;
-import com.mod.loan.service.MerchantService;
-import com.mod.loan.service.OrderAuditService;
-import com.mod.loan.service.OrderService;
-import com.mod.loan.util.ExcelUtil;
-import com.mod.loan.util.TimeUtils;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "order")
@@ -49,6 +49,8 @@ public class OrderController {
     @Autowired
     private MerchantService merchantService;
 
+    @Autowired
+    private CallBackRongZeService callBackRongZeService;
     @Autowired
     private UserMapper userMapper;
 
@@ -84,10 +86,10 @@ public class OrderController {
 
     @RequestMapping(value = "order_pass_list_ajax", method = {RequestMethod.POST})
     public ResultMessage order_pass_list_ajax(Order order, String startTime, String endTime, Page page) {
-    	int timeDiff = TimeUtils.getTimeDiff(startTime, endTime);
-		if (timeDiff > 7 || timeDiff < 0) {
-			return null;
-		}
+        int timeDiff = TimeUtils.getTimeDiff(startTime, endTime);
+        if (timeDiff > 7 || timeDiff < 0) {
+            return null;
+        }
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("merchant", RequestThread.get().getMerchant());
         param.put("userType", order.getUserType() != null ? order.getUserType() : null);
@@ -190,16 +192,16 @@ public class OrderController {
         String merchant = RequestThread.get().getMerchant();
         Merchant record = merchantService.selectByPrimaryKey(merchant);
         JSONObject merchantChannel = JSONObject.parseObject(record.getMerchantChannel());
-        
+
         // 支付通道是否合法
-		if (merchantChannel.get(payType) == null) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "请选择正确的支付通道");
-		} else if (merchantChannel.get(payType) instanceof Integer && merchantChannel.getInteger(payType) != 1) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
-		} else if (!(merchantChannel.get(payType) instanceof Integer) && merchantChannel.getJSONObject(payType).getInteger("pay") != 1) {
-			return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
-		}
-		
+        if (merchantChannel.get(payType) == null) {
+            return new ResultMessage(ResponseEnum.M4000.getCode(), "请选择正确的支付通道");
+        } else if (merchantChannel.get(payType) instanceof Integer && merchantChannel.getInteger(payType) != 1) {
+            return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
+        } else if (!(merchantChannel.get(payType) instanceof Integer) && merchantChannel.getJSONObject(payType).getInteger("pay") != 1) {
+            return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
+        }
+
         if (!redisMapper.getLock(RedisConst.REDIS_LOCK + merchant, 10)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "系统忙，请重试。");
         }
@@ -238,17 +240,21 @@ public class OrderController {
         record.setId(orderId);
         record.setStatus(Constant.ORDER_CANCLE);
         orderService.updateByPrimaryKeySelective(record);
-        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),orderService.selectByPrimaryKey(orderId));
+        if (order.getSource() == ConstantUtils.ONE) {
+            callBackRongZeService.pushOrderStatus(order);
+        } else {
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderService.selectByPrimaryKey(orderId));
+        }
         return new ResultMessage(ResponseEnum.M2000);
     }
 
     @RequestMapping(value = "export_report_order_list")
     public void export_report(String reportName, String startTime, String endTime, String startRealRepayTime, String endRealRepayTime, HttpServletResponse response, String userPhone, Integer status, String startCreateTime, String endCreateTime) {
-		// 安全校验
-		if (redisMapper.get(RedisConst.USER_SECURITY_CODE_SECOND + RequestThread.get().getUid()) == null) {
-			return;
-		}
-		// 导出功能
+        // 安全校验
+        if (redisMapper.get(RedisConst.USER_SECURITY_CODE_SECOND + RequestThread.get().getUid()) == null) {
+            return;
+        }
+        // 导出功能
         try {
             String[] title = null;
             String sheetName = null;

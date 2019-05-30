@@ -15,11 +15,12 @@ import com.mod.loan.mapper.*;
 import com.mod.loan.model.Manager;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
-import com.mod.loan.model.OrderRepay;
 import com.mod.loan.model.User;
 import com.mod.loan.model.dto.StrategyDTO;
+import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
 import com.mod.loan.util.MoneyUtil;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -62,6 +63,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     @Autowired
     private OrderRepayMapper orderRepayMapper;
 
+    @Autowired
+    private CallBackRongZeService callBackRongZeService;
+
     @Override
     public void updateOrderFollowUser(Long followUserId, String merchant, Long... ids) {
         if (ids == null | ids.length == 0) {
@@ -95,11 +99,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 map.put("strategyList", strategyList);
                 //获取每个订单的代扣结果-由菜单决定
                 //searchType: 1-线下还款
-                if(searchType != null && searchType.equals("1")){
-                    Integer status =  orderRepayMapper.getLastRepayStatus(String.valueOf(map.get("id")));
+                if (searchType != null && searchType.equals("1")) {
+                    Integer status = orderRepayMapper.getLastRepayStatus(String.valueOf(map.get("id")));
                     //0-初始；1:受理成功；2:受理失败； 3:还款成功；4:还款失败
                     map.put("repayStatus", status);
-                }else{
+                } else {
                     map.put("repayStatus", null);
                 }
             });
@@ -226,7 +230,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
-                orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(id));
+                if (order.getSource() == ConstantUtils.ONE) {
+                    callBackRongZeService.pushOrderStatus(order);
+                } else {
+                    orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(id));
+                }
                 // 发送消息
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("orderId", id);
@@ -271,24 +279,24 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
              *
              * jsd=流量费+风控费+短信费用
              */
-            Integer countBindbankUserNumberToDay = (int)data.get("countBindbankUserNumberToDay");
-            Integer countFlowAmount = (int)data.get("countFlowAmount");
+            Integer countBindbankUserNumberToDay = (int) data.get("countBindbankUserNumberToDay");
+            Integer countFlowAmount = (int) data.get("countFlowAmount");
             double countLoanAmountAll = Double.valueOf(data.get("countLoanAmountAll").toString());
             double countBorrowMoneyAll = Double.valueOf(data.get("countBorrowMoneyAll").toString());
             double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
 
-            int llf = countFlowAmount*32;
-            int fkf = countFlowAmount*10;
-            double jrgkf = countLoanAmountAll*0.003;
-            double jqf = countBindbankUserNumberToDay*0.5;
-            double dff = countBackNumberAll*1;
-            double zff = countBorrowMoneyAll*0.0033;
+            int llf = countFlowAmount * 32;
+            int fkf = countFlowAmount * 10;
+            double jrgkf = countLoanAmountAll * 0.003;
+            double jqf = countBindbankUserNumberToDay * 0.5;
+            double dff = countBackNumberAll * 1;
+            double zff = countBorrowMoneyAll * 0.0033;
             int dxf = userSmsMapper.countUserSms();
-            if(MerchantEnum.isJiShiDai(merchant)) {
-                double sum =  llf + fkf +dxf;
+            if (MerchantEnum.isJiShiDai(merchant)) {
+                double sum = llf + fkf + dxf;
                 data.put("merchantBalance", sum);
-            }else if(MerchantEnum.isHuaShiDai(merchant)){
-                double sum =  llf + fkf + jrgkf + jqf + dff +zff +dxf;
+            } else if (MerchantEnum.isHuaShiDai(merchant)) {
+                double sum = llf + fkf + jrgkf + jqf + dff + zff + dxf;
                 data.put("merchantBalance", sum);
             }
 
@@ -325,8 +333,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         JSONObject object = JSONObject.parseObject(user.getCommonInfo());
         object.put("orderNo", order.getOrderNo());
         object.put("orderType", OrderTypeEnum.JK.getCode());
-        object.put("shouldRepayAmount",new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
-        object.put("accountId",order.getUid());
+        object.put("shouldRepayAmount", new BigDecimal(order.getShouldRepay().toString()).stripTrailingZeros().toPlainString());
+        object.put("accountId", order.getUid());
         switch (order.getStatus()) {
             case 21:
                 object.put("orderStatus", OrderStatusEnum.WAIT_PAY.getCode());
@@ -520,7 +528,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         order.setShouldRepay(new BigDecimal("1207.50"));
         order.setUid(1358L);
         OrderServiceImpl orderService = new OrderServiceImpl();
-        orderService.orderCallBack(user,order);
+        orderService.orderCallBack(user, order);
     }
 
 
