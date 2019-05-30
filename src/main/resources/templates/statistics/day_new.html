@@ -355,9 +355,6 @@
             success: function (data) {
                 console.log(data);
                 var info = data.data;
-                var countTotalFee = info.countTotalFee;
-                var countOverdueAmount = info.countOverdueAmount;
-                var insertfee = info.countInterestFee;
 
                 if (data.status == 2000) {
                     $("#countAllOrderNumber").html(info.countAllOrderNumber);
@@ -397,7 +394,6 @@
                     $("#countPassTimeBorrowAmountAll").html(info.countPassTimeBorrowAmountAll);
                     $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllSuccessOrderNumber*1.00).toFixed(0)+"%");
 
-                    $("#countOverdueAmount").html(info.countOverdueAmount);
                     $("#otherFee").html(info.otherFee * 0.03);
                 } else {
                     Dialog.alert(data.message);
