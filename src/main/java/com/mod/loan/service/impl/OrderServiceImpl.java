@@ -278,7 +278,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
 
             int llf = countFlowAmount*32;
-            int fkf = countFlowAmount*10;
+            int fkf = countFlowAmount*5;
             double jrgkf = countLoanAmountAll*0.003;
             double jqf = countBindbankUserNumberToDay*0.5;
             double dff = countBackNumberAll*1;
