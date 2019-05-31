@@ -186,8 +186,8 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
         repay.put("pay_type", 5);
         // 当前所需的还款金额，单位元，保留小数点后两位 （该金额应该是本金利息加上逾期金额减去已还款金额的结果，逾期金额、已还款金额可能为零）
         repay.put("amount", order.getShouldRepay());
-        // 已还款金额，单位元，保留小数点后两位
-        repay.put("paid_amount", order.getHadRepay().toPlainString());
+        // 已还款金额+减免金额，单位元，保留小数点后两位
+        repay.put("paid_amount", (order.getHadRepay().add(order.getReduceMoney())).toPlainString());
         // 逾期费用，单位元，保留小数点后两位
         repay.put("overdue_fee", order.getOverdueFee().toPlainString());
         // 还款成功的时间
