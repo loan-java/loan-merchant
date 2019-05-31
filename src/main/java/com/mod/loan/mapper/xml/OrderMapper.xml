@@ -205,9 +205,9 @@
 	IFNULL(SUM(CASE WHEN status in (33,42) THEN should_repay ELSE 0 END),0.0) AS 'countOverdueAmountAll',
 	IFNULL(SUM(CASE WHEN status in (33,42)  THEN actual_money ELSE 0 END),0.0) AS 'countOverdueBorrowAmountAll',
 	COUNT(CASE WHEN status in (33,42)  THEN id END) AS 'countOverdueNumberAll',
-    IFNULL(SUM(CASE WHEN status in (31,31,32) THEN should_repay ELSE 0 END),0.0) AS 'countPassTimeAmountAll',
-	IFNULL(SUM(CASE WHEN status in (31,31,32) THEN actual_money ELSE 0 END),0.0) AS 'countPassTimeBorrowAmountAll',
-	COUNT(CASE WHEN status in (41,42)  THEN id END) AS  'countBackNumberAll'
+    IFNULL(SUM(CASE WHEN status in (31,32) THEN should_repay ELSE 0 END),0.0) AS 'countPassTimeAmountAll',
+	IFNULL(SUM(CASE WHEN status in (31,32) THEN actual_money ELSE 0 END),0.0) AS 'countPassTimeBorrowAmountAll',
+	COUNT(CASE WHEN status in (31,32,33,34,41,42)  THEN id END) AS  'countBackNumberAll'
 
 	FROM tb_order WHERE merchant = #{merchant}
 
