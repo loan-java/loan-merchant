@@ -301,7 +301,7 @@
     </select>
 
     <select id="countFlowAmount" resultType="int">
-        select count(id) from tb_order where merchant = #{merchant}
+        select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
     </select>
 
     <select id="countOverdueAmount" resultType="decimal">

@@ -266,7 +266,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
             data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
-            data.put("countFlowAmount", orderMapper.countFlowAmount(merchant));//订单个数
+            data.put("countFlowAmount", orderMapper.countFlowAmount());//风控订单个数
             /**
              * hsd=流量费+风控费+金融挂靠费+银行卡权鉴+代付费+支付费+短信验证码费用
              * 聚合流量费=32*完整注册
@@ -286,7 +286,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             Integer countFlowAmount = (int) data.get("countFlowAmount");
             //风控
             int fkf = countFlowAmount * 5;
-            double lif=0d;
+            double lif = 0d;
             //金融挂靠费
             double countLoanAmountAll = Double.valueOf(data.get("countLoanAmountAll").toString());
             double jrgkf = countLoanAmountAll * 0.003;
@@ -297,17 +297,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
             double dff = countBackNumberAll * 1;
             //支付费
-            double sucessOrderForPaymentType = orderMapper.sucessOrderForPaymentType(merchant,"baofoo");
+            double sucessOrderForPaymentType = orderMapper.sucessOrderForPaymentType(merchant, "baofoo");
             double zff = sucessOrderForPaymentType * 0.0033;
             //短信费用
-            double dxf = userSmsMapper.countUserSms()*0.1;
+            double dxf = userSmsMapper.countUserSms() * 0.1;
             //算融泽 1509*30%*30%*成功放款笔数
 
-            int successOrderRZ = orderMapper.sucessOrder(merchant,OrderSourceEnum.RONGZE.getSoruce());
-            lif+=successOrderRZ*1509*0.3*0.3;
+            int successOrderRZ = orderMapper.sucessOrder(merchant, OrderSourceEnum.RONGZE.getSoruce());
+            lif += successOrderRZ * 1509 * 0.3 * 0.3;
             //算聚合 32*完整注册
-            int countAllUser = userMapper.countAllUser(merchant,UserOriginEnum.JH.getCode());
-            lif+=32*countAllUser;
+            int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
+            lif += 32 * countAllUser;
 
             if (MerchantEnum.isJiShiDai(merchant)) {
                 double sum = lif + fkf + dxf;
