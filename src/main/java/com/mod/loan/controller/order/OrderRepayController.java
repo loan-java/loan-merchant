@@ -11,8 +11,10 @@ import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderRepay;
+import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
 import com.mod.loan.util.ExcelUtil;
 import com.mod.loan.util.StringUtil;
 import com.mod.loan.util.TimeUtils;
@@ -52,6 +54,9 @@ public class OrderRepayController {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CallBackRongZeService callBackRongZeService;
 
     @RequestMapping(value = "order_repay_list")
     public ModelAndView order_repay_list(ModelAndView view) {
@@ -140,7 +145,11 @@ public class OrderRepayController {
         orderRepay.setRemark(remark);
         orderRepay.setUpdateTime(new Date());
         orderRepayService.updateOrderOffline(record, orderRepay);
-        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
+        if (order.getSource() == ConstantUtils.ONE) {
+            callBackRongZeService.pushOrderStatus(orderMapper.selectByPrimaryKey(orderId));
+        } else {
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
+        }
         return new ResultMessage(ResponseEnum.M2000);
     }
 

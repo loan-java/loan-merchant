@@ -15,4 +15,16 @@ public interface CallBackRongZeService {
      *
      */
     void pushRiskResult(Order order, String riskCode, String riskDesc);
+
+
+
+    /*
+     * @Description:
+     * @Param: 推送还款计划
+     * @return:
+     * @Author: huijin.shuailijie
+     * @Date: 2019/5/19
+     */
+    void pushRepayPlan(Order order);
+
 }

@@ -1,18 +1,19 @@
 package com.mod.loan.controller.order;
 
-import java.math.BigDecimal;
-
-import com.mod.loan.mapper.UserMapper;
-import com.mod.loan.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.mapper.OrderMapper;
+import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Order;
+import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping(value = "order")
@@ -26,6 +27,10 @@ public class OperateController {
 
     @Autowired
     private UserMapper userMapper;
+
+
+    @Autowired
+    private CallBackRongZeService callBackRongZeService;
 
     @RequestMapping(value = "order_bad")
     public ResultMessage order_bad(Long orderId) {
@@ -66,7 +71,11 @@ public class OperateController {
         record.setReduceMoney(money);
         record.setShouldRepay(order.getInterestFee().add(order.getBorrowMoney()).add(order.getOverdueFee()).subtract(money));
         orderMapper.updateByPrimaryKeySelective(record);
-        orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
+        if (order.getSource() == ConstantUtils.ONE) {
+            callBackRongZeService.pushRepayPlan(orderMapper.selectByPrimaryKey(orderId));
+        } else {
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
+        }
         return new ResultMessage(ResponseEnum.M2000);
     }
 }

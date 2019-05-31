@@ -20,5 +20,6 @@
 	<select id="selectOneByUid" resultMap="BaseResultMap">
 	select card_name,card_no,card_phone,bind_type from tb_user_bank where uid = #{uid} and card_status = 1 order by id desc limit 1
 	</select>
+
 	
 </mapper>

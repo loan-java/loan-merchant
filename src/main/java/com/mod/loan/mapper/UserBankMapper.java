@@ -9,4 +9,5 @@ public interface UserBankMapper extends MyBaseMapper<UserBank> {
 
 	UserBank selectOneByUid(@Param("uid") Long uid);
 
+
 }
