@@ -35,7 +35,7 @@
 		<jsoup.version>1.9.2</jsoup.version>
 		<guava.version>19.0</guava.version>
 		<dom4j.version>1.6.1</dom4j.version>
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 	</properties>
 
 	<dependencies>
