@@ -1,12 +1,12 @@
 package com.mod.loan.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class Constant {
@@ -120,7 +120,7 @@ public class Constant {
     public static String orgPrivateKey;
 
     @Value("${oss.static.bucket.name.mobile}")
-    public  void setBucket_name_mobile(String bucket_name_mobile) {
+    public void setBucket_name_mobile(String bucket_name_mobile) {
         Constant.bucket_name_mobile = bucket_name_mobile;
     }
 

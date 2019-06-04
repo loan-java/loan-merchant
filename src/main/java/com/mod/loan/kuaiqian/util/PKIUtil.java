@@ -1,7 +1,7 @@
 package com.mod.loan.kuaiqian.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 
@@ -14,10 +14,10 @@ import java.io.UnsupportedEncodingException;
  * @date 2015-12-2
  *
  */
+@Slf4j
 public class PKIUtil {
 	
-	private static Logger logger = Logger.getLogger(PKIUtil.class);
-	
+
 	private static final String ENCODING = "utf-8";
 	
     
@@ -25,7 +25,7 @@ public class PKIUtil {
 		try {
 			return new String(bytes, ENCODING);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("byte2UTF8String exception", e);
+			log.error("byte2UTF8String exception", e);
 			return "";
 		}
 	}
@@ -34,7 +34,7 @@ public class PKIUtil {
     	try {
     		return new String(Base64.encodeBase64(bytes), ENCODING);
     	} catch (UnsupportedEncodingException e) {
-    		logger.error("byte2UTF8String exception", e);
+			log.error("byte2UTF8String exception", e);
     		return "";
     	}
     }
@@ -43,7 +43,7 @@ public class PKIUtil {
     	try {
     		return Base64.decodeBase64(string.getBytes(ENCODING));
     	} catch (UnsupportedEncodingException e) {
-    		logger.error("utf8String2Byte exception", e);
+			log.error("utf8String2Byte exception", e);
     		return null;
     	}
     }
