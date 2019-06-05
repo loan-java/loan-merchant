@@ -200,6 +200,7 @@
     COUNT(CASE WHEN status in(31,32,33,34,41,42) THEN id END)  AS 'countAllSuccessOrderNumber',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN actual_money ELSE 0 END),0.0) AS 'countLoanAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN total_fee+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountAll',
+	IFNULL(SUM(CASE WHEN status in(41,42) THEN had_repay ELSE 0 END),0.0) AS 'countRepayedAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN should_repay ELSE 0 END),0.0) AS 'countShouldRepayAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN actual_money ELSE 0 END),0.0) AS 'countBorrowMoneyAll',
 	IFNULL(SUM(CASE WHEN status in (33,42) THEN should_repay ELSE 0 END),0.0) AS 'countOverdueAmountAll',
