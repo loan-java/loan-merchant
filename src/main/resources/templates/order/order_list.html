@@ -177,7 +177,7 @@
             id: "contract_url",
             renderer: function (idValue, value, record) {
                 if (value === undefined || value === null || value === '' || value.length === 0) return '---';
-                var html = "<div class='btn-group'>";
+                var html = "<div style=\"width: 100%; height: 700px; overflow-x: hidden; overflow-y: scroll;\">";
                 html += "<a class='btn btn-mini btn-info' title='查看' href=" + value + ">查看</a>";
                 html += "</div>";
                 return html;
