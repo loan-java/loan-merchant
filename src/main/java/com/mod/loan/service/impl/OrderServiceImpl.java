@@ -84,6 +84,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         List<Map<String, Object>> list = orderMapper.findOrderList(param);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(map -> {
+                map.put("contract_url", Constant.sysDomainHost + "/static/loan-contract.html?uid=" + map.get("uid") + "&orderNo=" + map.get("order_no") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
                 String str = (String) map.get("strategies");
                 if (StringUtils.isBlank(str)) return;
 
@@ -106,7 +107,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 } else {
                     map.put("repayStatus", null);
                 }
-                map.put("contract_url", Constant.sysDomainHost + "/static/loan-contract.html?uid=" + map.get("uid") + "&orderNo=" + map.get("order_no") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
             });
         }
         return list;
