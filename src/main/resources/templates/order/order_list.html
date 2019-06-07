@@ -62,6 +62,7 @@
                         <th class="center">借款期限</th>
                         <th class="center">状态</th>
                         <th class="center">风控报告</th>
+                        <th class="center">合同</th>
                         <th class="center">借款金额</th>
                         <th class="center">综合费</th>
                         <th class="center">实际到账金额</th>
@@ -172,6 +173,16 @@
                 html += "</div>";
                 return html;
             }
+        }, {
+            id: "contract_url",
+            renderer: function (idValue, value, record) {
+                if (value === undefined || value === null || value === '' || value.length === 0) return '---';
+                var html = "<div class='btn-group'>";
+                html += "<a class='btn btn-mini btn-info' title='查看' href=" + record.contract_url + ">查看</a>";
+                html += "</div>";
+                return html;
+            }
+
         }, {
             id: "borrow_money",
             renderer: function (idValue, value, record) {

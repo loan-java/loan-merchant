@@ -1,11 +1,11 @@
 package com.mod.loan.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.mod.loan.common.mapper.BaseService;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.model.OrderAudit;
+
+import java.util.List;
+import java.util.Map;
 
 public interface OrderAuditService extends BaseService<OrderAudit, Long> {
 
@@ -29,5 +29,7 @@ public interface OrderAuditService extends BaseService<OrderAudit, Long> {
      * @return
      */
     Map<String, Object> countAuditOrderMessage();
+
+    int refuseAuditResult(OrderAudit orderAudit);
 
 }

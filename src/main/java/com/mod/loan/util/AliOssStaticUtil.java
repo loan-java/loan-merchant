@@ -76,7 +76,7 @@ public class AliOssStaticUtil {
             ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
             // 判断文件是否存在。doesObjectExist还有一个参数isOnlyInOSS，如果为true则忽略302重定向或镜像；如果为false，则考虑302重定向或镜像。
             boolean found = ossClient.doesObjectExist(bucketName, objectName);
-            logger.error("判断文件objectName=【" + objectName + "】在bucketName=【" + bucketName + "】是否存在【" + found + "】");
+            logger.info("判断文件objectName=【" + objectName + "】在bucketName=【" + bucketName + "】是否存在【" + found + "】");
             if (!found) {
                 throw new RuntimeException("当前查询数据不存在");
             }

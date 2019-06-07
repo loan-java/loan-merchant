@@ -119,6 +119,9 @@ public class Constant {
 
     public static String orgPrivateKey;
 
+
+    public static String sysDomainHost; //系统域名
+
     @Value("${oss.static.bucket.name.mobile}")
     public void setBucket_name_mobile(String bucket_name_mobile) {
         Constant.bucket_name_mobile = bucket_name_mobile;
@@ -253,6 +256,13 @@ public class Constant {
     public void setAccess_key_secret(String access_key_secret) {
         Constant.access_key_secret = access_key_secret;
     }
+
+
+    @Value("${sys.domain.host}")
+    public void setSysDomainHost(String sysDomainHost) {
+        Constant.sysDomainHost = sysDomainHost;
+    }
+
 
     /**
      * 为thymeleaf添加全局静态变量

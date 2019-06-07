@@ -86,4 +86,12 @@
 		select DISTINCT(audit_name) as auditName from tb_order_audit
 		WHERE merchant = #{merchant}
 	</select>
+	<update id="refuseAuditResult" parameterType="com.mod.loan.model.OrderAudit">
+		update tb_order_audit set
+		status=1,
+		audit_id =#{auditId},
+		audit_name =#{auditName},
+		fail_reason=#{failReason}
+		where status =2  and order_id =#{orderId}
+	</update>
 </mapper>

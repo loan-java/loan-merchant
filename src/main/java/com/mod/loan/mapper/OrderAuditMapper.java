@@ -20,4 +20,6 @@ public interface OrderAuditMapper extends MyBaseMapper<OrderAudit> {
 
     List<Map<String, Object>> findOrderAuditNameList(Map<String, Object> param);
 
+    int refuseAuditResult(OrderAudit orderAudit);
+
 }

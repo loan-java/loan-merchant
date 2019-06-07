@@ -1,13 +1,20 @@
 package com.mod.loan.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSON;
 import com.mod.loan.common.enums.PolicyResultEnum;
+import com.mod.loan.common.mapper.BaseServiceImpl;
+import com.mod.loan.common.model.Page;
+import com.mod.loan.common.model.RequestThread;
+import com.mod.loan.config.Constant;
+import com.mod.loan.mapper.ManagerMapper;
+import com.mod.loan.mapper.OrderAuditMapper;
+import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.model.Manager;
+import com.mod.loan.model.Order;
+import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.OrderAuditService;
 import com.mod.loan.service.OrderService;
 import com.mod.loan.util.ConstantUtils;
 import org.slf4j.Logger;
@@ -15,18 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.mod.loan.common.mapper.BaseServiceImpl;
-import com.mod.loan.common.model.Page;
-import com.mod.loan.common.model.RequestThread;
-import com.mod.loan.config.Constant;
-import com.mod.loan.mapper.OrderAuditMapper;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.model.Order;
-import com.mod.loan.model.OrderAudit;
-import com.mod.loan.service.OrderAuditService;
-
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> implements OrderAuditService {
@@ -37,6 +37,9 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
     private OrderMapper orderMapper;
     @Autowired
     private OrderAuditMapper orderAuditMapper;
+
+    @Autowired
+    private ManagerMapper managerMapper;
 
     @Autowired
     private OrderService orderService;
@@ -92,7 +95,7 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushRiskResult(order, riskCode, riskDesc);
         } else {
-            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()),orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
+            orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
         }
         return true;
     }
@@ -103,6 +106,14 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
         param.put("auditId", RequestThread.get().getUid());
         param.put("merchant", RequestThread.get().getMerchant());
         return orderAuditMapper.countAuditOrderMessage(param);
+    }
+
+    @Override
+    public int refuseAuditResult(OrderAudit orderAudit) {
+        Manager manager = managerMapper.selectByPrimaryKey(RequestThread.get().getUid());
+        orderAudit.setAuditId(manager.getId());
+        orderAudit.setAuditName(manager.getUserName());
+        return orderAuditMapper.refuseAuditResult(orderAudit);
     }
 
 }
