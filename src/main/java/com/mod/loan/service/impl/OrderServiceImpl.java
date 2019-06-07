@@ -106,7 +106,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 } else {
                     map.put("repayStatus", null);
                 }
-                map.put("contract_url", Constant.sysDomainHost + "/templates/loan-contract.html?uid=" + map.get("uid") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
+                map.put("contract_url", Constant.sysDomainHost + "/static/loan-contract.html?uid=" + map.get("uid") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
             });
         }
         return list;

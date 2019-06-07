@@ -178,7 +178,7 @@
             renderer: function (idValue, value, record) {
                 if (value === undefined || value === null || value === '' || value.length === 0) return '---';
                 var html = "<div class='btn-group'>";
-                html += "<a class='btn btn-mini btn-info' title='查看' href=" + record.contract_url + ">查看</a>";
+                html += "<a class='btn btn-mini btn-info' title='查看' href=" + value + ">查看</a>";
                 html += "</div>";
                 return html;
             }
