@@ -307,15 +307,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             int successOrderRZ = orderMapper.sucessOrder(merchant, OrderSourceEnum.RONGZE.getSoruce());
             lif += successOrderRZ * 1509 * 0.3 * 0.3;
             //算聚合 32*完整注册
-            int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
-            lif += 32 * countAllUser;
+            //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
+            //lif += 32 * countAllUser;
 
             if (MerchantEnum.isJiShiDai(merchant)) {
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
-
-                double sum = lif + fkf + jrgkf + jqf + dff + zff + dxf;
+                double sum = lif + fkf + dxf;
+                //double sum = lif + fkf + jrgkf + jqf + dff + zff + dxf;
                 data.put("merchantBalance", sum);
             }
 
