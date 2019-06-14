@@ -27,4 +27,6 @@ public interface CallBackRongZeService {
      */
     void pushRepayPlan(Order order);
 
+
+    void pushRiskResultForPb(Order order, String riskCode, String riskDesc);
 }

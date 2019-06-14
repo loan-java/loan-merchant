@@ -2,6 +2,7 @@ package com.mod.loan.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.mod.loan.common.enums.OrderSourceEnum;
+import com.mod.loan.common.enums.PbResultEnum;
 import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.config.Constant;
 import com.mod.loan.model.Order;
@@ -79,6 +80,33 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             log.error("给融泽推送风控审批结果失败: " + e.getMessage(), e);
         }
     }
+
+
+    @Override
+    public void pushRiskResultForPb(Order order, String riskCode, String riskDesc) {
+        try {
+            //只推审核通过跟审核拒绝
+            if (!(PbResultEnum.isAPPROVE(riskCode) || PbResultEnum.isDENY(riskCode) || PbResultEnum.isMANUAL(riskCode))) {
+                return;
+            }
+            order = checkOrder(order);
+            if (order == null) return;
+            //先推审批结果，再推订单状态，order_status=100（审批通过），order_status=110（审批拒绝）
+            postRiskResult(order, riskCode, riskDesc);
+
+            int orderStatus = PbResultEnum.isAPPROVE(riskCode) ? 100 : 110;
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("order_no", order.getOrderNo());
+            map.put("order_status", orderStatus);
+            map.put("update_time", System.currentTimeMillis());
+            postOrderStatus(map);
+
+        } catch (Exception e) {
+            log.error("给融泽推送风控审批结果失败: " + e.getMessage(), e);
+        }
+    }
+
 
     private void postRiskResult(Order order, String riskCode, String riskDesc) throws Exception {
         String orderNo = order.getOrderNo();

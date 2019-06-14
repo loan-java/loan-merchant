@@ -1,5 +1,21 @@
 package com.mod.loan.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.mod.loan.common.enums.PbResultEnum;
+import com.mod.loan.common.enums.PolicyResultEnum;
+import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.service.CallBackRongZeService;
+import com.mod.loan.service.OrderService;
+import com.mod.loan.util.ConstantUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.common.mapper.BaseServiceImpl;
@@ -76,14 +92,16 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
         // 复审通过
         String riskCode = "", riskDesc = "";
         if (orderAudit.getStatus() == 0) {
-            riskCode = PolicyResultEnum.AGREE.getCode();
+//            riskCode = PolicyResultEnum.AGREE.getCode();
+            riskCode = PbResultEnum.APPROVE.getCode();
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_FOR_LENDING);
             orderMapper.updateByPrimaryKey(order);
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
-            riskCode = PolicyResultEnum.REJECT.getCode();
+//            riskCode = PolicyResultEnum.REJECT.getCode();
+            riskCode = PbResultEnum.DENY.getCode();
             riskDesc = "人工审核拒绝";
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_AUDIT_FAIL);
@@ -93,7 +111,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
         if (order.getSource() == ConstantUtils.ONE) {
-            callBackRongZeService.pushRiskResult(order, riskCode, riskDesc);
+//            callBackRongZeService.pushRiskResult(order, riskCode, riskDesc);
+            callBackRongZeService.pushRiskResultForPb(order, riskCode, riskDesc);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
         }
