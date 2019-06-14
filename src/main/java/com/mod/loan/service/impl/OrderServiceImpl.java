@@ -85,19 +85,19 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(map -> {
                 map.put("contract_url", Constant.sysDomainHost + "/static/loan-contract.html?uid=" + map.get("uid") + "&orderNo=" + map.get("order_no") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
-                String str = (String) map.get("strategies");
-                if (StringUtils.isBlank(str)) return;
-
-                List<StrategyDTO> strategyList;
-
-                if (StringUtils.startsWith(str, "[{")) {
-                    strategyList = JSON.parseArray(str, StrategyDTO.class);
-                } else {
-                    strategyList = bindStrategyDTOList(str);
-                }
-
-                map.put("strategies", null);
-                map.put("strategyList", strategyList);
+//                String str = (String) map.get("strategies");
+//                if (StringUtils.isBlank(str)) return;
+//
+//                List<StrategyDTO> strategyList;
+//
+//                if (StringUtils.startsWith(str, "[{")) {
+//                    strategyList = JSON.parseArray(str, StrategyDTO.class);
+//                } else {
+//                    strategyList = bindStrategyDTOList(str);
+//                }
+//
+//                map.put("strategies", null);
+//                map.put("strategyList", strategyList);
                 //获取每个订单的代扣结果-由菜单决定
                 //searchType: 1-线下还款
                 if (searchType != null && searchType.equals("1")) {
@@ -122,10 +122,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         page.setPageSize(1);
         List<Map<String, Object>> list = findOrderList(param, page);
         if (CollectionUtils.isNotEmpty(list)) {
-            Object strategies = list.get(0).get("strategyList");
-
-            List<StrategyDTO> strategyList = (List<StrategyDTO>) strategies;
-            return strategyList != null ? strategyList : null;
+//            Object strategies = list.get(0).get("strategyList");
+//
+//            List<StrategyDTO> strategyList = (List<StrategyDTO>) strategies;
+//            return strategyList != null ? strategyList : null;
         }
         return new ArrayList<>();
     }

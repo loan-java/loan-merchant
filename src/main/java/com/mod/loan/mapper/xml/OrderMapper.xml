@@ -78,7 +78,12 @@
     </select>
 
     <select id="findOrderList" resultType="map">
-        select o.*,user.user_name,user.user_phone,r.strategies from tb_order o left join tb_user user on o.uid = user.id left join tb_decision_res_detail r on r.order_id=o.id
+        select o.*,user.user_name,user.user_phone
+--               ,r.strategies
+        from tb_order o
+        left join tb_user user on o.uid = user.id
+--         left join tb_decision_res_detail r on r.order_id=o.id
+        left join tb_decision_pb_detail r on r.order_id=o.id
         <where>
             <if test="id != null">
                 and o.id = #{id}
@@ -302,7 +307,8 @@
     </select>
 
     <select id="countFlowAmount" resultType="int">
-        select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
+--         select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
+        select count(1) from tb_decision_pb_detail where result = 'APPROVE'
     </select>
 
     <select id="countOverdueAmount" resultType="decimal">
