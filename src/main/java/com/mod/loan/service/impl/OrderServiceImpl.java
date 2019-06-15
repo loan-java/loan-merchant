@@ -1,6 +1,5 @@
 package com.mod.loan.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.mod.loan.common.enums.*;
@@ -122,10 +121,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         page.setPageSize(1);
         List<Map<String, Object>> list = findOrderList(param, page);
         if (CollectionUtils.isNotEmpty(list)) {
-//            Object strategies = list.get(0).get("strategyList");
-//
-//            List<StrategyDTO> strategyList = (List<StrategyDTO>) strategies;
-//            return strategyList != null ? strategyList : null;
+            Object strategies = list.get(0).get("strategyList");
+
+            List<StrategyDTO> strategyList = (List<StrategyDTO>) strategies;
+            return strategyList != null ? strategyList : null;
         }
         return new ArrayList<>();
     }

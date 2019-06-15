@@ -79,7 +79,7 @@
 
     <select id="findOrderList" resultType="map">
         select o.*,user.user_name,user.user_phone
---               ,r.strategies
+               ,r.score
         from tb_order o
         left join tb_user user on o.uid = user.id
 --         left join tb_decision_res_detail r on r.order_id=o.id
