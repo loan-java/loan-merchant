@@ -1,23 +1,7 @@
 package com.mod.loan.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.mod.loan.common.enums.PbResultEnum;
-import com.mod.loan.common.enums.PolicyResultEnum;
-import com.mod.loan.mapper.UserMapper;
-import com.mod.loan.service.CallBackRongZeService;
-import com.mod.loan.service.OrderService;
-import com.mod.loan.util.ConstantUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
-import com.mod.loan.common.enums.PolicyResultEnum;
+import com.mod.loan.common.enums.PbResultEnum;
 import com.mod.loan.common.mapper.BaseServiceImpl;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
@@ -111,7 +95,7 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
         if (order.getSource() == ConstantUtils.ONE) {
-//            callBackRongZeService.pushRiskResult(order, riskCode, riskDesc);
+            //  callBackRongZeService.pushRiskResultForQjld(order, riskCode, riskDesc);
             callBackRongZeService.pushRiskResultForPb(order, riskCode, riskDesc);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));

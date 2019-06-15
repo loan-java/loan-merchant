@@ -10,14 +10,6 @@ public interface CallBackRongZeService {
      */
     void pushOrderStatus(Order order);
 
-    /**
-     * 推送风控审批结果
-     *
-     */
-    void pushRiskResult(Order order, String riskCode, String riskDesc);
-
-
-
     /*
      * @Description:
      * @Param: 推送还款计划
@@ -29,4 +21,10 @@ public interface CallBackRongZeService {
 
 
     void pushRiskResultForPb(Order order, String riskCode, String riskDesc);
+
+    /**
+     * 推送风控审批结果
+     *
+     */
+    void pushRiskResultForQjld(Order order, String riskCode, String riskDesc);
 }
