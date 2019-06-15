@@ -55,7 +55,7 @@
         <file>${LOG_PATH_ERROR}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH_ERROR}.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${PATTERN}</pattern>
