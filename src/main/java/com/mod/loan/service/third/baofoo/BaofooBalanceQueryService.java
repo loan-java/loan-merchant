@@ -48,12 +48,12 @@ public class BaofooBalanceQueryService {
         PostParams.put("account_type", String.valueOf(ConstantUtils.ONE));//帐户类型--0:全部、1:基本账户、2:未结算账户、3:冻结账户、4:保证金账户、5:资金托管账户；
 
         String Md5AddString = "member_id=" + PostParams.get("member_id") + ConstantUtils.MAK + "terminal_id=" + PostParams.get("terminal_id") + ConstantUtils.MAK + "return_type=" + PostParams.get("return_type") + ConstantUtils.MAK + "trans_code=" + PostParams.get("trans_code") + ConstantUtils.MAK + "version=" + PostParams.get("version") + ConstantUtils.MAK + "account_type=" + PostParams.get("account_type") + ConstantUtils.MAK + "key=" + baofooPayConfig.getBaofooKeyString();
-        log.info("Md5拼接字串:" + Md5AddString);//商户在正式环境不要输出此项以免泄漏密钥，只在测试时输出以检查验签失败问题
+        log.info("Md5拼接字串:{}", Md5AddString);//商户在正式环境不要输出此项以免泄漏密钥，只在测试时输出以检查验签失败问题
         String Md5Sing = SecurityUtil.MD5(Md5AddString).toUpperCase();//必须为大写
         PostParams.put("sign", Md5Sing);
         String re_Url = baofooPayConfig.getBaofooBalanceUrl();//正式请求地址
         String retrunString = HttpUtil.RequestForm(re_Url, PostParams);
-        log.info("返回：" + retrunString);
+        log.info("返回:{}" , retrunString);
         strObj = (TransContent<TransRespBFBalance>) strObj.str2Obj(
                 retrunString, TransRespBFBalance.class);
 
