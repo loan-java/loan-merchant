@@ -311,38 +311,37 @@ public class UserController {
             return new ResultMessage(ResponseEnum.M4000, "用户不存在");
         }
         moxieMobile = moxieMobileMapper.selectLastOne(id);
-        if (moxieMobile == null)
-            if (StringUtil.isEmpty(moxieMobile.getRemark())) {
-                if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
-                    OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
-                    JSONObject jsonObject1 = new JSONObject();
-                    jsonObject1.put("order_no", orderUser.getOrderNo());
-                    jsonObject1.put("type", "1");
-                    String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
-                    //判断运营商数据
-                    JSONObject jsonObject = JSONObject.parseObject(mxMobile);
-                    if (!jsonObject.containsKey("code") || !jsonObject.containsKey("data") || jsonObject.getInteger("code") != 200) {
-                        throw new Exception("推送用户补充信息:下载运营商数据解析失败");
-                    }
-                    String dataStr = jsonObject.getString("data");
-                    JSONObject all = JSONObject.parseObject(dataStr);
-                    JSONObject data = all.getJSONObject("data");
-                    JSONObject report = data.getJSONObject("report");
-                    JSONObject members = report.getJSONObject("members");
-                    //上传
-                    String mxMobilePath = AliOssStaticUtil.uploadStr(members.toJSONString(), user.getId());
-                    if (StringUtils.isBlank(mxMobilePath)) {
-                        throw new Exception("推送用户补充信息:运营商数据上传失败");
-                    }
-                    moxieMobile = new MoxieMobile();
-                    moxieMobile.setUid(user.getId());
-                    moxieMobile.setPhone(user.getUserPhone());
-                    //oss上文件的地址存在remark这个字段
-                    moxieMobile.setRemark(mxMobilePath);
-                    moxieMobileMapper.insertSelective(moxieMobile);
-                } else {
-                    return new ResultMessage(ResponseEnum.M4000, "运营商数据不存在");
+        if (moxieMobile == null || moxieMobile.getRemark() == null)
+
+            if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
+                OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
+                JSONObject jsonObject1 = new JSONObject();
+                jsonObject1.put("order_no", orderUser.getOrderNo());
+                jsonObject1.put("type", "1");
+                String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
+                //判断运营商数据
+                JSONObject jsonObject = JSONObject.parseObject(mxMobile);
+                if (!jsonObject.containsKey("code") || !jsonObject.containsKey("data") || jsonObject.getInteger("code") != 200) {
+                    throw new Exception("推送用户补充信息:下载运营商数据解析失败");
                 }
+                String dataStr = jsonObject.getString("data");
+                JSONObject all = JSONObject.parseObject(dataStr);
+                JSONObject data = all.getJSONObject("data");
+                JSONObject report = data.getJSONObject("report");
+                JSONObject members = report.getJSONObject("members");
+                //上传
+                String mxMobilePath = AliOssStaticUtil.uploadStr(members.toJSONString(), user.getId());
+                if (StringUtils.isBlank(mxMobilePath)) {
+                    throw new Exception("推送用户补充信息:运营商数据上传失败");
+                }
+                moxieMobile = new MoxieMobile();
+                moxieMobile.setUid(user.getId());
+                moxieMobile.setPhone(user.getUserPhone());
+                //oss上文件的地址存在remark这个字段
+                moxieMobile.setRemark(mxMobilePath);
+                moxieMobileMapper.insertSelective(moxieMobile);
+            } else {
+                return new ResultMessage(ResponseEnum.M4000, "运营商数据不存在");
             }
         String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(), Constant.bucket_name_mobile);
         JSONObject jsonObject = JSON.parseObject(str);
