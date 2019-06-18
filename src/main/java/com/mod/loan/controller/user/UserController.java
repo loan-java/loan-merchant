@@ -1,16 +1,28 @@
 package com.mod.loan.controller.user;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.enums.UserOriginEnum;
+import com.mod.loan.common.model.Page;
+import com.mod.loan.common.model.RequestThread;
+import com.mod.loan.common.model.ResultMessage;
+import com.mod.loan.config.Constant;
+import com.mod.loan.mapper.*;
+import com.mod.loan.model.*;
+import com.mod.loan.model.moxie.CallInContactList;
+import com.mod.loan.model.moxie.CallOutContactList;
+import com.mod.loan.model.moxie.ContactList;
+import com.mod.loan.model.moxie.Linkmans;
+import com.mod.loan.service.UserService;
 import com.mod.loan.util.AliOssStaticUtil;
+import com.mod.loan.util.ExcelUtil;
+import com.mod.loan.util.TimeUtils;
+import com.mod.loan.util.moxie.AddressListUtil;
+import com.mod.loan.util.moxie.ContactUtil;
+import com.mod.loan.util.moxie.MoxieOssUtil;
+import com.mod.loan.util.rongze.RongZeRequestUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.jsoup.Connection.Response;
@@ -22,36 +34,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.mod.loan.common.enums.ResponseEnum;
-import com.mod.loan.common.model.Page;
-import com.mod.loan.common.model.RequestThread;
-import com.mod.loan.common.model.ResultMessage;
-import com.mod.loan.config.Constant;
-import com.mod.loan.mapper.MoxieMobileMapper;
-import com.mod.loan.mapper.OrderAuditMapper;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.mapper.UserBankMapper;
-import com.mod.loan.mapper.UserIdentMapper;
-import com.mod.loan.mapper.UserInfoMapper;
-import com.mod.loan.model.MoxieMobile;
-import com.mod.loan.model.User;
-import com.mod.loan.model.UserBank;
-import com.mod.loan.model.UserIdent;
-import com.mod.loan.model.UserInfo;
-import com.mod.loan.model.moxie.CallInContactList;
-import com.mod.loan.model.moxie.CallOutContactList;
-import com.mod.loan.model.moxie.ContactList;
-import com.mod.loan.model.moxie.Linkmans;
-import com.mod.loan.service.UserService;
-import com.mod.loan.util.ExcelUtil;
-import com.mod.loan.util.TimeUtils;
-import com.mod.loan.util.moxie.AddressListUtil;
-import com.mod.loan.util.moxie.ContactUtil;
-import com.mod.loan.util.moxie.MoxieOssUtil;
 import tk.mybatis.mapper.util.StringUtil;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "user")
@@ -73,6 +63,9 @@ public class UserController {
     private OrderMapper orderMapper;
     @Autowired
     private OrderAuditMapper orderAuditMapper;
+
+    @Autowired
+    private OrderUserMapper orderUserMapper;
 
     @RequestMapping(value = "user_select")
     public ModelAndView user_select(ModelAndView view) {
@@ -247,47 +240,47 @@ public class UserController {
         }
         return new ResultMessage(ResponseEnum.M2000, userService.updateByPrimaryKeySelective(user));
     }
-    
-	//@RequestMapping(value = "export_report_user_list")
-	public void export_report(HttpServletResponse response, String userOrigin, String startTime, String endTime) {
-		if (StringUtils.isBlank(userOrigin) || StringUtils.isBlank(startTime) || StringUtils.isBlank(endTime)) {
-			return;
-		}
-		try {
-			String[] title = null;
-			String sheetName = null;
-			String[] columns = null;
-			List<Map<String, Object>> list = null;
-			String downloadFileName = TimeUtils.parseTime(new Date(), TimeUtils.dateformat4);
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put("merchant", RequestThread.get().getMerchant());
-			param.put("userOrigin", userOrigin);
-			param.put("startTime", StringUtils.isNotEmpty(startTime) ? startTime : null);
-			param.put("endTime", StringUtils.isNotEmpty(endTime) ? endTime : null);
 
-			downloadFileName += "-用户渠道列表";
-			title = new String[] { "渠道编号", "用户姓名", "用户手机", "注册时间", "是否借款" };
-			sheetName = "用户渠道列表";
-			columns = new String[] { "user_origin", "user_name", "user_phone", "create_time", "borrow_flag" };
-			list = userService.exportUserOriginReport(param);
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			ExcelUtil.createSheet(workbook, sheetName, title, ExcelUtil.mapToArray(list, columns));
-			ExcelUtil.excelExp(response, downloadFileName, workbook);
-		} catch (Exception e) {
-			logger.error("用户渠道列表报告导出异常。", e);
-		}
-	}
+    //@RequestMapping(value = "export_report_user_list")
+    public void export_report(HttpServletResponse response, String userOrigin, String startTime, String endTime) {
+        if (StringUtils.isBlank(userOrigin) || StringUtils.isBlank(startTime) || StringUtils.isBlank(endTime)) {
+            return;
+        }
+        try {
+            String[] title = null;
+            String sheetName = null;
+            String[] columns = null;
+            List<Map<String, Object>> list = null;
+            String downloadFileName = TimeUtils.parseTime(new Date(), TimeUtils.dateformat4);
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("merchant", RequestThread.get().getMerchant());
+            param.put("userOrigin", userOrigin);
+            param.put("startTime", StringUtils.isNotEmpty(startTime) ? startTime : null);
+            param.put("endTime", StringUtils.isNotEmpty(endTime) ? endTime : null);
 
-	//===================================运营商相关数据以下=====================================================================
+            downloadFileName += "-用户渠道列表";
+            title = new String[]{"渠道编号", "用户姓名", "用户手机", "注册时间", "是否借款"};
+            sheetName = "用户渠道列表";
+            columns = new String[]{"user_origin", "user_name", "user_phone", "create_time", "borrow_flag"};
+            list = userService.exportUserOriginReport(param);
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            ExcelUtil.createSheet(workbook, sheetName, title, ExcelUtil.mapToArray(list, columns));
+            ExcelUtil.excelExp(response, downloadFileName, workbook);
+        } catch (Exception e) {
+            logger.error("用户渠道列表报告导出异常。", e);
+        }
+    }
+
+    //===================================运营商相关数据以下=====================================================================
     @RequestMapping(value = "user_carrier_info")
     public ModelAndView user_carrier_info(ModelAndView view, String id) {
         view.addObject("id", id);
-        if(id == null) new RuntimeException("缺少必要参数");
+        if (id == null) new RuntimeException("缺少必要参数");
         User user = userService.selectByPrimaryKey(Long.valueOf(id));
-        if(user == null) new RuntimeException("用户不存在");
-        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
+        if (user == null) new RuntimeException("用户不存在");
+        if (StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             view.setViewName("user/user_carrier_info");
-        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+        } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
             view.setViewName("user/user_carrier_info_rz");
         }
         return view;
@@ -296,38 +289,74 @@ public class UserController {
     @RequestMapping(value = "user_smses_info")
     public ModelAndView user_smses_info(ModelAndView view, String id) {
         view.addObject("id", id);
-        if(id == null) new RuntimeException("缺少必要参数");
+        if (id == null) new RuntimeException("缺少必要参数");
         User user = userService.selectByPrimaryKey(Long.valueOf(id));
-        if(user == null) new RuntimeException("用户不存在");
-        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
+        if (user == null) new RuntimeException("用户不存在");
+        if (StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             view.setViewName("user/user_smses_info");
-        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+        } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
             view.setViewName("user/user_smses_info_rz");
         }
         return view;
     }
 
     @RequestMapping(value = "user_mobile_ajax", method = {RequestMethod.POST})
-    public ResultMessage user_mobile_ajax(Long id) {
-        if(id == null) return new ResultMessage(ResponseEnum.M4000,"缺少必要参数");
+    public ResultMessage user_mobile_ajax(Long id) throws Exception {
+        MoxieMobile moxieMobile = null;
+        if (id == null) {
+            return new ResultMessage(ResponseEnum.M4000, "缺少必要参数");
+        }
         User user = userService.selectByPrimaryKey(id);
-        if(user == null)  return new ResultMessage(ResponseEnum.M4000,"用户不存在");
-        MoxieMobile moxieMobile = moxieMobileMapper.selectLastOne(id);
-        if(moxieMobile == null)  return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
-        if(StringUtil.isEmpty(moxieMobile.getRemark())) return new ResultMessage(ResponseEnum.M4000,"运营商数据不存在");
-        String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(),Constant.bucket_name_mobile);
+        if (user == null) {
+            return new ResultMessage(ResponseEnum.M4000, "用户不存在");
+        }
+        moxieMobile = moxieMobileMapper.selectLastOne(id);
+        if (moxieMobile == null)
+            if (StringUtil.isEmpty(moxieMobile.getRemark())) {
+                if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
+                    OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
+                    JSONObject jsonObject1 = new JSONObject();
+                    jsonObject1.put("order_no", orderUser.getOrderNo());
+                    jsonObject1.put("type", "1");
+                    String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
+                    //判断运营商数据
+                    JSONObject jsonObject = JSONObject.parseObject(mxMobile);
+                    if (!jsonObject.containsKey("code") || !jsonObject.containsKey("data") || jsonObject.getInteger("code") != 200) {
+                        throw new Exception("推送用户补充信息:下载运营商数据解析失败");
+                    }
+                    String dataStr = jsonObject.getString("data");
+                    JSONObject all = JSONObject.parseObject(dataStr);
+                    JSONObject data = all.getJSONObject("data");
+                    JSONObject report = data.getJSONObject("report");
+                    JSONObject members = report.getJSONObject("members");
+                    //上传
+                    String mxMobilePath = AliOssStaticUtil.uploadStr(members.toJSONString(), user.getId());
+                    if (StringUtils.isBlank(mxMobilePath)) {
+                        throw new Exception("推送用户补充信息:运营商数据上传失败");
+                    }
+                    moxieMobile = new MoxieMobile();
+                    moxieMobile.setUid(user.getId());
+                    moxieMobile.setPhone(user.getUserPhone());
+                    //oss上文件的地址存在remark这个字段
+                    moxieMobile.setRemark(mxMobilePath);
+                    moxieMobileMapper.insertSelective(moxieMobile);
+                } else {
+                    return new ResultMessage(ResponseEnum.M4000, "运营商数据不存在");
+                }
+            }
+        String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(), Constant.bucket_name_mobile);
         JSONObject jsonObject = JSON.parseObject(str);
-        if(StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
+        if (StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
             return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
-        }else if(user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())){
+        } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
             JSONArray jsonArray = jsonObject.getJSONArray("transactions");
-            if(jsonArray.size() > 0) {
+            if (jsonArray.size() > 0) {
                 return new ResultMessage(ResponseEnum.M2000, jsonArray.get(0));
             }
         }
         return new ResultMessage(ResponseEnum.M2000, null);
     }
 
-  //===================================运营商相关数据以上=====================================================================
+    //===================================运营商相关数据以上=====================================================================
 
 }

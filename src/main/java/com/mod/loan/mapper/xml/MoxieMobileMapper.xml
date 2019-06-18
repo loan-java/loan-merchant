@@ -5,6 +5,7 @@
 		<!-- WARNING - @mbg.generated -->
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="uid" jdbcType="BIGINT" property="uid" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
 		<result column="task_id" jdbcType="VARCHAR" property="taskId" />
 		<result column="status" jdbcType="VARCHAR" property="status" />
 		<result column="message" jdbcType="VARCHAR" property="message" />

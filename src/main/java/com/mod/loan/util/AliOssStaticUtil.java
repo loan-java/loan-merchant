@@ -1,17 +1,19 @@
 package com.mod.loan.util;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.OSSObject;
 import com.mod.loan.config.Constant;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.aliyun.oss.OSSClient;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
+@Slf4j
 public class AliOssStaticUtil {
 
     private static Logger logger = LoggerFactory.getLogger(AliOssStaticUtil.class);
@@ -91,7 +93,7 @@ public class AliOssStaticUtil {
             }
             // 数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
             reader.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("获取oss上的指定文件失败：", e);
             throw new RuntimeException(e.getMessage());
         } finally {
@@ -101,6 +103,26 @@ public class AliOssStaticUtil {
             }
         }
         return stringBuffer.toString();
+    }
+
+    public static String uploadStr(String str, Long uid) {
+
+        OSSClient ossClient = new OSSClient(Constant.endpoint_in, Constant.accesskey_id, Constant.access_key_secret);
+        String fileType = ".txt";
+        try {
+            DateTime dateTime = new DateTime();
+            String newFileName = uid + fileType;
+            String filepath = dateTime.getYear() + "/" + dateTime.toString("MMdd") + "/" + newFileName;
+            ossClient.putObject(Constant.bucket_name_mobile, filepath, new ByteArrayInputStream(str.getBytes()));
+            return filepath;
+        } catch (Exception e) {
+            log.error("文件上传失败", e);
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
+        return null;
     }
 
 
