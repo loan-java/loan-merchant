@@ -45,10 +45,10 @@ public class OrderPayServiceImpl extends BaseServiceImpl<OrderPay, Long> impleme
             if (map.get("pay_status").equals(4)) {
                 map.put("pay_status", "放款失败");
             }
-            if (map.get("pay_type").equals(1)) {
+            if (map.get("pay_type").equals(5)) {
                 map.put("pay_type", "快钱");
             }
-            if (map.get("pay_type").equals(2)) {
+            if (map.get("pay_type").equals(4)) {
                 map.put("pay_type", "宝付");
             }
         }
