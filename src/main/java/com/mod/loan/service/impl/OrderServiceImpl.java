@@ -1,6 +1,5 @@
 package com.mod.loan.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.mod.loan.common.enums.*;
@@ -84,19 +83,20 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
         List<Map<String, Object>> list = orderMapper.findOrderList(param);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(map -> {
-                String str = (String) map.get("strategies");
-                if (StringUtils.isBlank(str)) return;
-
-                List<StrategyDTO> strategyList;
-
-                if (StringUtils.startsWith(str, "[{")) {
-                    strategyList = JSON.parseArray(str, StrategyDTO.class);
-                } else {
-                    strategyList = bindStrategyDTOList(str);
-                }
-
-                map.put("strategies", null);
-                map.put("strategyList", strategyList);
+                map.put("contract_url", Constant.sysDomainHost + "/static/loan-contract.html?uid=" + map.get("uid") + "&orderNo=" + map.get("order_no") + "&source=" + OrderSourceEnum.RONGZE.getSoruce());
+//                String str = (String) map.get("strategies");
+//                if (StringUtils.isBlank(str)) return;
+//
+//                List<StrategyDTO> strategyList;
+//
+//                if (StringUtils.startsWith(str, "[{")) {
+//                    strategyList = JSON.parseArray(str, StrategyDTO.class);
+//                } else {
+//                    strategyList = bindStrategyDTOList(str);
+//                }
+//
+//                map.put("strategies", null);
+//                map.put("strategyList", strategyList);
                 //获取每个订单的代扣结果-由菜单决定
                 //searchType: 1-线下还款
                 if (searchType != null && searchType.equals("1")) {
@@ -306,15 +306,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             int successOrderRZ = orderMapper.sucessOrder(merchant, OrderSourceEnum.RONGZE.getSoruce());
             lif += successOrderRZ * 1509 * 0.3 * 0.3;
             //算聚合 32*完整注册
-            int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
-            lif += 32 * countAllUser;
+            //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
+            //lif += 32 * countAllUser;
 
             if (MerchantEnum.isJiShiDai(merchant)) {
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
-
-                double sum = lif + fkf + jrgkf + jqf + dff + zff + dxf;
+                double sum = lif + fkf + dxf;
+                //double sum = lif + fkf + jrgkf + jqf + dff + zff + dxf;
                 data.put("merchantBalance", sum);
             }
 

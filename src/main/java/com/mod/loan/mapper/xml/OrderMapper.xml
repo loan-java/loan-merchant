@@ -78,7 +78,12 @@
     </select>
 
     <select id="findOrderList" resultType="map">
-        select o.*,user.user_name,user.user_phone,r.strategies from tb_order o left join tb_user user on o.uid = user.id left join tb_decision_res_detail r on r.order_id=o.id
+        select o.*,user.user_name,user.user_phone
+        ,r.score
+        from tb_order o
+        left join tb_user user on o.uid = user.id
+        -- left join tb_decision_res_detail r on r.order_id=o.id
+        left join tb_decision_pb_detail r on r.order_id=o.id
         <where>
             <if test="id != null">
                 and o.id = #{id}
@@ -120,7 +125,7 @@
         order by o.id desc limit #{startIndex},#{pageSize}
     </select>
 
-	<select id="selectOrderById" resultMap="BaseResultMap">
+    <select id="selectOrderById" resultMap="BaseResultMap">
 		/*FORCE_MASTER*/ select * from tb_order where id = #{id}
 	</select>
 
@@ -133,9 +138,10 @@
             </if>
         </where>
     </select>
-    
+
     <update id="updateOrderFollowUser">
-        update tb_order a set a.follow_user_id = #{followUserId} where a.merchant = #{merchant} and a.status in(33,34) and
+        update tb_order a set a.follow_user_id = #{followUserId} where a.merchant = #{merchant} and a.status in(33,34)
+        and
         a.id in
         <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -180,9 +186,12 @@
 	from tb_order where uid = #{uid} and merchant = #{merchant}
 	</select>
 
-	<!-- 根据日期统计订单情况 -->
+    <!-- 根据日期统计订单情况 -->
     <select id="countOrderMessageByDay" resultType="map">
     <![CDATA[
+
+
+
     SELECT
     COUNT(id) as 'countAllOrderNumber',
     COUNT(distinct  uid) as 'countAllOrderUserNumber',
@@ -200,6 +209,7 @@
     COUNT(CASE WHEN status in(31,32,33,34,41,42) THEN id END)  AS 'countAllSuccessOrderNumber',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN actual_money ELSE 0 END),0.0) AS 'countLoanAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN total_fee+interest_fee ELSE 0 END),0.0) AS 'countRepayAmountAll',
+	IFNULL(SUM(CASE WHEN status in(41,42) THEN had_repay ELSE 0 END),0.0) AS 'countRepayedAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN should_repay ELSE 0 END),0.0) AS 'countShouldRepayAmountAll',
 	IFNULL(SUM(CASE WHEN status in(31,32,33,34,41,42) THEN actual_money ELSE 0 END),0.0) AS 'countBorrowMoneyAll',
 	IFNULL(SUM(CASE WHEN status in (33,42) THEN should_repay ELSE 0 END),0.0) AS 'countOverdueAmountAll',
@@ -211,7 +221,10 @@
 
 	FROM tb_order WHERE merchant = #{merchant}
 
-	]]>
+
+
+
+        ]]>
 	</select>
 
     <!-- 共债记录 -->
@@ -284,7 +297,7 @@
         tb_order o left join tb_order_audit oa on o.id = oa.order_id
         <where>
             <if test="userType != null">
-               and o.user_type = #{userType}
+                and o.user_type = #{userType}
             </if>
             <if test="merchant != null">
                 and o.merchant = #{merchant}
@@ -301,7 +314,11 @@
     </select>
 
     <select id="countFlowAmount" resultType="int">
-        select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
+--         select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
+select sum(num) from(
+        select count(1) as num from tb_decision_pb_detail
+        union
+        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS') decision
     </select>
 
     <select id="countOverdueAmount" resultType="decimal">

@@ -11,6 +11,7 @@ import com.mod.loan.config.redis.RedisMapper;
 import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Merchant;
 import com.mod.loan.model.Order;
+import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderAuditService;
@@ -240,6 +241,11 @@ public class OrderController {
         record.setId(orderId);
         record.setStatus(Constant.ORDER_CANCLE);
         orderService.updateByPrimaryKeySelective(record);
+        //更新审核状态
+        OrderAudit orderAudit=new OrderAudit();
+        orderAudit.setOrderId(orderId);
+        orderAudit.setFailReason("取消放款");
+        orderAuditService.refuseAuditResult(orderAudit);
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushOrderStatus(order);
         } else {

@@ -103,7 +103,7 @@
 						<ul class="submenu">
 							<th:block th:each="child:${parent.childResource}">
 								<li th:id="@{'z'+${child.id}}">
-									<a style="cursor: pointer;" target="mainFrame" th:onclick="|siMenu('z${child.id}','lm${parent.id}','${child.resourceName}','${child.resourceUrl}')|">
+									<a style="cursor: pointer;" target="mainFrame" th:onclick="siMenu('z[[${child.id}]]','lm[[${parent.id}]]',[[${child.resourceName}]],[[${child.resourceUrl}]])">
 											<i class="icon-double-angle-right"></i>
 										<th:block th:text="${child.resourceName}"></th:block>
 									</a>

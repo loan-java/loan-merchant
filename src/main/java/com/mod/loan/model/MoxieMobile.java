@@ -1,7 +1,9 @@
 package com.mod.loan.model;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import javax.persistence.*;
 
 @Table(name = "tb_moxie_mobile")
 public class MoxieMobile {
@@ -25,6 +27,9 @@ public class MoxieMobile {
      * 加密请求报文，用来显示报告
      */
     private String message;
+
+
+    private String phone;
 
     /**
      * 备注
@@ -118,6 +123,16 @@ public class MoxieMobile {
     public void setMessage(String message) {
         this.message = message == null ? null : message.trim();
     }
+
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
 
     /**
      * 获取备注

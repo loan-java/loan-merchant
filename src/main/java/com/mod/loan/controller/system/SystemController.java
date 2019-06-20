@@ -272,7 +272,7 @@ public class SystemController {
         String randomNum = RandomUtils.generateRandomNum(6);
         logger.info("ip={},merchant={},login_name={},登陆验证未通过,向手机={}发送短信验证码={}", ip, manager.getMerchant(), manager.getLoginName(), manager.getUserPhone(), randomNum);
         redisMapper.set(RedisConst.USER_SECURITY_CODE + manager.getUserPhone(), randomNum, 300);
-        rabbitTemplate.convertAndSend(RabbitConst.QUEUE_SMS, new SmsMessage(manager.getMerchant(), SmsTemplate.T001.getKey(), manager.getUserPhone(), randomNum + "|5分钟"));
+        rabbitTemplate.convertAndSend(RabbitConst.QUEUE_SMS, new SmsMessage(manager.getMerchant(), SmsTemplate.T001.getKey(), manager.getUserPhone(), "尊敬的用户，本次验证码为" + randomNum + " 请勿泄露，5分钟内有效！"));
         return new ResultMessage(ResponseEnum.M2000);
     }
 
