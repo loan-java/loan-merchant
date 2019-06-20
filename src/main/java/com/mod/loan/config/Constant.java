@@ -119,6 +119,38 @@ public class Constant {
 
     public static String orgPrivateKey;
 
+    //畅捷支付
+//    public static String chanpayPartnerId;
+    public static String chanpayMerchantNo;
+    public static String chanpayApiGateway;
+    public static String chanpayPublicKey;
+    public static String chanpayOrgPrivateKey;
+
+//    @Value("${chanpay.partner.id}")
+//    public void setChanpayPartnerId(String chanpayPartnerId) {
+//        Constant.chanpayPartnerId = chanpayPartnerId;
+//    }
+
+    @Value("${chanpay.merchant.no}")
+    public void setChanpayMerchantNo(String chanpayMerchantNo) {
+        Constant.chanpayMerchantNo = chanpayMerchantNo;
+    }
+
+    @Value("${chanpay.api.gateway}")
+    public void setChanpayApiGateway(String chanpayApiGateway) {
+        Constant.chanpayApiGateway = chanpayApiGateway;
+    }
+
+    @Value("${chanpay.rsa.public.key}")
+    public void setChanpayPublicKey(String chanpayPublicKey) {
+        Constant.chanpayPublicKey = chanpayPublicKey;
+    }
+
+    @Value("${chanpay.org.rsa.private.key}")
+    public void setChanpayOrgPrivateKey(String chanpayOrgPrivateKey) {
+        Constant.chanpayOrgPrivateKey = chanpayOrgPrivateKey;
+    }
+
     @Value("${oss.static.bucket.name.mobile}")
     public void setBucket_name_mobile(String bucket_name_mobile) {
         Constant.bucket_name_mobile = bucket_name_mobile;
