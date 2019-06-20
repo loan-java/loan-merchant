@@ -318,7 +318,9 @@
 select sum(num) from(
         select count(1) as num from tb_decision_pb_detail
         union
-        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS') decision
+        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS'
+        union
+        select count(1) as num from tb_decision_zm_detail where return_code = '0') decision
     </select>
 
     <select id="countOverdueAmount" resultType="decimal">

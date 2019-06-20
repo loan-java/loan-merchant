@@ -2,15 +2,14 @@ package com.mod.loan.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.mod.loan.common.enums.PbResultEnum;
+import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.common.mapper.BaseServiceImpl;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.config.Constant;
-import com.mod.loan.mapper.ManagerMapper;
-import com.mod.loan.mapper.OrderAuditMapper;
-import com.mod.loan.mapper.OrderMapper;
-import com.mod.loan.mapper.UserMapper;
+import com.mod.loan.mapper.*;
 import com.mod.loan.model.Manager;
+import com.mod.loan.model.Merchant;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
 import com.mod.loan.service.CallBackRongZeService;
@@ -40,7 +39,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
 
     @Autowired
     private ManagerMapper managerMapper;
-
+    @Autowired
+    private MerchantMapper merchantMapper;
     @Autowired
     private OrderService orderService;
 
@@ -73,19 +73,38 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             logger.error("订单状态异常,自动取消审核记录,order={}", JSON.toJSONString(order));
             return false;
         }
+
+        Merchant  merchant1 = merchantMapper.selectByPrimaryKey(merchant);
+        if(merchant1 == null) {
+            logger.error("商户不存在,order={}", JSON.toJSONString(order));
+            return false;
+        }
+        Integer riskType=merchant1.getRiskType();
+        if(riskType == null) riskType=2;
+
         // 复审通过
         String riskCode = "", riskDesc = "";
         if (orderAudit.getStatus() == 0) {
-//            riskCode = PolicyResultEnum.AGREE.getCode();
-            riskCode = PbResultEnum.APPROVE.getCode();
+            if(riskType == 1) {
+                riskCode = PolicyResultEnum.AGREE.getCode();
+            }else if(riskType == 2) {
+                riskCode = PbResultEnum.APPROVE.getCode();
+            }else{
+                riskCode = "0";
+            }
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_FOR_LENDING);
             orderMapper.updateByPrimaryKey(order);
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
-//            riskCode = PolicyResultEnum.REJECT.getCode();
-            riskCode = PbResultEnum.DENY.getCode();
+            if(riskType == 1) {
+                riskCode = PolicyResultEnum.REJECT.getCode();
+            }else if(riskType == 2) {
+                riskCode = PbResultEnum.DENY.getCode();
+            }else{
+                riskCode = "-1";
+            }
             riskDesc = "人工审核拒绝";
             order.setAuditTime(new Date());
             order.setStatus(Constant.ORDER_AUDIT_FAIL);
@@ -95,8 +114,13 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
         if (order.getSource() == ConstantUtils.ONE) {
-            //  callBackRongZeService.pushRiskResultForQjld(order, riskCode, riskDesc);
-            callBackRongZeService.pushRiskResultForPb(order, riskCode, riskDesc);
+            if(riskType == 1) {
+                callBackRongZeService.pushRiskResultForQjld(order, riskCode, riskDesc);
+            }else if(riskType == 2) {
+                callBackRongZeService.pushRiskResultForPb(order, riskCode, riskDesc);
+            }else{
+                callBackRongZeService.pushRiskResultForZm(order, riskCode);
+            }
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
         }

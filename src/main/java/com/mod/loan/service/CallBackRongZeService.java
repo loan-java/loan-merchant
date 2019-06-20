@@ -27,4 +27,6 @@ public interface CallBackRongZeService {
      *
      */
     void pushRiskResultForQjld(Order order, String riskCode, String riskDesc);
+
+    void pushRiskResultForZm(Order order, String riskCode);
 }

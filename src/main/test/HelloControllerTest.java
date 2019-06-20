@@ -46,8 +46,8 @@ public class HelloControllerTest {
      */
     @Test
     public void listFile() throws IOException {
-        String bucketName = Constant.bucket_name_mobile;
-        String objectName="2019/0514/7920567.txt";
+        String bucketName = "hsd-mobile";
+        String objectName="2019/0616/3935.txt";
         String str = AliOssStaticUtil.ossGetFile(objectName,bucketName);
         System.out.println(str);
         JSONObject jsonObject = JSON.parseObject(str);
