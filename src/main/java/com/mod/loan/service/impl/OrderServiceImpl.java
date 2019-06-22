@@ -283,38 +283,51 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
              * jsd=流量费+风控费+短信费用
              */
 
-            Integer countFlowAmount = (int) data.get("countFlowAmount");
-            //风控
-            int fkf = countFlowAmount * 5;
-            double lif = 0d;
+
             //金融挂靠费
             double countLoanAmountAll = Double.valueOf(data.get("countLoanAmountAll").toString());
             double jrgkf = countLoanAmountAll * 0.003;
-            //权鉴费
+
+            //绑卡权鉴费
             Integer countBindbankUserNumber = userMapper.countBindbankUserNumberAll(merchant);
             double jqf = countBindbankUserNumber * 0.5;
-            //代付费
+
+            //绑卡代付费
             double countBackNumberAll = Double.valueOf(data.get("countBackNumberAll").toString());
             double dff = countBackNumberAll * 1;
+
             //支付费
             double sucessOrderForPaymentType = orderMapper.sucessOrderForPaymentType(merchant, "baofoo");
             double zff = sucessOrderForPaymentType * 0.0033;
-            //短信费用
-            double dxf = userSmsMapper.countUserSms() * 0.1;
-            //算融泽 1509*30%*30%*成功放款笔数
 
+            //风控个数
+            Integer countFlowAmount = (int) data.get("countFlowAmount");
+
+            //风控费
+            int fkf = 0;
+            //流量费
+            double lif = 0d;
+            //短信费用
+            double dxf = 0d;
+
+            //算融泽 1509*30%*30%*成功放款笔数
             int successOrderRZ = orderMapper.sucessOrder(merchant, OrderSourceEnum.RONGZE.getSoruce());
-            lif += successOrderRZ * 1509 * 0.3 * 0.3;
+
             //算聚合 32*完整注册
             //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
             //lif += 32 * countAllUser;
 
             if (MerchantEnum.isJiShiDai(merchant)) {
+                lif = successOrderRZ * 1509 * 0.3 * 0.3;
+                fkf = countFlowAmount * 5;
+                dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
+                lif = successOrderRZ * 1509 * 0.3 * 0.3;
+                fkf = countFlowAmount * 5;
+                dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
-                //double sum = lif + fkf + jrgkf + jqf + dff + zff + dxf;
                 data.put("merchantBalance", sum);
             }
 
