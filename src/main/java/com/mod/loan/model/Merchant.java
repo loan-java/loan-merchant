@@ -74,6 +74,8 @@ public class Merchant {
 	@Column(name = "huiju_md5_key")
 	private String huiju_md5_key;
 
+	@Column(name = "bind_type")
+	private Integer bindType;
 
 	/**
 	 * 第三方支付类型：baofoo   kuaiqian
@@ -260,4 +262,11 @@ public class Merchant {
 		this.fuyou_h5key = fuyou_h5key;
 	}
 
+	public Integer getBindType() {
+		return bindType;
+	}
+
+	public void setBindType(Integer bindType) {
+		this.bindType = bindType;
+	}
 }
