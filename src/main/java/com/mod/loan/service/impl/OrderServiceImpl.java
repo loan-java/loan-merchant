@@ -317,7 +317,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
             //lif += 32 * countAllUser;
 
-            if (MerchantEnum.isJiShiDai(merchant)) {
+            if (MerchantEnum.isXiaoHuQianBao(merchant)) {
                 lif = successOrderRZ * 1509 * 0.3 * 0.3;
                 fkf = countFlowAmount * 5.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
