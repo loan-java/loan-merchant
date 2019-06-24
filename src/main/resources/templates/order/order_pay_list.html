@@ -25,8 +25,8 @@
                     <span>支付通道:</span>
                     <select id="payType" name="payType" class="form-control" onchange="this.blur()">
                         <option value="">全部</option>
-                        <!--<option value="1">快钱</option>-->
-                        <option value="2">宝付</option>
+                        <!--<option value="5">快钱</option>-->
+                        <option value="4">宝付</option>
                     </select>
                     <br>
                     <span>放款时间:</span>
@@ -92,10 +92,10 @@
         },{
             id: "pay_type",
             renderer: function (idValue, value, record) {
-                if (value == 1) {
+                if (value == 5) {
                     return "快钱";
                 }
-                if (value == 2) {
+                if (value == 4) {
                     return "宝付";
                 }
                 return "---";

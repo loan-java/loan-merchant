@@ -119,7 +119,6 @@ public class Constant {
 
     public static String orgPrivateKey;
 
-
     public static String sysDomainHost; //系统域名
 
     @Value("${oss.static.bucket.name.mobile}")
