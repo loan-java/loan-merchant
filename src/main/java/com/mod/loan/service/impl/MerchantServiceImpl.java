@@ -46,7 +46,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
     public long findMerchantBalanceFen(String merchantAlias) {
         if (MerchantEnum.isHuaShiDai(merchantAlias)) return baofooBalanceQueryService.queryBalanceFen();
 
-        if (MerchantEnum.isJiShiDai(merchantAlias)) return kuaiQianBalanceQueryService.queryBalanceFen();
+        if (MerchantEnum.isXiaoHuQianBao(merchantAlias)) return kuaiQianBalanceQueryService.queryBalanceFen();
 
 //        if ("dev".equalsIgnoreCase(Constant.env)) return baofooBalanceQueryService.queryBalanceFen();
 

@@ -7,7 +7,7 @@ package com.mod.loan.common.enums;
 public enum MerchantEnum {
 
     HUASHIDAI("huashidai", "华时贷"),
-    JISHIDAI("jishidai", "及时贷");
+    XIAOHUQIANBAO("xiaohuqianbao", "小虎钱包");
 
     private String key;
     private String name;
@@ -21,8 +21,8 @@ public enum MerchantEnum {
         return HUASHIDAI.getKey().equalsIgnoreCase(key);
     }
 
-    public static boolean isJiShiDai(String key) {
-        return JISHIDAI.getKey().equalsIgnoreCase(key);
+    public static boolean isXiaoHuQianBao(String key) {
+        return XIAOHUQIANBAO.getKey().equalsIgnoreCase(key);
     }
 
     public String getKey() {

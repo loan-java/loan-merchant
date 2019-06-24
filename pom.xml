@@ -324,10 +324,10 @@
 			</activation>
 		</profile>
 		<profile>
-			<!-- 及时贷环境 -->
-			<id>jishidai</id>
+			<!-- 小虎钱包环境 -->
+			<id>xiaohuqianbao</id>
 			<properties>
-				<profiles.active>jishidai</profiles.active>
+				<profiles.active>xiaohuqianbao</profiles.active>
 			</properties>
 		</profile>
 		<profile>
