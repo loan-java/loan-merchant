@@ -27,15 +27,21 @@
                     </select>
                     <br>
                     <span>放款时间:</span>
-                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     ~
-                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     <span>完成时间:</span>
-                    <input id="startUpdateTime" name="startUpdateTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="startUpdateTime" name="startUpdateTime" type="text" readonly="readonly"
+                           placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     ~
-                    <input id="endUpdateTime" name="endUpdateTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <input id="endUpdateTime" name="endUpdateTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
                     <br>
-                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i>
+                        查询
+                    </button>
                     <button class="btn btn-small btn-success" onclick="exportReport()">EXCEL导出</button>
                 </div>
                 <!-- 检索  -->
@@ -84,12 +90,12 @@
             renderer: function (idValue, value, record) {
                 return value ? value : "---";
             }
-        },{
+        }, {
             id: "user_name",
             renderer: function (idValue, value, record) {
                 return value ? value + "(" + record.user_phone + ")" : "---";
             }
-        },{
+        }, {
             id: "pay_type",
             renderer: function (idValue, value, record) {
                 if (value == 4) {
@@ -107,7 +113,7 @@
 
                 return "---";
             }
-        },{
+        }, {
             id: "pay_status",
             renderer: function (idValue, value, record) {
                 if (value == 0) {
@@ -127,36 +133,36 @@
                 }
                 return "---";
             }
-        },{
+        }, {
             id: "pay_money",
             renderer: function (idValue, value, record) {
                 return value ? value : "---";
             }
-        },{
+        }, {
             id: "bank",
             renderer: function (idValue, value, record) {
                 return value ? value : "---";
             }
-        },{
+        }, {
             id: "bank_no",
             renderer: function (idValue, value, record) {
                 return value ? value : "---";
             }
-        },{
+        }, {
             id: "create_time",
             renderer: function (idValue, value, record) {
                 return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
             }
-        },{
+        }, {
             id: "update_time",
             renderer: function (idValue, value, record) {
                 return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
             }
-        },{
+        }, {
             id: "remark",
             renderer: function (idValue, value, record) {
                 return value ? value : "---";
-           }
+            }
         }]
     });
 
@@ -179,10 +185,12 @@
             payType: $("#payType").val()
         });
     }
+
     query();
+
     function search() {
         myTable.page.pageNo = 1;
-        if (times($("#startTime").val(),$("#endTime").val())>7) {
+        if (times($("#startTime").val(), $("#endTime").val()) > 7) {
             $("#startTime").tips({
                 side: 3,
                 msg: "选择时间区间请少于7天！",
@@ -199,7 +207,7 @@
             $("#endTime").focus();
             return false;
         }
-        if (times($("#startUpdateTime").val(),$("#endUpdateTime").val()) > 7) {
+        if (times($("#startUpdateTime").val(), $("#endUpdateTime").val()) > 7) {
             $("#startUpdateTime").tips({
                 side: 3,
                 msg: "选择时间区间请少于7天！",
@@ -218,9 +226,9 @@
         }
         query();
     }
-    
-    function secondSecurityVerify(){
-    	var diag = new top.Dialog();
+
+    function secondSecurityVerify() {
+        var diag = new top.Dialog();
         diag.Drag = true;
         diag.Title = "安全校验";
         diag.URL = contextPath + "user_security";
@@ -231,45 +239,45 @@
         };
         diag.show();
     }
-    
+
     function exportReport() {
-    	$.ajax({
-			url : contextPath+"system/security_first_verify",
-			type : "POST",
-			dataType : "json",
-			data : {},
-			beforeSend : function(){
-	            maskScreen();
-	        },
-			success : function(jsonObject) {
-				if(jsonObject.status != 2000){
-					secondSecurityVerify();
-				}else{
-					Dialog.confirm("确认按条件导出放款列表吗？",function () {
-			            location.href = contextPath + "order/export_report_pay?reportName=order_pay_list&startTime=" + $("#startTime").val()
-			                    + "&endTime=" + $("#endTime").val()
-			                    + "&payStatus=" + $("#payStatus").val()
-			                    + "&payType=" + $("#payType").val()
-			                    + "&userPhone=" + $("#userPhone").val()
-			                    + "&startUpdateTime=" + $("#startUpdateTime").val()
-			                    + "&payNo=" + $("#payNo").val()
-			                    + "&endUpdateTime=" + $("#endUpdateTime").val();
-			        });
-				}
-			},
-			complete : function(){
-				unMaskScreen();
-			}
-		});
+        $.ajax({
+            url: contextPath + "system/security_first_verify",
+            type: "POST",
+            dataType: "json",
+            data: {},
+            beforeSend: function () {
+                maskScreen();
+            },
+            success: function (jsonObject) {
+                if (jsonObject.status != 2000) {
+                    secondSecurityVerify();
+                } else {
+                    Dialog.confirm("确认按条件导出放款列表吗？", function () {
+                        location.href = contextPath + "order/export_report_pay?reportName=order_pay_list&startTime=" + $("#startTime").val()
+                            + "&endTime=" + $("#endTime").val()
+                            + "&payStatus=" + $("#payStatus").val()
+                            + "&payType=" + $("#payType").val()
+                            + "&userPhone=" + $("#userPhone").val()
+                            + "&startUpdateTime=" + $("#startUpdateTime").val()
+                            + "&payNo=" + $("#payNo").val()
+                            + "&endUpdateTime=" + $("#endUpdateTime").val();
+                    });
+                }
+            },
+            complete: function () {
+                unMaskScreen();
+            }
+        });
     }
-    
-    function times(startTime,endTime) {
+
+    function times(startTime, endTime) {
         var day1 = startTime;
         day1 = new Date(day1.replace(/-/g, "/"));
         var day2 = endTime;
         day2 = new Date(day2.replace(/-/g, "/"));
-        var days = day2.getTime()-day1.getTime();
-        var time = parseInt(days/(1000*60*60*24));
+        var days = day2.getTime() - day1.getTime();
+        var time = parseInt(days / (1000 * 60 * 60 * 24));
         return time;
     }
 
@@ -285,19 +293,19 @@
                 var payType = data.data;
                 if (payType == 'baofoo') {
                     $("#payType").append(" <option value=\"\">全部</option>");
-                    $("#payType").append("<option value='baofoo'>宝付</option>");
+                    $("#payType").append(" <option value=\"4\">宝付</option>");
                 }
                 if (payType == 'kuaiqian') {
                     $("#payType").append(" <option value=\"\">全部</option>");
-                    $("#payType").append("<option value='kuaiqian'>快钱</option>");
+                    $("#payType").append(" <option value=\"5\">快钱</option>");
                 }
                 if (payType == 'chanpay') {
                     $("#payType").append(" <option value=\"\">全部</option>");
-                    $("#payType").append("<option value='chanpay'>畅捷</option>");
+                    $("#payType").append("<option value=\"6\">畅捷</option>");
                 }
                 if (payType == 'yeepay') {
                     $("#payType").append(" <option value=\"\">全部</option>");
-                    $("#payType").append("<option value='yeepay'>易宝</option>");
+                    $("#payType").append("<option value=\"7\">易宝</option>");
                 }
 
             },
