@@ -194,9 +194,9 @@ public class OrderController {
         String paymentType = record.getPaymentType();
 
         // 支付通道是否合法
-        if (paymentType == null) {
+        if (paymentType == null || payType == null) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "请选择正确的支付通道");
-        } else if (!paymentType.equalsIgnoreCase(paymentType)) {
+        } else if (!paymentType.equalsIgnoreCase(payType)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
         }
 
