@@ -63,6 +63,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
     private OrderRepayMapper orderRepayMapper;
 
     @Autowired
+    private AccountRechargeMapper accountRechargeMapper;
+
+    @Autowired
     private CallBackRongZeService callBackRongZeService;
 
     @Override
@@ -246,6 +249,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 } else if (PaymentTypeEnum.KUAIQIAN.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
                 }
+                if (PaymentTypeEnum.CHANPAY.getCode().equals(order.getPaymentType())) {
+                    rabbitTemplate.convertAndSend(RabbitConst.chanpay_queue_order_pay, jsonObject);
+                } else if (PaymentTypeEnum.YEEPAY.getCode().equals(order.getPaymentType())) {
+                    rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_order_pay, jsonObject);
+                }
             }
         }
     }
@@ -318,17 +326,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             //lif += 32 * countAllUser;
 
             if (MerchantEnum.isXiaoHuQianBao(merchant)) {
-                lif = successOrderRZ * 1509 * 0.3 * 0.3;
+                lif = successOrderRZ * 1509 * 0.3 * 0.27;
                 fkf = countFlowAmount * 5.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
-                data.put("merchantBalance", sum);
+                data.put("merchantBalance", accountRechargeMapper.getAccountRecharge()-sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
                 lif = successOrderRZ * 1509 * 0.3 * 0.3;
                 fkf = countFlowAmount * 5.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
-                data.put("merchantBalance", sum);
+                data.put("merchantBalance", accountRechargeMapper.getAccountRecharge()-sum);
             }
 
             redisMapper.set(RedisConst.MAIN_STATISTICS + merchant + searchTime, data, 900);

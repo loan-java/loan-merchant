@@ -119,39 +119,72 @@ public class Constant {
 
     public static String orgPrivateKey;
 
+    //畅捷支付
+//    public static String chanpayPartnerId;
+    public static String chanpayMerchantNo;
+    public static String chanpayApiGateway;
+    public static String chanpayPublicKey;
+    public static String chanpayOrgPrivateKey;
+
+//    @Value("${chanpay.partner.id}")
+//    public void setChanpayPartnerId(String chanpayPartnerId) {
+//        Constant.chanpayPartnerId = chanpayPartnerId;
+//    }
+
+    @Value("${chanpay.merchant.no}")
+    public void setChanpayMerchantNo(String chanpayMerchantNo) {
+        Constant.chanpayMerchantNo = chanpayMerchantNo;
+    }
+
+    @Value("${chanpay.api.gateway}")
+    public void setChanpayApiGateway(String chanpayApiGateway) {
+        Constant.chanpayApiGateway = chanpayApiGateway;
+    }
+
+    @Value("${chanpay.rsa.public.key}")
+    public void setChanpayPublicKey(String chanpayPublicKey) {
+        Constant.chanpayPublicKey = chanpayPublicKey;
+    }
+
+    @Value("${chanpay.org.rsa.private.key}")
+    public void setChanpayOrgPrivateKey(String chanpayOrgPrivateKey) {
+        Constant.chanpayOrgPrivateKey = chanpayOrgPrivateKey;
+    }
+
+
     public static String sysDomainHost; //系统域名
 
-    @Value("${oss.static.bucket.name.mobile}")
+    @Value("${oss.static.bucket.name.mobile:}")
     public void setBucket_name_mobile(String bucket_name_mobile) {
         Constant.bucket_name_mobile = bucket_name_mobile;
     }
 
-    @Value("${rongze.request.app.id}")
+    @Value("${rongze.request.app.id:}")
     public void setRongZeRequestAppId(String rongZeRequestAppId) {
         Constant.rongZeRequestAppId = rongZeRequestAppId;
     }
 
-    @Value("${rongze.callback.url}")
+    @Value("${rongze.callback.url:}")
     public void setRongZeCallbackUrl(String rongZeCallbackUrl) {
         Constant.rongZeCallbackUrl = rongZeCallbackUrl;
     }
 
-    @Value("${rongze.query.url}")
+    @Value("${rongze.query.url:}")
     public void setRongZeQueryUrl(String rongZeQueryUrl) {
         Constant.rongZeQueryUrl = rongZeQueryUrl;
     }
 
-    @Value("${org.rsa.private.key}")
+    @Value("${org.rsa.private.key:}")
     public void setOrgPrivateKey(String orgPrivateKey) {
         Constant.orgPrivateKey = orgPrivateKey;
     }
 
-    @Value("${rongze.rsa.public.key}")
+    @Value("${rongze.rsa.public.key:}")
     public void setRongZePublicKey(String rongZePublicKey) {
         Constant.rongZePublicKey = rongZePublicKey;
     }
 
-    @Value("${juhe.call.back.url}")
+    @Value("${juhe.call.back.url:}")
     public void setJuheCallBackUrl(String juheCallBackUrl) {
         Constant.juheCallBackUrl = juheCallBackUrl;
     }
@@ -257,7 +290,7 @@ public class Constant {
     }
 
 
-    @Value("${sys.domain.host}")
+    @Value("${sys.domain.host:}")
     public void setSysDomainHost(String sysDomainHost) {
         Constant.sysDomainHost = sysDomainHost;
     }

@@ -1,9 +1,9 @@
 package com.mod.loan.service.impl;
 
-import com.mod.loan.common.enums.MerchantEnum;
-import com.mod.loan.config.Constant;
 import com.mod.loan.service.third.baofoo.BaofooBalanceQueryService;
 import com.mod.loan.service.third.kuaiqian.KuaiQianBalanceQueryService;
+import com.mod.loan.util.chanpay.ChanpayApiRequest;
+import com.mod.loan.util.yeepay.YeePayApiRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +21,15 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
 
     @Autowired
     private RedisMapper redisMapper;
-    @Autowired
+    @Resource
     private MerchantMapper merchantMapper;
 
     @Resource
     private BaofooBalanceQueryService baofooBalanceQueryService;
     @Resource
     private KuaiQianBalanceQueryService kuaiQianBalanceQueryService;
+    @Resource
+    private ChanpayApiRequest chanpayApiRequest;
 
     @Override
     public Merchant findMerchantByAlias(String merchantAlias) {
@@ -44,12 +46,23 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
 
     @Override
     public long findMerchantBalanceFen(String merchantAlias) {
-        if (MerchantEnum.isHuaShiDai(merchantAlias)) return baofooBalanceQueryService.queryBalanceFen();
-
-        if (MerchantEnum.isXiaoHuQianBao(merchantAlias)) return kuaiQianBalanceQueryService.queryBalanceFen();
-
-//        if ("dev".equalsIgnoreCase(Constant.env)) return baofooBalanceQueryService.queryBalanceFen();
-
-        return 0L;
+        Merchant merchant = findMerchantByAlias(merchantAlias);
+        long balance = 0L;
+        switch (merchant.getBindType()) {
+            case 4:
+                balance = baofooBalanceQueryService.queryBalanceFen();
+                break;
+            case 5:
+                balance = kuaiQianBalanceQueryService.queryBalanceFen();
+                break;
+            case 6:
+                balance = chanpayApiRequest.queryPayBalanceFen();
+                break;
+            case 7:
+                balance = YeePayApiRequest.queryBalanceFen();
+                break;
+            default:
+        }
+        return balance;
     }
 }
