@@ -166,7 +166,7 @@
     });
 
     function query() {
-        if ($("#status").val() == 21 ) {
+        if ($("#status").val() == 21) {
             $("#makeLoansDiv").show();
         } else {
             $("#makeLoansDiv").hide();
@@ -266,29 +266,18 @@
                 console.log(jsonObject)
                 $("#payType").html("");
                 var payType = JSON.parse(jsonObject.data);
-                 if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 1) {
-                     $("#payType").append("<option value='baofoo'>宝付</option>");
-                 }
-                 if (payType.kuaiqian && payType.kuaiqian.pay && payType.kuaiqian.pay == 1) {
+                if (payType.baofoo && payType.baofoo.pay && payType.baofoo.pay == 1) {
+                    $("#payType").append("<option value='baofoo'>宝付</option>");
+                }
+                if (payType.kuaiqian && payType.kuaiqian.pay && payType.kuaiqian.pay == 1) {
                     $("#payType").append("<option value='kuaiqian'>快钱</option>");
-                 }
-                // if (payType.helibao && payType.helibao == 1) {
-                //     $("#payType").append("<option value='helibao'>合利宝</option>");
-                // }
-                // if (payType.fuyou && payType.fuyou == 1) {
-                //     $("#payType").append("<option value='fuyou'>富友</option>");
-                // }
-                //
-                // if (payType.helibao && payType.helibao.pay && payType.helibao.pay == 1) {
-                //     $("#payType").append("<option value='helibao'>合利宝</option>");
-                // }
-                // if (payType.fuyou && payType.fuyou.pay && payType.fuyou.pay == 1) {
-                //     $("#payType").append("<option value='fuyou'>富友</option>");
-                // }
-                // if (payType.huiju && payType.huiju.pay && payType.huiju.pay == 1) {
-                //     $("#payType").append("<option value='huiju'>汇聚</option>");
-                // }
-
+                }
+                if (payType.chanpay && payType.chanpay.pay && payType.chanpay.pay == 1) {
+                    $("#payType").append("<option value='chanpay'>畅捷</option>");
+                }
+                if (payType.yeepay && payType.yeepay.pay && payType.yeepay.pay == 1) {
+                    $("#payType").append("<option value='yeepay'>易宝</option>");
+                }
             },
             complete: function () {
                 unMaskScreen();
