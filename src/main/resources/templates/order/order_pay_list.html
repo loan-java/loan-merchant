@@ -24,12 +24,6 @@
                     <input id="payNo" name="payNo" type="text"/>
                     <span>支付通道:</span>
                     <select id="payType" name="payType" class="form-control" onchange="this.blur()">
-                        <option value="">全部</option>
-                        <option value="4">宝付</option>
-                        <option value="5">快钱</option>
-                        <option value="6">畅捷</option>
-                        <option value="7">易宝</option>
-
                     </select>
                     <br>
                     <span>放款时间:</span>
@@ -82,6 +76,9 @@
         table: "myTable",
         id: "id",
         queryUrl: contextPath + "order/order_pay_list_ajax",
+        complete: function () {
+            getPayTypeList();
+        },
         headerColumns: [{
             id: "pay_no",
             renderer: function (idValue, value, record) {
@@ -274,6 +271,40 @@
         var days = day2.getTime()-day1.getTime();
         var time = parseInt(days/(1000*60*60*24));
         return time;
+    }
+
+    function getPayTypeList() {
+        $.ajax({
+            url: contextPath + "order/pay_type_list",
+            type: "POST",
+            dataType: "json",
+            data: {},
+            success: function (data) {
+                console.log(data)
+                $("#payType").html("");
+                var payType = data.data;
+                if (payType == 'baofoo') {
+                    $("#payType").append(" <option value=\"\">全部</option>");
+                    $("#payType").append("<option value='baofoo'>宝付</option>");
+                }
+                if (payType == 'kuaiqian') {
+                    $("#payType").append(" <option value=\"\">全部</option>");
+                    $("#payType").append("<option value='kuaiqian'>快钱</option>");
+                }
+                if (payType == 'chanpay') {
+                    $("#payType").append(" <option value=\"\">全部</option>");
+                    $("#payType").append("<option value='chanpay'>畅捷</option>");
+                }
+                if (payType == 'yeepay') {
+                    $("#payType").append(" <option value=\"\">全部</option>");
+                    $("#payType").append("<option value='yeepay'>易宝</option>");
+                }
+
+            },
+            complete: function () {
+                unMaskScreen();
+            }
+        });
     }
 </script>
 </body>
