@@ -131,22 +131,22 @@ public class Constant {
 //        Constant.chanpayPartnerId = chanpayPartnerId;
 //    }
 
-    @Value("${chanpay.merchant.no}")
+    @Value("${chanpay.merchant.no:}")
     public void setChanpayMerchantNo(String chanpayMerchantNo) {
         Constant.chanpayMerchantNo = chanpayMerchantNo;
     }
 
-    @Value("${chanpay.api.gateway}")
+    @Value("${chanpay.api.gateway:}")
     public void setChanpayApiGateway(String chanpayApiGateway) {
         Constant.chanpayApiGateway = chanpayApiGateway;
     }
 
-    @Value("${chanpay.rsa.public.key}")
+    @Value("${chanpay.rsa.public.key:}")
     public void setChanpayPublicKey(String chanpayPublicKey) {
         Constant.chanpayPublicKey = chanpayPublicKey;
     }
 
-    @Value("${chanpay.org.rsa.private.key}")
+    @Value("${chanpay.org.rsa.private.key:}")
     public void setChanpayOrgPrivateKey(String chanpayOrgPrivateKey) {
         Constant.chanpayOrgPrivateKey = chanpayOrgPrivateKey;
     }
