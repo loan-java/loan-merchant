@@ -124,7 +124,7 @@ public class OrderPayController {
         if(merchant == null) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "配置信息不存在");
         }
-        return new ResultMessage(ResponseEnum.M2000, merchant.getMerchantChannel());
+        return new ResultMessage(ResponseEnum.M2000, merchant.getPaymentType());
 
     }
 }
