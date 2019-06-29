@@ -28,7 +28,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="pricing-span-index"  style="width: 36%">
+                <div class="pricing-span-index" style="width: 36%">
                     <div class="widget-box ">
                         <div class="widget-header header-color-red3">
                             <h5 class="bigger lighter">商户余额：</h5>
@@ -150,14 +150,14 @@
                     </div>
                 </div>
                 <!--<div class="pricing-span-index">-->
-                    <!--<div class="widget-box ">-->
-                        <!--<div class="widget-header header-color-red3">-->
-                            <!--<h5 class="bigger lighter">累计应收本金：</h5>-->
-                        <!--</div>-->
-                        <!--<div class="widget-body index-number">-->
-                            <!--<span id="countBorrowMoneyAll">0</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="widget-box ">-->
+                <!--<div class="widget-header header-color-red3">-->
+                <!--<h5 class="bigger lighter">累计应收本金：</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-body index-number">-->
+                <!--<span id="countBorrowMoneyAll">0</span>-->
+                <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
             </div>
         </div>
@@ -219,24 +219,24 @@
                     </div>
                 </div>
                 <!--<div class="pricing-span-index">-->
-                    <!--<div class="widget-box ">-->
-                        <!--<div class="widget-header header-color-red3">-->
-                            <!--<h5 class="bigger lighter">所有流量费</h5>-->
-                        <!--</div>-->
-                        <!--<div class="widget-body index-number">-->
-                            <!--<span id="countFlowAmount"></span>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="widget-box ">-->
+                <!--<div class="widget-header header-color-red3">-->
+                <!--<h5 class="bigger lighter">所有流量费</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-body index-number">-->
+                <!--<span id="countFlowAmount"></span>-->
+                <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--<div class="pricing-span-index">-->
-                    <!--<div class="widget-box ">-->
-                        <!--<div class="widget-header header-color-red3">-->
-                            <!--<h5 class="bigger lighter">所有风控费</h5>-->
-                        <!--</div>-->
-                        <!--<div class="widget-body index-number">-->
-                            <!--<span id="countRiskAmount"></span>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                <!--<div class="widget-box ">-->
+                <!--<div class="widget-header header-color-red3">-->
+                <!--<h5 class="bigger lighter">所有风控费</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-body index-number">-->
+                <!--<span id="countRiskAmount"></span>-->
+                <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
             </div>
         </div>
@@ -380,7 +380,7 @@
                     // $("#countFlowAmount").html(info.countFlowAmount * 32);//流量费
                     // $("#countRiskAmount").html(info.countFlowAmount * 10);//风控费
                     $("#balance").html((info.balance).toFixed(2));
-                    $("#merchantBalance").html(-info.merchantBalance.toFixed(2));
+                    $("#merchantBalance").html(info.merchantBalance.toFixed(2));
 
                     $("#countNewUserNumberToDay").html(info.countNewUserNumberToDay);
                     $("#countSecondUserNumberToDay").html(info.countSecondUserNumberToDay);
@@ -405,13 +405,11 @@
                     $("#countOverdueBorrowAmountAll").html(info.countOverdueBorrowAmountAll);
                     $("#countPassTimeAmountAll").html(info.countPassTimeAmountAll);
                     $("#countPassTimeBorrowAmountAll").html(info.countPassTimeBorrowAmountAll);
-                    if(info.countAllSuccessOrderNumber == 0){
+                    if (info.countAllSuccessOrderNumber == 0) {
                         $("#countOverdueRate").html("0%");
-                    }else{
-                        $("#countOverdueRate").html((info.countOverdueNumberAll*100.00/info.countAllSuccessOrderNumber*1.00).toFixed(0)+"%");
+                    } else {
+                        $("#countOverdueRate").html((info.countOverdueNumberAll * 100.00 / info.countAllSuccessOrderNumber * 1.00).toFixed(0) + "%");
                     }
-
-
 
 
                     $("#otherFee").html(info.otherFee * 0.03);
