@@ -264,7 +264,7 @@
             data: {},
             success: function (data) {
                 console.log(data)
-               // $("#payType").html("");
+                $("#payType").html("");
                 var payType = data.data;
                 if (payType == 'baofoo') {
                     $("#payType").append("<option value='baofoo'>宝付</option>");
