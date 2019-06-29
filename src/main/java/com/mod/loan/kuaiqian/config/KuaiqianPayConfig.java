@@ -9,43 +9,43 @@ import org.springframework.stereotype.Component;
 @Component
 public class KuaiqianPayConfig {
 
-    @Value("${kuaiqian.member.code}")
+    @Value("${kuaiqian.member.code:}")
     private String kuaiqianMemberCode;
 
-    @Value("${kuaiqian.feture.code}")
+    @Value("${kuaiqian.feture.code:}")
     private String kuaiqianFetureCode;
 
-    @Value("${kuaiqian.pay.url}")
+    @Value("${kuaiqian.pay.url:}")
     private String kuaiqianPayUrl;
 
-    @Value("${kuaiqian.query.url}")
+    @Value("${kuaiqian.query.url:}")
     private String kuaiqianQueryUrl;
 
-    @Value("${kuaiqian.query.balance.url}")
+    @Value("${kuaiqian.query.balance.url:}")
     private String kuaiqianQueryBalanceUrl;
 
-    @Value("${kuaiqian.version}")
+    @Value("${kuaiqian.version:}")
     private String kuaiqianVersion;
 
-    @Value("${kuaiqian.member.id}")
+    @Value("${kuaiqian.member.id:}")
     private String kuaiqianMemberId;
 
-    @Value("${kuaiqian.terminal.id}")
+    @Value("${kuaiqian.terminal.id:}")
     private String kuaiqianTerminalId;
 
-    @Value("${kuaiqian.repay.query.url}")
+    @Value("${kuaiqian.repay.query.url:}")
     private String kuaiqianRepayQueryUrl;
 
-    @Value("${kuaiqian.function.key}")
+    @Value("${kuaiqian.function.key:}")
     private String functionKey;
 
-    @Value("${kuaiqian.query.balance.memberAcctCode}")
+    @Value("${kuaiqian.query.balance.memberAcctCode:}")
     private String queryBalanceMemberAcctCode;
 
-    @Value("${kuaiqian.app.id}")
+    @Value("${kuaiqian.app.id:}")
     private String appId;
 
-    @Value("${kuaiqian.query.balance.service}")
+    @Value("${kuaiqian.query.balance.service:}")
     private String queryBalanceService;
 
     public String getKuaiqianMemberCode() {

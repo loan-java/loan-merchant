@@ -9,65 +9,65 @@ import org.springframework.stereotype.Component;
 @Component
 public class BaofooPayConfig {
 
-    @Value("${baofoo.key.store.path}")
+    @Value("${baofoo.key.store.path:}")
     private String baofooKeyStorePath;
 
 
-    @Value("${baofoo.key.store.password}")
+    @Value("${baofoo.key.store.password:}")
     private String baofooKeyStorePassword;
 
 
-    @Value("${baofoo.pub.key.path}")
+    @Value("${baofoo.pub.key.path:}")
     private String baofooPubKeyPath;
 
 
-    @Value("${baofoo.pay.url}")
+    @Value("${baofoo.pay.url:}")
     private String baofooPayUrl;
 
 
-    @Value("${baofoo.query.url}")
+    @Value("${baofoo.query.url:}")
     private String baofooQueryUrl;
 
 
-    @Value("${baofoo.balance.url}")
+    @Value("${baofoo.balance.url:}")
     private String baofooBalanceUrl;
 
 
-    @Value("${baofoo.member.id}")
+    @Value("${baofoo.member.id:}")
     private String baofooMemberId;
 
-    @Value("${baofoo.terminal.id}")
+    @Value("${baofoo.terminal.id:}")
     private String baofooTerminalId;
 
-    @Value("${baofoo.key.string}")
+    @Value("${baofoo.key.string:}")
     private String baofooKeyString;
 
 
-    @Value("${baofoo.balance.terminal.id}")
+    @Value("${baofoo.balance.terminal.id:}")
     private String baofooBalanceTerminalId;
 
-    @Value("${baofoo.version}")
+    @Value("${baofoo.version:}")
     private String baofooVersion;
 
-    @Value("${baofoo.repay.pri.key.path}")
+    @Value("${baofoo.repay.pri.key.path:}")
     private String baofooRepayPriKeyPath;
 
-    @Value("${baofoo.repay.pub.key.path}")
+    @Value("${baofoo.repay.pub.key.path:}")
     private String baofooRepayPubKeyPath;
 
-    @Value("${baofoo.repay.key.password}")
+    @Value("${baofoo.repay.key.password:}")
     private String baofooRepayKeyPassword;
 
-    @Value("${baofoo.repay.query.url}")
+    @Value("${baofoo.repay.query.url:}")
     private String baofooRepayQueryUrl;
 
-    @Value("${baofoo.repay.member.id}")
+    @Value("${baofoo.repay.member.id:}")
     private String baofooRepayMemberId;
 
-    @Value("${baofoo.repay.terminal.id}")
+    @Value("${baofoo.repay.terminal.id:}")
     private String baofooRepayTerminalId;
 
-    @Value("${baofoo.repay.version}")
+    @Value("${baofoo.repay.version:}")
     private String baofooRepayVersion;
 
     public String getBaofooKeyStorePath() {
