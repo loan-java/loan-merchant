@@ -266,16 +266,16 @@
                 console.log(data)
                 $("#payType").html("");
                 var payType = data.data;
-                if (payType.paymentType == 'baofoo') {
+                if (payType.paymentType == "baofoo") {
                     $("#payType").append("<option value='baofoo'>宝付</option>");
                 }
-                if (payType.paymentType == 'kuaiqian') {
+                if (payType.paymentType == "kuaiqian") {
                     $("#payType").append("<option value='kuaiqian'>快钱</option>");
                 }
-                if (payType.paymentType == 'chanpay') {
+                if (payType.paymentType == "chanpay") {
                     $("#payType").append("<option value='chanpay'>畅捷</option>");
                 }
-                if (payType.paymentType == 'yeepay') {
+                if (payType.paymentType == "yeepay") {
                     $("#payType").append("<option value='yeepay'>易宝</option>");
                 }
 
