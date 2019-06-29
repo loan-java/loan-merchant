@@ -1,6 +1,5 @@
 package com.mod.loan.controller.order;
 
-import com.alibaba.fastjson.JSONObject;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
@@ -192,14 +191,12 @@ public class OrderController {
         }
         String merchant = RequestThread.get().getMerchant();
         Merchant record = merchantService.selectByPrimaryKey(merchant);
-        JSONObject merchantChannel = JSONObject.parseObject(record.getMerchantChannel());
+        String paymentType = record.getPaymentType();
 
         // 支付通道是否合法
-        if (merchantChannel.get(payType) == null) {
+        if (paymentType == null) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "请选择正确的支付通道");
-        } else if (merchantChannel.get(payType) instanceof Integer && merchantChannel.getInteger(payType) != 1) {
-            return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
-        } else if (!(merchantChannel.get(payType) instanceof Integer) && merchantChannel.getJSONObject(payType).getInteger("pay") != 1) {
+        } else if (!paymentType.equalsIgnoreCase(paymentType)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "没有开通此支付通道");
         }
 
@@ -242,7 +239,7 @@ public class OrderController {
         record.setStatus(Constant.ORDER_CANCLE);
         orderService.updateByPrimaryKeySelective(record);
         //更新审核状态
-        OrderAudit orderAudit=new OrderAudit();
+        OrderAudit orderAudit = new OrderAudit();
         orderAudit.setOrderId(orderId);
         orderAudit.setFailReason("取消放款");
         orderAuditService.refuseAuditResult(orderAudit);
