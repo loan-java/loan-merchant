@@ -61,12 +61,18 @@
         },{
             id: "pay_type",
             renderer: function (idValue, value, record) {
+                if (value == 4) {
+                    return "宝付";
+                 }
                  if (value == 5) {
                     return "快钱";
                  }
-                 if (value == 4) {
-                    return "宝付";
-                 }
+                if (value == 6) {
+                    return "畅捷";
+                }
+                if (value == 7) {
+                    return "易宝";
+                }
                  return "---";
             }
         }, {

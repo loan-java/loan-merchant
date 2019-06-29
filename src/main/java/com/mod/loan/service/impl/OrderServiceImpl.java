@@ -246,6 +246,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 } else if (PaymentTypeEnum.KUAIQIAN.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
                 }
+                if (PaymentTypeEnum.CHANPAY.getCode().equals(order.getPaymentType())) {
+                    rabbitTemplate.convertAndSend(RabbitConst.chanpay_queue_order_pay, jsonObject);
+                } else if (PaymentTypeEnum.YEEPAY.getCode().equals(order.getPaymentType())) {
+                    rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_order_pay, jsonObject);
+                }
             }
         }
     }
