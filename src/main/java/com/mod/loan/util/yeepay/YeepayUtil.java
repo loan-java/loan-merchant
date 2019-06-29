@@ -48,10 +48,7 @@ public class YeepayUtil {
     }
 
     public static JSONObject yeepayYOP(Map<String, Object> map, String Uri) throws Exception {
-
-//        Map<String, Object> result = new HashMap<String, Object>();
-//        Map<String, YopSubError> erresult = new HashMap<String, YopSubError>();
-        YopRequest request = new YopRequest("OPR:" + getMerchantNo());
+        YopRequest request = new YopRequest("OPR:" + getMerchantNo(), getPrivateKey());
 
         Set<Entry<String, Object>> entry = map.entrySet();
         for (Entry<String, Object> s : entry) {
@@ -61,40 +58,9 @@ public class YeepayUtil {
 
         //向YOP发请求
         YopResponse response = YopRsaClient.post(Uri, request);
-        log.info("易宝返回: " + JSON.toJSONString(response));
 
         checkFailResp(response);
-
         return parseResult(response.getStringResult());
-//        System.out.println("请求YOP之后的结果：" + yopresponse.getStringResult());
-
-        // System.out.println("+++++" + JSON.toJSONString(yopresponse));
-//        	对结果进行处理
-//        if ("FAILURE".equals(yopresponse.getState())) {
-//            if (yopresponse.getError() != null) {
-//                result.put("errorcode", yopresponse.getError().getCode());
-//                result.put("errormsg", yopresponse.getError().getMessage());
-//
-//                if (yopresponse.getError().getSubCode() != null && yopresponse.getError().getSubCode().length()>0) {
-//                	erresult.get("errorDetails");
-//                	//    erresult.put("errorDetails", yopresponse.getError().getSubCode().getBytes());
-//                } else {
-//                    erresult.put("errorDetails", null);
-//                }
-//
-//                System.err.println("错误明细：" + yopresponse.getError().getSubCode());
-//                result.putAll(erresult);
-//                System.out.println("系统处理异常结果：" + result);
-//            }
-//
-//            return result;
-//        }
-//        //成功则进行相关处理
-//        if (yopresponse.getStringResult() != null) {
-//            result = parseResponse(yopresponse.getStringResult());
-//        }
-//
-//        return result;
     }
 
     public static void checkFailResp(YopResponse resp) throws BizException {
