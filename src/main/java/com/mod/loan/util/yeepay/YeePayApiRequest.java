@@ -13,13 +13,15 @@ import java.util.Map;
  * @ date 2019/6/16 12:58
  */
 @Slf4j
+@Component
 public class YeePayApiRequest {
 
     //余额查询
-    public static long queryBalanceFen() {
+    public long queryBalanceFen() {
         return MoneyUtil.yuan2Fen(queryBalance());
     }
-    public static double queryBalance() {
+
+    public double queryBalance() {
         try {
             String customerNumber = format(Config.getInstance().getValue("customerNumber"));
 
