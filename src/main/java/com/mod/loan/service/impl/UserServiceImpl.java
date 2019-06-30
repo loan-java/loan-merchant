@@ -23,7 +23,22 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
 		param.put("startIndex", page.getStartIndex());
 		param.put("pageSize", page.getPageSize());
 		page.setTotalCount(userMapper.userCount(param));
-		return userMapper.findUserList(param);
+		List<Map<String, Object>> list = userMapper.findUserList(param);
+		int n = list.size();
+		for (int i = 0; i < n ; i++) {
+			Map<String, Object> map = list.get(i);
+			Map<String, Object> map1risk=userMapper.countRiskResult(map.get("id").toString());
+			if(map1risk.isEmpty()){
+				map.put("orderId","");
+				map.put("score","0");
+				map.put("code","0");
+			}else{
+				map.put("orderId", map1risk.get("orderId").toString());
+				map.put("score", map1risk.get("score").toString());
+				map.put("code", map1risk.get("code").toString());
+			}
+		}
+		return list;
 	}
 
 	@Override

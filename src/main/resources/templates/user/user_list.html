@@ -35,6 +35,7 @@
 								<th class="center">个人信息</th>
 								<th class="center">运营商认证</th>
 								<th class="center">银行卡认证</th>
+								<th class="center">风控结果</th>
 								<th class="center">注册时间</th>
 								<th class="center">操作</th>
 							</tr>
@@ -200,6 +201,11 @@
 			            }
 			        }
 	        	},{
+                id : "orderId",
+                renderer : function(idValue,value,record){
+                    return ("1" == record.code? "分控通过" : "--") + "," +  parseFloat(record.score).toFixed(2);
+                }
+            },{
 		            id : "create_time",
 		            renderer : function(idValue,value,record){
 			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";

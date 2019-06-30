@@ -27,6 +27,8 @@ public interface UserMapper extends MyBaseMapper<User> {
 
 	int countUserDetailsUserNumberToDay(@Param("merchant") String merchant, @Param("searchTime") String searchTime);
 
+	Map<String, Object> countRiskResult(@Param("uid") String uid);
+
 	/**
 	 * 用户渠道列表导出
 	 * 

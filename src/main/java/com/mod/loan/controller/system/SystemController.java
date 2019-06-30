@@ -228,7 +228,7 @@ public class SystemController {
     public ResultMessage login_phone_code_ajax(HttpServletRequest request, String loginname, String password) {
         String merchant = request.getServerName().split("\\.")[0];
         if (merchant.equals("localhost")) {
-            merchant = "xiaohuqianbao";
+            merchant = "huashidai";
         }
         if (StringUtils.isBlank(merchant)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "无效的请求");
@@ -288,7 +288,7 @@ public class SystemController {
     public ResultMessage login_current_merchant_ajax(HttpServletRequest request) {
         String merchantAlias = RequestThread.get().getMerchant() == null ? request.getServerName().split("\\.")[0] : RequestThread.get().getMerchant();
         if (merchantAlias.equals("localhost")) {
-            merchantAlias = "xiaohuqianbao";
+            merchantAlias = "huashidai";
         }
         Merchant temp = new Merchant();
         temp.setMerchantAlias(merchantAlias);
