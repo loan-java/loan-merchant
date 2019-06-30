@@ -39,4 +39,16 @@ public class YeePayApiRequest {
         return text == null ? "" : text.trim();
     }
 
+
+    public static void main(String[] args) throws Exception {
+        String customerNumber = format("1000046");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("customerNumber", customerNumber);
+        String uri = YeepayUtil.getUrl(YeepayUtil.customeramountQuery_URL);
+
+        JSONObject json = YeepayUtil.yeepayYOP(params, "/rest/v1.0/balance/query_customer_amount");
+        System.out.print(Double.valueOf(MoneyUtil.fen2YuanStr(MoneyUtil.yuan2Fen(json.getDoubleValue("wtjsValidAmount"))))); //wtjsValidAmount	代付代发可用余额, accountAmount	账户可用余额
+    }
+
 }
