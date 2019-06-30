@@ -31,9 +31,6 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
     @Resource
     private ChanpayApiRequest chanpayApiRequest;
 
-    @Resource
-    private YeePayApiRequest yeePayApiRequest;
-
     @Override
     public Merchant findMerchantByAlias(String merchantAlias) {
         Merchant merchant = redisMapper.get(merchantAlias, new TypeReference<Merchant>() {
@@ -62,7 +59,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
                 balance = chanpayApiRequest.queryPayBalanceFen();
                 break;
             case 7:
-                balance = yeePayApiRequest.queryBalanceFen();
+                balance = YeePayApiRequest.queryBalanceFen();
                 break;
             default:
         }
