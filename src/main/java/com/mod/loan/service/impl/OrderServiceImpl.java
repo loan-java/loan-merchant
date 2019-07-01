@@ -109,6 +109,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 } else {
                     map.put("repayStatus", null);
                 }
+                //分控分数
+                Map<String, Object> map1risk=orderMapper.countRiskResultForOrder(map.get("id").toString());
+                if(map1risk.isEmpty()){
+                    map.put("score","0");
+                }else{
+                    map.put("score", map1risk.get("score").toString());
+                }
             });
         }
         return list;

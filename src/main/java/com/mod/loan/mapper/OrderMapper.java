@@ -78,4 +78,8 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 			"and a.repay_status in (3) and a.repay_type in (1,7) and b.payment_type=#{paymentType}")
 	double sucessOrderForPaymentType(@Param(value = "merchant") String merchant, @Param(value = "paymentType") String paymentType);
 
+
+	Map<String, Object> countRiskResultForOrder(@Param("id") String id);
+
+
 }
