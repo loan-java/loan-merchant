@@ -3,257 +3,262 @@
 <head th:insert="common/top :: head">
 </head>
 <body>
-	<div class="container-fluid" id="main-container">
-		<div id="page-content" class="clearfix">
-  			<div class="row-fluid">
-				<div class="row-fluid">
-					<!-- 检索  -->
-					<div>
-					    <span>用户姓名:</span>
-					    <input id="userName" name="userName" type="text" />
-						<span>渠道编号:</span>
-						<input id="userOrigin" name="userOrigin" type="text" />
-					    <span>用户手机:</span>
-					    <input id="userPhone" name="userPhone" type="text" />
-						<br>
-						<span>注册时间:</span>
-						<input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
-						~
-						<input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
-						<button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i> 查询</button>
-					</div>
-					<!-- 检索  -->
-					<table id="table_report" class="table table-striped table-bordered table-hover">
-						<thead>
-							<tr>
-								<th class="center">序号</th>
-								<th class="center">用户姓名</th>
-								<th class="center">用户手机</th>
-								<th class="center">渠道编号</th>
-								<th class="center">实名认证</th>
-								<th class="center">人脸识别</th>
-								<th class="center">个人信息</th>
-								<th class="center">运营商认证</th>
-								<th class="center">银行卡认证</th>
-								<th class="center">风控结果</th>
-								<th class="center">注册时间</th>
-								<th class="center">操作</th>
-							</tr>
-						</thead>
-						<tbody id="myTable"></tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- 返回顶部  -->
-	<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
-		<i class="icon-double-angle-up icon-only"></i>
-	</a>
-	<script type="text/javascript">
-		var contextPath="[[@{/}]]";
-		$(top.hangge());
-		var myTable = new MaxTable();
-		myTable.initialize({
-			table : "myTable",
-			id : "id",
-			queryUrl : contextPath+"user/user_list_ajax",
-            beforeSend : function(){
-                maskScreen();
-            },
-			complete : function(){
-				unMaskScreen();
-			},
-			headerColumns : [{
-  			   		id : "id",
-  			   		renderer : numRenderer
-				},{
-		            id : "user_name",
-		            renderer : function(idValue,value,record){
-			            return value ? value : "---" ;
-			        }
-	        	},{
-		            id : "user_phone",
-		            renderer : function(idValue,value,record){
-			            return value ?  value : "---";
-			        }
-	        	},{
-		            id : "user_origin",
-		            renderer : function(idValue,value,record){
-		                if(value != null && value == "1") {
-                            return "RZ";
-						}
-			            return "JH";
-			        }
-	        	},{
-		            id : "real_name",
-		            renderer : function(idValue,value,record){
-			            switch(value){
-			            case 0:
-			            	return "<font color='red'>未认证</font>";
-			            	break;
-			            case 1:
-			            	return "<font color='orange'>认证中</font>";
-			            	break;
-			            case 2:
-			            	return "<font color='green'>认证成功</font>";
-			            	break;
-			            case 3:
-			            	return "<font color='red'>认证失败</font>";
-			            	break;
-			            case 4:
-			            	return "<font color='red'>已失效</font>";
-			            	break;
-			            default:
-			            	return "---";
-			            }
-			        }
-	        	},{
-		            id : "liveness",
-		            renderer : function(idValue,value,record){
-			            switch(value){
-			            case 0:
-			            	return "<font color='red'>未认证</font>";
-			            	break;
-			            case 1:
-			            	return "<font color='orange'>认证中</font>";
-			            	break;
-			            case 2:
-			            	return "<font color='green'>认证成功</font>";
-			            	break;
-			            case 3:
-			            	return "<font color='red'>认证失败</font>";
-			            	break;
-			            case 4:
-			            	return "<font color='red'>已失效</font>";
-			            	break;
-			            default:
-			            	return "---";
-			            }
-			        }
-	        	},{
-		            id : "user_details",
-		            renderer : function(idValue,value,record){
-			            switch(value){
-			            case 0:
-			            	return "<font color='red'>未认证</font>";
-			            	break;
-			            case 1:
-			            	return "<font color='orange'>认证中</font>";
-			            	break;
-			            case 2:
-			            	return "<font color='green'>认证成功</font>";
-			            	break;
-			            case 3:
-			            	return "<font color='red'>认证失败</font>";
-			            	break;
-			            case 4:
-			            	return "<font color='red'>已失效</font>";
-			            	break;
-			            default:
-			            	return "---";
-			            }
-			        }
-	        	},{
-		            id : "mobile",
-		            renderer : function(idValue,value,record){
-			            switch(value){
-			            case 0:
-			            	return "<font color='red'>未认证</font>";
-			            	break;
-			            case 1:
-			            	return "<font color='orange'>认证中</font>";
-			            	break;
-			            case 2:
-			            	return "<font color='green'>认证成功</font>";
-			            	break;
-			            case 3:
-			            	return "<font color='red'>认证失败</font>";
-			            	break;
-			            case 4:
-			            	return "<font color='red'>已失效</font>";
-			            	break;
-			            default:
-			            	return "---";
-			            }
-			        }
-	        	},{
-		            id : "bindbank",
-		            renderer : function(idValue,value,record){
-			            switch(value){
-			            case 0:
-			            	return "<font color='red'>未认证</font>";
-			            	break;
-			            case 1:
-			            	return "<font color='orange'>认证中</font>";
-			            	break;
-			            case 2:
-			            	return "<font color='green'>认证成功</font>";
-			            	break;
-			            case 3:
-			            	return "<font color='red'>认证失败</font>";
-			            	break;
-			            case 4:
-			            	return "<font color='red'>已失效</font>";
-			            	break;
-			            default:
-			            	return "---";
-			            }
-			        }
-	        	},{
-                id : "orderId",
-                renderer : function(idValue,value,record){
-                    return ("0" == record.code? "分控通过" : "--") + "," +  parseFloat(record.score).toFixed(2);
+<div class="container-fluid" id="main-container">
+    <div id="page-content" class="clearfix">
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <!-- 检索  -->
+                <div>
+                    <span>用户姓名:</span>
+                    <input id="userName" name="userName" type="text"/>
+                    <span>渠道编号:</span>
+                    <input id="userOrigin" name="userOrigin" type="text"/>
+                    <span>用户手机:</span>
+                    <input id="userPhone" name="userPhone" type="text"/>
+                    <br>
+                    <span>注册时间:</span>
+                    <input id="startTime" name="startTime" type="text" readonly="readonly" placeholder="开始时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    ~
+                    <input id="endTime" name="endTime" type="text" readonly="readonly" placeholder="结束时间"
+                           onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"/>
+                    <button id="query" class="btn btn-small btn-success" onclick="search()"><i class="icon-search"></i>
+                        查询
+                    </button>
+                </div>
+                <!-- 检索  -->
+                <table id="table_report" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">序号</th>
+                        <th class="center">用户姓名</th>
+                        <th class="center">用户手机</th>
+                        <th class="center">渠道编号</th>
+                        <th class="center">实名认证</th>
+                        <th class="center">人脸识别</th>
+                        <th class="center">个人信息</th>
+                        <th class="center">运营商认证</th>
+                        <th class="center">银行卡认证</th>
+                        <th class="center">风控结果</th>
+                        <th class="center">注册时间</th>
+                        <th class="center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="myTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 返回顶部  -->
+<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+    <i class="icon-double-angle-up icon-only"></i>
+</a>
+<script type="text/javascript">
+    var contextPath = "[[@{/}]]";
+    $(top.hangge());
+    var myTable = new MaxTable();
+    myTable.initialize({
+        table: "myTable",
+        id: "id",
+        queryUrl: contextPath + "user/user_list_ajax",
+        beforeSend: function () {
+            maskScreen();
+        },
+        complete: function () {
+            unMaskScreen();
+        },
+        headerColumns: [{
+            id: "id",
+            renderer: numRenderer
+        }, {
+            id: "user_name",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "user_phone",
+            renderer: function (idValue, value, record) {
+                return value ? value : "---";
+            }
+        }, {
+            id: "user_origin",
+            renderer: function (idValue, value, record) {
+                if (value != null && value == "1") {
+                    return "RZ";
                 }
-            },{
-		            id : "create_time",
-		            renderer : function(idValue,value,record){
-			            return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
-			        }
-	        	},{
-		            id : "id",
-		            renderer : function(idValue,value,record){
-		            	var html = "<div class='btn-group'>";
-		            	html += "<a class='btn btn-mini btn-info' title='详情' onclick=\"detail(" + value + ");\">详情</a>";
-						html += "</div>";
-			        	return html;
-			        }
-	        	}]
-		});
+                return "JH";
+            }
+        }, {
+            id: "real_name",
+            renderer: function (idValue, value, record) {
+                switch (value) {
+                    case 0:
+                        return "<font color='red'>未认证</font>";
+                        break;
+                    case 1:
+                        return "<font color='orange'>认证中</font>";
+                        break;
+                    case 2:
+                        return "<font color='green'>认证成功</font>";
+                        break;
+                    case 3:
+                        return "<font color='red'>认证失败</font>";
+                        break;
+                    case 4:
+                        return "<font color='red'>已失效</font>";
+                        break;
+                    default:
+                        return "---";
+                }
+            }
+        }, {
+            id: "liveness",
+            renderer: function (idValue, value, record) {
+                switch (value) {
+                    case 0:
+                        return "<font color='red'>未认证</font>";
+                        break;
+                    case 1:
+                        return "<font color='orange'>认证中</font>";
+                        break;
+                    case 2:
+                        return "<font color='green'>认证成功</font>";
+                        break;
+                    case 3:
+                        return "<font color='red'>认证失败</font>";
+                        break;
+                    case 4:
+                        return "<font color='red'>已失效</font>";
+                        break;
+                    default:
+                        return "---";
+                }
+            }
+        }, {
+            id: "user_details",
+            renderer: function (idValue, value, record) {
+                switch (value) {
+                    case 0:
+                        return "<font color='red'>未认证</font>";
+                        break;
+                    case 1:
+                        return "<font color='orange'>认证中</font>";
+                        break;
+                    case 2:
+                        return "<font color='green'>认证成功</font>";
+                        break;
+                    case 3:
+                        return "<font color='red'>认证失败</font>";
+                        break;
+                    case 4:
+                        return "<font color='red'>已失效</font>";
+                        break;
+                    default:
+                        return "---";
+                }
+            }
+        }, {
+            id: "mobile",
+            renderer: function (idValue, value, record) {
+                switch (value) {
+                    case 0:
+                        return "<font color='red'>未认证</font>";
+                        break;
+                    case 1:
+                        return "<font color='orange'>认证中</font>";
+                        break;
+                    case 2:
+                        return "<font color='green'>认证成功</font>";
+                        break;
+                    case 3:
+                        return "<font color='red'>认证失败</font>";
+                        break;
+                    case 4:
+                        return "<font color='red'>已失效</font>";
+                        break;
+                    default:
+                        return "---";
+                }
+            }
+        }, {
+            id: "bindbank",
+            renderer: function (idValue, value, record) {
+                switch (value) {
+                    case 0:
+                        return "<font color='red'>未认证</font>";
+                        break;
+                    case 1:
+                        return "<font color='orange'>认证中</font>";
+                        break;
+                    case 2:
+                        return "<font color='green'>认证成功</font>";
+                        break;
+                    case 3:
+                        return "<font color='red'>认证失败</font>";
+                        break;
+                    case 4:
+                        return "<font color='red'>已失效</font>";
+                        break;
+                    default:
+                        return "---";
+                }
+            }
+        }, {
+            id: "orderId",
+            renderer: function (idValue, value, record) {
+                return ("订单ID:" + record.orderId + "," + "0" == record.code ? "分控通过" : "--") + "," + parseFloat(record.score).toFixed(2);
+            }
+        }, {
+            id: "create_time",
+            renderer: function (idValue, value, record) {
+                return value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : "---";
+            }
+        }, {
+            id: "id",
+            renderer: function (idValue, value, record) {
+                var html = "<div class='btn-group'>";
+                html += "<a class='btn btn-mini btn-info' title='详情' onclick=\"detail(" + value + ");\">详情</a>";
+                html += "</div>";
+                return html;
+            }
+        }]
+    });
 
-		var submitTime = laydate.now(0, 'YYYY-MM-DD');
-		$("#startTime").attr('value',submitTime);
-		$("#endTime").attr('value',submitTime);
+    var submitTime = laydate.now(0, 'YYYY-MM-DD');
+    $("#startTime").attr('value', submitTime);
+    $("#endTime").attr('value', submitTime);
 
-		function query() {
-			myTable.page.totalRowNum = 0;
-			myTable.onLoad({
-				userName:$("#userName").val(),
-				userPhone:$("#userPhone").val(),
-				startTime:$("#startTime").val(),
-				endTime:$("#endTime").val(),
-				userOrigin:$("#userOrigin").val()
-			});
-		}
-		function search(){
-			myTable.page.pageNo= 1;
-			query();
-		}
-		
-		function detail(id){
-			 var diag = new top.Dialog();
-			 diag.Drag = true;
-			 diag.Title = "详情";
-			 diag.URL = contextPath + "user/user_detail?id=" + id;
-			 diag.Width = 1400;
-			 diag.Height = 800;
-			 diag.CancelEvent = function(){ //关闭事件
-				query();
-				diag.close();
-			 };
-			 diag.show();
-		}
-	</script>
+    function query() {
+        myTable.page.totalRowNum = 0;
+        myTable.onLoad({
+            userName: $("#userName").val(),
+            userPhone: $("#userPhone").val(),
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val(),
+            userOrigin: $("#userOrigin").val()
+        });
+    }
+
+    function search() {
+        myTable.page.pageNo = 1;
+        query();
+    }
+
+    function detail(id) {
+        var diag = new top.Dialog();
+        diag.Drag = true;
+        diag.Title = "详情";
+        diag.URL = contextPath + "user/user_detail?id=" + id;
+        diag.Width = 1400;
+        diag.Height = 800;
+        diag.CancelEvent = function () { //关闭事件
+            query();
+            diag.close();
+        };
+        diag.show();
+    }
+</script>
 </body>
 </html>
 
