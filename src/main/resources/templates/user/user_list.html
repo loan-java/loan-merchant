@@ -203,7 +203,7 @@
 	        	},{
                 id : "orderId",
                 renderer : function(idValue,value,record){
-                    return ("1" == record.code? "分控通过" : "--") + "," +  parseFloat(record.score).toFixed(2);
+                    return ("0" == record.code? "分控通过" : "--") + "," +  parseFloat(record.score).toFixed(2);
                 }
             },{
 		            id : "create_time",
