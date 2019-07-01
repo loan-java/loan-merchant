@@ -2,23 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mod.loan.mapper.MerchantMapper">
 	<resultMap id="BaseResultMap" type="com.mod.loan.model.Merchant">
-		<!-- WARNING - @mbg.generated -->
 		<id column="merchant_alias" jdbcType="VARCHAR" property="merchantAlias" />
 		<result column="merchant_name" jdbcType="VARCHAR" property="merchantName" />
 		<result column="merchant_app" jdbcType="VARCHAR" property="merchantApp" />
+		<result column="merchant_app_ios" jdbcType="VARCHAR" property="merchantAppIos" />
 		<result column="merchant_zfb" jdbcType="VARCHAR" property="merchantZfb" />
 		<result column="merchant_status" jdbcType="TINYINT" property="merchantStatus" />
+		<result column="merchant_channel" jdbcType="VARCHAR" property="merchantChannel" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="hlb_id" jdbcType="VARCHAR" property="hlb_id" />
 		<result column="hlb_rsa_private_key" jdbcType="VARCHAR" property="hlb_rsa_private_key" />
 		<result column="hlb_rsa_public_key" jdbcType="VARCHAR" property="hlb_rsa_public_key" />
 		<result column="hlb_md5_key" jdbcType="VARCHAR" property="hlb_md5_key" />
 		<result column="hlb_des_key" jdbcType="VARCHAR" property="hlb_des_key" />
+		<result column="merchant_market" jdbcType="VARCHAR" property="merchantMarket" />
 		<result column="fuyou_merid" jdbcType="VARCHAR" property="fuyou_merid" />
 		<result column="fuyou_secureid" jdbcType="VARCHAR" property="fuyou_secureid" />
 		<result column="fuyou_h5key" jdbcType="VARCHAR" property="fuyou_h5key" />
 		<result column="huiju_id" jdbcType="VARCHAR" property="huiju_id" />
 		<result column="huiju_md5_key" jdbcType="VARCHAR" property="huiju_md5_key" />
-		<result column="merchant_channel" jdbcType="VARCHAR" property="merchantChannel" />
+		<result column="bind_type" jdbcType="TINYINT" property="bindType" />
+		<result column="risk_type" jdbcType="TINYINT" property="riskType" />
 	</resultMap>
 </mapper>
