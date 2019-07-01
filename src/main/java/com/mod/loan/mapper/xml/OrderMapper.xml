@@ -79,11 +79,11 @@
 
     <select id="findOrderList" resultType="map">
         select o.*,user.user_name,user.user_phone
---         ,r.score
+        -- ,r.score
         from tb_order o
         left join tb_user user on o.uid = user.id
         -- left join tb_decision_res_detail r on r.order_id=o.id
---         left join tb_decision_pb_detail r on r.order_id=o.id
+        -- left join tb_decision_pb_detail r on r.order_id=o.id
         <where>
             <if test="id != null">
                 and o.id = #{id}
@@ -192,6 +192,7 @@
 
 
 
+
     SELECT
     COUNT(id) as 'countAllOrderNumber',
     COUNT(distinct  uid) as 'countAllOrderUserNumber',
@@ -220,6 +221,7 @@
 	COUNT(CASE WHEN status in (31,32,33,34,41,42)  THEN id END) AS  'countBackNumberAll'
 
 	FROM tb_order WHERE merchant = #{merchant}
+
 
 
 
@@ -340,11 +342,10 @@ select sum(num) from(
                 select order_id ,ifnull(res_score,0) as score,create_time,if(code = 'AGREE',0,-1) as code from tb_decision_res_detail where order_status = 'SUCCESS'
                  union
                 select order_id ,ifnull(score,0) as score,create_time ,return_code as code from tb_decision_zm_detail
-                ) as a
+                ) as a where a.order_id=#{id}
             order by a.create_time desc
             LIMIT 1 )
             as b
-        where b.order_id=#{id}
     </select>
 
 

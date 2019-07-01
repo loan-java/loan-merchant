@@ -136,8 +136,7 @@
                  union
                 select order_id ,ifnull(score,0) as score,create_time ,return_code as code from tb_decision_zm_detail
                 ) as a
-            order by a.create_time desc
-            LIMIT 1 )
+            order by a.create_time desc)
             as b on a.id=b.order_id
     </select>
 
