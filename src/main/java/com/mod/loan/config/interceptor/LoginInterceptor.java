@@ -51,7 +51,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
 		RequestThread.remove();// 移除本地线程变量
 		String merchant = request.getServerName().split("\\.")[0];
-		if(merchant.equals("localhost")){
+		if(merchant.equals("localhost") || merchant.contains("test")){
 			merchant="huashidai";
 		}
 		String token = CookieUtils.getCookieValue(request, Constant.cookie_token);
