@@ -125,19 +125,21 @@
 
 
     <select id="countRiskResult" resultType="map">
-       select  a.order_no,b.order_id as orderId,ifnull(b.score,0) as score,ifnull(b.code ,0) as code
+        select  a.order_no as orderNo,b.order_id as orderId,ifnull(b.score,0) as score,ifnull(b.code ,-1) as code,b.create_time as createTime
         from
-            (select order_no from tb_user_order where uid=#{uid} order by create_time desc ) as a
+            (
+                select order_no,create_time,source from tb_user_order where uid=#{uid}
+				UNION ALL
+				select order_no,create_time,source from tb_order where uid=#{uid} and source = 0
+            ) as a
             left join (
-                select * from (
                 select order_id ,order_no,ifnull(score,0) as score,create_time,if(result = 'APPROVE',0,-1) as code from tb_decision_pb_detail
                 union
                 select order_id ,order_no,ifnull(res_score,0) as score,create_time,if(code = 'AGREE',0,-1) as code from tb_decision_res_detail where order_status = 'SUCCESS'
-                 union
+                union
                 select order_id ,order_no,ifnull(score,0) as score,create_time ,return_code as code from tb_decision_zm_detail
-                ) as a
-            order by a.create_time desc)
-            as b on a.order_no=b.order_no
+           )  as b on a.order_no=b.order_no
+           ORDER BY b.create_time desc  limit 1
     </select>
 
 </mapper>
