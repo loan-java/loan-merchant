@@ -133,7 +133,7 @@
 				select order_no,create_time,source from tb_order where uid=#{uid} and source = 0
             ) as a
             left join (
-                select order_id ,order_no,ifnull(score,0) as score,create_time,if(result = 'APPROVE',0,-1) as code from tb_decision_pb_detail
+                select order_id ,order_no,ifnull(score,0) as score,create_time,if(result = 'DENY',0,-1) as code from tb_decision_pb_detail
                 union
                 select order_id ,order_no,ifnull(res_score,0) as score,create_time,if(code = 'AGREE',0,-1) as code from tb_decision_res_detail where order_status = 'SUCCESS'
                 union
