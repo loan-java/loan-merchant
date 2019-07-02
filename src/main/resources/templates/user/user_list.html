@@ -207,7 +207,7 @@
         }, {
             id: "orderId",
             renderer: function (idValue, value, record) {
-                return "订单ID:" + record.orderId + "," + ("0" == record.code ? "风控通过" : "风控未通过") + "," + "风控分数:" + record.score;
+                return ("0" == record.code ? "风控通过" + "," + "订单ID:" + record.orderId + "," + "风控分数:" + record.score : "风控未通过");
             }
         }, {
             id: "create_time",
