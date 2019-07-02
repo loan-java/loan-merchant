@@ -208,7 +208,7 @@
             id: "orderId",
             renderer: function (idValue, value, record) {
                 console.log(record)
-                return ("0" == record.code ? "风控通过" + "," + "订单ID:" + record.orderId + "," + "风控分数:" + parseFloat(record.score).toFixed(2) : "风控未通过");
+                return ("0" == record.code ? "<span style='color:green;'>风控通过" + "," + "订单ID:" + record.orderId + "," + "风控分数:" + parseFloat(record.score).toFixed(2) + "</span>" : "<span style='color:red;'>风控未通过</span>");
             }
         }, {
             id: "create_time",
