@@ -134,8 +134,8 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             proType = 1; //单期产品
             amountType = 0; //审批金额是否固定，0 - 固定
             termType = 0; //审批期限是否固定，0 - 固定
-            approvalAmount = 1500; //审批金额
-            approvalTerm = 6; //审批期限
+            approvalAmount = order.getBorrowMoney().intValue(); //审批金额
+            approvalTerm = order.getBorrowDay().intValue(); //审批期限
             termUnit = 1; //期限单位，1 - 天
             remark = "通过";
         } else {
@@ -192,8 +192,8 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             proType = 1; //单期产品
             amountType = 0; //审批金额是否固定，0 - 固定
             termType = 0; //审批期限是否固定，0 - 固定
-            approvalAmount = 1500; //审批金额
-            approvalTerm = 6; //审批期限
+            approvalAmount = order.getBorrowMoney().intValue(); //审批金额
+            approvalTerm = order.getBorrowDay().intValue(); //审批期限
             termUnit = 1; //期限单位，1 - 天
             remark = "通过";
         } else {
@@ -400,8 +400,8 @@ public class CallBackRongZeServiceImpl implements CallBackRongZeService {
             proType = 1; //单期产品
             amountType = 0; //审批金额是否固定，0 - 固定
             termType = 0; //审批期限是否固定，0 - 固定
-            approvalAmount = 1500; //审批金额
-            approvalTerm = 6; //审批期限
+            approvalAmount = order.getBorrowMoney().intValue(); //审批金额
+            approvalTerm = order.getBorrowDay().intValue(); //审批期限
             termUnit = 1; //期限单位，1 - 天
             remark = "通过";
         } else {
