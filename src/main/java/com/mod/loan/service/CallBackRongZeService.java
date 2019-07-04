@@ -20,13 +20,4 @@ public interface CallBackRongZeService {
     void pushRepayPlan(Order order);
 
 
-    void pushRiskResultForPb(Order order, String riskCode, String riskDesc);
-
-    /**
-     * 推送风控审批结果
-     *
-     */
-    void pushRiskResultForQjld(Order order, String riskCode, String riskDesc);
-
-    void pushRiskResultForZm(Order order, String riskCode);
 }

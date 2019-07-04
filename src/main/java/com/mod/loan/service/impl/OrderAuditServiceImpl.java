@@ -74,22 +74,22 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             return false;
         }
 
-        Merchant  merchant1 = merchantMapper.selectByPrimaryKey(merchant);
-        if(merchant1 == null) {
+        Merchant merchant1 = merchantMapper.selectByPrimaryKey(merchant);
+        if (merchant1 == null) {
             logger.error("商户不存在,order={}", JSON.toJSONString(order));
             return false;
         }
-        Integer riskType=merchant1.getRiskType();
-        if(riskType == null) riskType=2;
+        Integer riskType = merchant1.getRiskType();
+        if (riskType == null) riskType = 2;
 
         // 复审通过
         String riskCode = "", riskDesc = "";
         if (orderAudit.getStatus() == 0) {
-            if(riskType == 1) {
+            if (riskType == 1) {
                 riskCode = PolicyResultEnum.AGREE.getCode();
-            }else if(riskType == 2) {
+            } else if (riskType == 2) {
                 riskCode = PbResultEnum.APPROVE.getCode();
-            }else{
+            } else {
                 riskCode = "0";
             }
             order.setAuditTime(new Date());
@@ -98,11 +98,11 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         } else if (orderAudit.getStatus() == 1) {// 复审拒绝
-            if(riskType == 1) {
+            if (riskType == 1) {
                 riskCode = PolicyResultEnum.REJECT.getCode();
-            }else if(riskType == 2) {
+            } else if (riskType == 2) {
                 riskCode = PbResultEnum.DENY.getCode();
-            }else{
+            } else {
                 riskCode = "-1";
             }
             riskDesc = "人工审核拒绝";
@@ -114,13 +114,7 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
         if (order.getSource() == ConstantUtils.ONE) {
-            if(riskType == 1) {
-                callBackRongZeService.pushRiskResultForQjld(order, riskCode, riskDesc);
-            }else if(riskType == 2) {
-                callBackRongZeService.pushRiskResultForPb(order, riskCode, riskDesc);
-            }else{
-                callBackRongZeService.pushRiskResultForZm(order, riskCode);
-            }
+            callBackRongZeService.pushOrderStatus(order);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
         }
