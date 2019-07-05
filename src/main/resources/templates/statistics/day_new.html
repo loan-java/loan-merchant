@@ -307,23 +307,43 @@
                 <div class="pricing-span-index">
                     <div class="widget-box ">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">当日实名：</h5>
+                            <h5 class="bigger lighter">当日黑名单：</h5>
                         </div>
                         <div class="widget-body index-number">
-                            <span id="countRealNameUserNumberToDay">0</span>
+                            <span id="countFilterToDay">0</span>
                         </div>
                     </div>
                 </div>
                 <div class="pricing-span-index">
                     <div class="widget-box ">
                         <div class="widget-header header-color-red3">
-                            <h5 class="bigger lighter">通讯录认证：</h5>
+                            <h5 class="bigger lighter">当日风控：</h5>
                         </div>
                         <div class="widget-body index-number">
-                            <span id="countUserDetailsUserNumberToDay">0</span>
+                            <span id="countFlowAmountToDay">0</span>
                         </div>
                     </div>
                 </div>
+                <!--<div class="pricing-span-index">-->
+                    <!--<div class="widget-box ">-->
+                        <!--<div class="widget-header header-color-red3">-->
+                            <!--<h5 class="bigger lighter">当日实名：</h5>-->
+                        <!--</div>-->
+                        <!--<div class="widget-body index-number">-->
+                            <!--<span id="countRealNameUserNumberToDay">0</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="pricing-span-index">-->
+                    <!--<div class="widget-box ">-->
+                        <!--<div class="widget-header header-color-red3">-->
+                            <!--<h5 class="bigger lighter">通讯录认证：</h5>-->
+                        <!--</div>-->
+                        <!--<div class="widget-body index-number">-->
+                            <!--<span id="countUserDetailsUserNumberToDay">0</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="pricing-span-index">
                     <div class="widget-box ">
                         <div class="widget-header header-color-red3">
@@ -371,11 +391,13 @@
                 if (data.status == 2000) {
                     $("#countAllOrderNumber").html(info.countAllOrderNumber);
                     $("#countRegisterUserNumberToDay").html(info.countRegisterUserNumberToDay);
-                    $("#countRealNameUserNumberToDay").html(info.countRealNameUserNumberToDay);
-                    $("#countAlipayUserNumberToDay").html(info.countAlipayUserNumberToDay);
+                    $("#countFlowAmountToDay").html(info.countFlowAmountToDay);
+                    $("#countFilterToDay").html(info.countFilterToDay);
+//                    $("#countRealNameUserNumberToDay").html(info.countRealNameUserNumberToDay);
+//                    $("#countAlipayUserNumberToDay").html(info.countAlipayUserNumberToDay);
                     $("#countMobileUserNumberToDay").html(info.countMobileUserNumberToDay);
                     $("#countBindbankUserNumberToDay").html(info.countBindbankUserNumberToDay);
-                    $("#countUserDetailsUserNumberToDay").html(info.countUserDetailsUserNumberToDay);
+//                    $("#countUserDetailsUserNumberToDay").html(info.countUserDetailsUserNumberToDay);
 
                     // $("#countFlowAmount").html(info.countFlowAmount * 32);//流量费
                     // $("#countRiskAmount").html(info.countFlowAmount * 10);//风控费

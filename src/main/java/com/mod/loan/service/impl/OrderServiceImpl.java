@@ -273,6 +273,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data = new HashMap<>();
             data.put("merchantRate", merchantRateMapper.findByMerchant(RequestThread.get().getMerchant()));
             data.put("countRegisterUserNumberToDay", userMapper.countRegisterUserNumberToDay(merchant, searchTime));
+            data.put("countFlowAmountToDay", orderMapper.countFlowAmountToDay(searchTime));
+            data.put("countFilterToDay", orderMapper.countFilterToDay(searchTime));
             data.put("countRealNameUserNumberToDay", userMapper.countRealNameUserNumberToDay(merchant, searchTime));
             data.put("countUserDetailsUserNumberToDay", userMapper.countUserDetailsUserNumberToDay(merchant, searchTime));
             data.put("countMobileUserNumberToDay", userMapper.countMobileUserNumberToDay(merchant, searchTime));

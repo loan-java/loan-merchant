@@ -351,4 +351,19 @@ select sum(num) from(
     </select>
 
 
+    <select id="countFlowAmountToDay" resultType="int">
+        select sum(num) from(
+            select count(1) as num from tb_decision_pb_detail where create_time &gt; #{searchTime} and create_time &lt;= DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+            union
+            select count(1) as num from tb_decision_res_detail where create_time &gt; #{searchTime} and create_time &lt;= DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+            union
+            select count(1) as num from tb_decision_zm_detail where create_time &gt; #{searchTime} and create_time &lt;= DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+        ) decision
+    </select>
+
+    <select id="countFilterToDay" resultType="int">
+        select count(1) as num from tb_type_filter where create_time &gt; #{searchTime} and create_time &lt;= DATE_ADD(#{searchTime},INTERVAL 1 DAY)
+    </select>
+
+
 </mapper>
