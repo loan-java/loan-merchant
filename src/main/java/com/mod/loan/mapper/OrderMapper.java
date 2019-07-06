@@ -68,8 +68,8 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	@Select("select count(*) from tb_order where merchant = #{merchant} and status in(31,32,33,34,41,42)")
 	int sucessOrderAll(@Param(value = "merchant") String merchant);
 
-	@Select("select count(*) from tb_order where merchant = #{merchant} and status in(31,32,33,34,41,42) and source=#{source}")
-	int sucessOrder(@Param(value = "merchant") String merchant, @Param(value = "source") Integer source);
+	@Select("select sum(should_repay) from tb_order where merchant = #{merchant} and status in(31,32,33,34,41,42) and source=#{source}")
+	double sucessOrderMoney(@Param(value = "merchant") String merchant, @Param(value = "source") Integer source);
 
 	@Select("select count(*) from tb_order where merchant = #{merchant} and source=#{source}")
 	int allOrder(@Param(value = "merchant") String merchant, @Param(value = "source") Integer source);

@@ -327,21 +327,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             //短信费用
             double dxf = 0d;
 
-            //算融泽 1509*30%*30%*成功放款笔数
-            int successOrderRZ = orderMapper.sucessOrder(merchant, OrderSourceEnum.RONGZE.getSoruce());
+            //算融泽 成功放款总额
+            double successOrderMoneyRZ = orderMapper.sucessOrderMoney(merchant, OrderSourceEnum.RONGZE.getSoruce());
 
             //算聚合 32*完整注册
             //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());
             //lif += 32 * countAllUser;
 
             if (MerchantEnum.isXiaoHuQianBao(merchant)) {
-                lif = successOrderRZ * 1509 * 0.3 * 0.27;
+                lif = successOrderMoneyRZ * 0.3 * 0.27;
                 fkf = countFlowAmount * 5.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", accountRechargeMapper.getAccountRecharge() - sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
-                lif = successOrderRZ * 1509 * 0.3 * 0.3;
+                lif = successOrderMoneyRZ * 0.3 * 0.3;
                 fkf = countFlowAmount * 5.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
