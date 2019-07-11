@@ -193,6 +193,17 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
     SELECT
     COUNT(id) as 'countAllOrderNumber',
     COUNT(distinct  uid) as 'countAllOrderUserNumber',
@@ -221,6 +232,17 @@
 	COUNT(CASE WHEN status in (31,32,33,34,41,42)  THEN id END) AS  'countBackNumberAll'
 
 	FROM tb_order WHERE merchant = #{merchant}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -365,5 +387,9 @@ select sum(num) from(
         select count(1) as num from tb_type_filter where create_time &gt; #{searchTime} and create_time &lt;= DATE_ADD(#{searchTime},INTERVAL 1 DAY)
     </select>
 
+
+    <select id="countFilter" resultType="int">
+        select count(1) as num from tb_type_filter
+    </select>
 
 </mapper>

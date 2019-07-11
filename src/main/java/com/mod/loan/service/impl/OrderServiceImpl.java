@@ -273,8 +273,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data = new HashMap<>();
             data.put("merchantRate", merchantRateMapper.findByMerchant(RequestThread.get().getMerchant()));
             data.put("countRegisterUserNumberToDay", userMapper.countRegisterUserNumberToDay(merchant, searchTime));
-            data.put("countFlowAmountToDay", orderMapper.countFlowAmountToDay(searchTime));
-            data.put("countFilterToDay", orderMapper.countFilterToDay(searchTime));
+            //今日风控笔数
+            data.put("countFlowAmountToDay", orderMapper.countFlowAmountToDay(searchTime) + orderMapper.countFilterToDay(searchTime));
+            //今日探针A笔数
+            //  data.put("countFilterToDay", orderMapper.countFilterToDay(searchTime));
             data.put("countRealNameUserNumberToDay", userMapper.countRealNameUserNumberToDay(merchant, searchTime));
             data.put("countUserDetailsUserNumberToDay", userMapper.countUserDetailsUserNumberToDay(merchant, searchTime));
             data.put("countMobileUserNumberToDay", userMapper.countMobileUserNumberToDay(merchant, searchTime));
@@ -283,7 +285,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
             data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
-            data.put("countFlowAmount", orderMapper.countFlowAmount());//风控订单个数
+            data.put("countFlowAmount", orderMapper.countFlowAmount() + orderMapper.countFilter());//风控订单个数+探针A个数
             /**
              * hsd=流量费+风控费+金融挂靠费+银行卡权鉴+代付费+支付费+短信验证码费用
              * 聚合流量费=32*完整注册
@@ -342,7 +344,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 data.put("merchantBalance", accountRechargeMapper.getAccountRecharge() - sum);
             } else if (MerchantEnum.isHuaShiDai(merchant)) {
                 lif = successOrderMoneyRZ * 0.3 * 0.3;
-                fkf = countFlowAmount * 5.5;
+                fkf = countFlowAmount * 3.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", accountRechargeMapper.getAccountRecharge() - sum);

@@ -82,6 +82,9 @@ public interface OrderMapper extends MyBaseMapper<Order> {
 	Map<String, Object> countRiskResultForOrder(@Param("id") String id);
 
 	int countFlowAmountToDay(@Param("searchTime") String searchTime);
+
 	int countFilterToDay(@Param("searchTime") String searchTime);
+
+	int countFilter();
 
 }
