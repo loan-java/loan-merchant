@@ -1,4 +1,4 @@
-package com.mod.loan.util.ali;
+package com.mod.loan.util.aliyun;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.OSSObject;

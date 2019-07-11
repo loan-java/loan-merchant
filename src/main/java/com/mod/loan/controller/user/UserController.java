@@ -16,7 +16,7 @@ import com.mod.loan.model.moxie.CallOutContactList;
 import com.mod.loan.model.moxie.ContactList;
 import com.mod.loan.model.moxie.Linkmans;
 import com.mod.loan.service.UserService;
-import com.mod.loan.util.ali.AliOssStaticUtil;
+import com.mod.loan.util.aliyun.AliOssStaticUtil;
 import com.mod.loan.util.ExcelUtil;
 import com.mod.loan.util.TimeUtils;
 import com.mod.loan.util.moxie.AddressListUtil;
