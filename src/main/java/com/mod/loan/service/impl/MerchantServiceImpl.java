@@ -2,8 +2,8 @@ package com.mod.loan.service.impl;
 
 import com.mod.loan.service.third.baofoo.BaofooBalanceQueryService;
 import com.mod.loan.service.third.kuaiqian.KuaiQianBalanceQueryService;
-import com.mod.loan.util.chanpay.ChanpayApiRequest;
-import com.mod.loan.util.yeepay.YeePayApiRequest;
+import com.mod.loan.pay.chanpay.ChanpayApiRequest;
+import com.mod.loan.pay.yeepay.YeePayApiRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

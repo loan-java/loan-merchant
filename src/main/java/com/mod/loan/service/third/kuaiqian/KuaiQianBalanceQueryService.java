@@ -8,13 +8,13 @@ package com.mod.loan.service.third.kuaiqian;
 
 import com.alibaba.fastjson.JSON;
 import com.bill99.schema.asap.commons.Mpf;
-import com.mod.loan.kuaiqian.config.KuaiqianPayConfig;
-import com.mod.loan.kuaiqian.schema.commons.Version;
-import com.mod.loan.kuaiqian.schema.ma.mbrinfo.MaMbrinfoRequestHead;
-import com.mod.loan.kuaiqian.schema.ma.mbrinfo.MaMbrinfoResponseHead;
-import com.mod.loan.kuaiqian.schema.ma.mbrinfo.MaSealPkiDataType;
-import com.mod.loan.kuaiqian.schema.ma.mbrinfo.balance.*;
-import com.mod.loan.kuaiqian.util.Bill99PkiInCrytoUtils;
+import com.mod.loan.pay.kuaiqian.config.KuaiqianPayConfig;
+import com.mod.loan.pay.kuaiqian.schema.commons.Version;
+import com.mod.loan.pay.kuaiqian.schema.ma.mbrinfo.MaMbrinfoRequestHead;
+import com.mod.loan.pay.kuaiqian.schema.ma.mbrinfo.MaMbrinfoResponseHead;
+import com.mod.loan.pay.kuaiqian.schema.ma.mbrinfo.MaSealPkiDataType;
+import com.mod.loan.pay.kuaiqian.schema.ma.mbrinfo.balance.*;
+import com.mod.loan.pay.kuaiqian.util.Bill99PkiInCrytoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

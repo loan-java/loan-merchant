@@ -1,12 +1,12 @@
 package com.mod.loan.service.third.baofoo;
 
-import com.mod.loan.baofoo.base.TransContent;
-import com.mod.loan.baofoo.base.TransHead;
-import com.mod.loan.baofoo.base.response.TransRespBFBalance;
-import com.mod.loan.baofoo.config.BaofooPayConfig;
-import com.mod.loan.baofoo.util.HttpUtil;
-import com.mod.loan.baofoo.util.SecurityUtil;
-import com.mod.loan.baofoo.util.TransConstant;
+import com.mod.loan.pay.baofoo.base.TransContent;
+import com.mod.loan.pay.baofoo.base.TransHead;
+import com.mod.loan.pay.baofoo.base.response.TransRespBFBalance;
+import com.mod.loan.pay.baofoo.config.BaofooPayConfig;
+import com.mod.loan.pay.baofoo.util.HttpUtil;
+import com.mod.loan.pay.baofoo.util.SecurityUtil;
+import com.mod.loan.pay.baofoo.util.TransConstant;
 import com.mod.loan.util.ConstantUtils;
 import com.mod.loan.util.MoneyUtil;
 import org.slf4j.Logger;

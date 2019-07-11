@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.config.Constant;
-import com.mod.loan.util.AliOssStaticUtil;
+import com.mod.loan.util.ali.AliOssStaticUtil;
 
 @RestController
 @RequestMapping(value = "upload")
