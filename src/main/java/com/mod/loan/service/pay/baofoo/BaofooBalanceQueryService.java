@@ -1,4 +1,4 @@
-package com.mod.loan.service.third.baofoo;
+package com.mod.loan.service.pay.baofoo;
 
 import com.mod.loan.pay.baofoo.base.TransContent;
 import com.mod.loan.pay.baofoo.base.TransHead;

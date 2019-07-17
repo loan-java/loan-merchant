@@ -1,4 +1,4 @@
-package com.mod.loan.service.third.kuaiqian;
+package com.mod.loan.service.pay.kuaiqian;
 
 /**
  * @author xiang.zhang

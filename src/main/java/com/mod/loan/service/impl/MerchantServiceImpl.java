@@ -1,9 +1,9 @@
 package com.mod.loan.service.impl;
 
-import com.mod.loan.service.third.baofoo.BaofooBalanceQueryService;
-import com.mod.loan.service.third.kuaiqian.KuaiQianBalanceQueryService;
-import com.mod.loan.pay.chanpay.ChanpayApiRequest;
-import com.mod.loan.pay.yeepay.YeePayApiRequest;
+import com.mod.loan.service.pay.baofoo.BaofooBalanceQueryService;
+import com.mod.loan.service.pay.kuaiqian.KuaiQianBalanceQueryService;
+import com.mod.loan.service.pay.chanpay.ChanpayBalanceQueryService;
+import com.mod.loan.service.pay.yeepay.YeePayBalanceQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
     @Resource
     private KuaiQianBalanceQueryService kuaiQianBalanceQueryService;
     @Resource
-    private ChanpayApiRequest chanpayApiRequest;
+    private ChanpayBalanceQueryService chanpayBalanceQueryService;
 
     @Override
     public Merchant findMerchantByAlias(String merchantAlias) {
@@ -56,10 +56,10 @@ public class MerchantServiceImpl extends BaseServiceImpl<Merchant, String> imple
                 balance = kuaiQianBalanceQueryService.queryBalanceFen();
                 break;
             case 6:
-                balance = chanpayApiRequest.queryPayBalanceFen();
+                balance = chanpayBalanceQueryService.queryPayBalanceFen();
                 break;
             case 7:
-                balance = YeePayApiRequest.queryBalanceFen();
+                balance = YeePayBalanceQueryService.queryBalanceFen();
                 break;
             default:
         }

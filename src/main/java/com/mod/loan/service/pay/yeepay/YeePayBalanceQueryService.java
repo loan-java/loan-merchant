@@ -1,6 +1,8 @@
-package com.mod.loan.pay.yeepay;
+package com.mod.loan.service.pay.yeepay;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mod.loan.pay.yeepay.Config;
+import com.mod.loan.pay.yeepay.YeepayUtil;
 import com.mod.loan.util.MoneyUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,7 +14,7 @@ import java.util.Map;
  * @ date 2019/6/16 12:58
  */
 @Slf4j
-public class YeePayApiRequest {
+public class YeePayBalanceQueryService {
 
     //余额查询
     public static long queryBalanceFen() {
