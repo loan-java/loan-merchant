@@ -286,6 +286,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
             data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
             data.put("countFlowAmount", orderMapper.countFlowAmount() + orderMapper.countFilter());//风控订单个数+探针A个数
+            data.put("countFlowAmountBefore78", orderMapper.countFlowAmountBefore78() + orderMapper.countFilterBefore78());//风控订单个数+探针A个数 7月8号之前
+            data.put("countFlowAmountAfter78", orderMapper.countFlowAmountAfter78() + orderMapper.countFilterAfter78());//风控订单个数+探针A个数 7月8号之后
             /**
              * hsd=流量费+风控费+金融挂靠费+银行卡权鉴+代付费+支付费+短信验证码费用
              * 聚合流量费=32*完整注册
@@ -322,6 +324,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             //风控个数
             Integer countFlowAmount = (int) data.get("countFlowAmount");
 
+            //风控个数 7.8之前
+            Integer countFlowAmountBefore78 = (int) data.get("countFlowAmountBefore78");
+
+            //风控个数 7.8之后
+            Integer countFlowAmountAfter78 = (int) data.get("countFlowAmountAfter78");
+
+
             //风控费
             double fkf = 0d;
             //流量费
@@ -338,7 +347,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
             if (MerchantEnum.isXiaoHuQianBao(merchant)) {
                 lif = successOrderMoneyRZ * 0.3 * 0.27;
-                fkf = countFlowAmount * 5.5;
+                fkf = countFlowAmountBefore78 * 5.5 + countFlowAmountAfter78 * 3.5;
                 dxf = userSmsMapper.countUserSms() * 0.1;
                 double sum = lif + fkf + dxf;
                 data.put("merchantBalance", accountRechargeMapper.getAccountRecharge() - sum);

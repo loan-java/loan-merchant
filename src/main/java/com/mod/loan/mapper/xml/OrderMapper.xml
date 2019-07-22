@@ -205,6 +205,8 @@
 
 
 
+
+
     SELECT
     COUNT(id) as 'countAllOrderNumber',
     COUNT(distinct  uid) as 'countAllOrderUserNumber',
@@ -233,6 +235,8 @@
 	COUNT(CASE WHEN status in (31,32,33,34,41,42)  THEN id END) AS  'countBackNumberAll'
 
 	FROM tb_order WHERE merchant = #{merchant}
+
+
 
 
 
@@ -339,15 +343,6 @@
         order by time_key desc
     </select>
 
-    <select id="countFlowAmount" resultType="int">
---         select count(1) from tb_decision_res_detail where order_status = 'SUCCESS'
-select sum(num) from(
-        select count(1) as num from tb_decision_pb_detail
-        union
-        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS'
-        union
-        select count(1) as num from tb_decision_zm_detail where return_code = '0') decision
-    </select>
 
     <select id="countOverdueAmount" resultType="decimal">
         select ifnull(sum(overdue_fee),0) from tb_order where merchant = #{merchant}
@@ -392,6 +387,46 @@ select sum(num) from(
 
     <select id="countFilter" resultType="int">
         select count(1) as num from tb_type_filter
+    </select>
+
+
+    <select id="countFilterBefore78" resultType="int">
+        select count(1) as num from tb_type_filter where create_time &lt;'2019-07-08 00:00:00'
+    </select>
+
+
+    <select id="countFilterAfter78" resultType="int">
+        select count(1) as num from tb_type_filter where create_time &gt;='2019-07-08 00:00:00'
+    </select>
+
+
+    <select id="countFlowAmount" resultType="int">
+select sum(num) from(
+        select count(1) as num from tb_decision_pb_detail
+        union
+        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS'
+        union
+        select count(1) as num from tb_decision_zm_detail where return_code = '0') decision
+    </select>
+
+
+    <select id="countFlowAmountBefore78" resultType="int">
+select sum(num) from(
+        select count(1) as num from tb_decision_pb_detail where create_time &lt;'2019-07-08 00:00:00'
+        union
+        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS' and create_time &lt;'2019-07-08 00:00:00'
+        union
+        select count(1) as num from tb_decision_zm_detail where return_code = '0' and create_time &lt;'2019-07-08 00:00:00') decision
+    </select>
+
+
+    <select id="countFlowAmountAfter78" resultType="int">
+select sum(num) from(
+        select count(1) as num from tb_decision_pb_detail where create_time &gt;= '2019-07-08 00:00:00'
+        union
+        select count(1) as num from tb_decision_res_detail where order_status = 'SUCCESS' and create_time &gt;= '2019-07-08 00:00:00'
+        union
+        select count(1) as num from tb_decision_zm_detail where return_code = '0' and create_time &gt;= '2019-07-08 00:00:00') decision
     </select>
 
 </mapper>
