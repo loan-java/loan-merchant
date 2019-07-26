@@ -20,7 +20,7 @@ public class BizDataUtil {
     public static String decryptBizData(String encryptStr, String desKey) throws Exception {
         if (StringUtils.isBlank(encryptStr)) return "";
 
-        String despwd = RSAUtils.decrypt(desKey, Constant.orgPrivateKey);
+        String despwd = RSAUtils.decrypt(desKey, Constant.rongzeOrgPrivateKey);
         return StandardDesUtils.decrypt(encryptStr, despwd);
     }
 }

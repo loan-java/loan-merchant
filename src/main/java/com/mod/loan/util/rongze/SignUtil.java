@@ -20,7 +20,7 @@ public class SignUtil {
 
         String pendVertContent = bindPreSignStr(json);
 //        System.out.println("待生成签名的字符串：" + pendVertContent);
-        String sign = RSAUtils.sign(pendVertContent, Constant.orgPrivateKey);
+        String sign = RSAUtils.sign(pendVertContent, Constant.rongzeOrgPrivateKey);
 //        System.out.println("签名sign:" + sign);
         return sign;
     }
