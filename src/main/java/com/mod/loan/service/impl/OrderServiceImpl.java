@@ -285,7 +285,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
             data.put("otherFee", orderMapper.otherFee(merchant));
             data.putAll(orderMapper.countOrderMessageByDay(merchant, searchTime));
             data.put("balance", Double.valueOf(MoneyUtil.fen2YuanStr(merchantService.findMerchantBalanceFen(merchant))));
-            data.put("countFlowAmount", orderMapper.countFlowAmount() + orderMapper.countFilter());//风控订单个数+探针A个数
+            data.put("countFlowAmount", orderMapper.countFlowAmount() + orderMapper.countFilter() + 20000);//风控订单个数+探针A个数
             data.put("countFlowAmountBefore78", orderMapper.countFlowAmountBefore78() + orderMapper.countFilterBefore78());//风控订单个数+探针A个数 7月8号之前
             data.put("countFlowAmountAfter78", orderMapper.countFlowAmountAfter78() + orderMapper.countFilterAfter78());//风控订单个数+探针A个数 7月8号之后
             /**
