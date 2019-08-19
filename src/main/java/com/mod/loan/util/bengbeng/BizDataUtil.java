@@ -1,4 +1,4 @@
-package com.mod.loan.util.rongze;
+package com.mod.loan.util.bengbeng;
 
 import com.mod.loan.config.Constant;
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +20,7 @@ public class BizDataUtil {
     public static String decryptBizData(String encryptStr, String desKey) throws Exception {
         if (StringUtils.isBlank(encryptStr)) return "";
 
-        String despwd = RSAUtils.decrypt(desKey, Constant.rongZeOrgPrivateKey);
+        String despwd = RSAUtils.decrypt(desKey, Constant.bengBengOrgPrivateKey);
         return StandardDesUtils.decrypt(encryptStr, despwd);
     }
 }

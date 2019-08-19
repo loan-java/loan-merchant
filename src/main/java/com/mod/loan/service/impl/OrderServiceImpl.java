@@ -16,6 +16,7 @@ import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
 import com.mod.loan.model.User;
 import com.mod.loan.model.dto.StrategyDTO;
+import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderService;
@@ -67,6 +68,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
     @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengService callBackBengBengService;
+
 
     @Override
     public void updateOrderFollowUser(Long followUserId, String merchant, Long... ids) {
@@ -242,6 +247,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 orderMapper.updateByPrimaryKey(order);
                 if (order.getSource() == ConstantUtils.ONE) {
                     callBackRongZeService.pushOrderStatus(order);
+                } else if (order.getSource() == ConstantUtils.TWO) {
+                    callBackBengBengService.pushOrderStatus(order);
                 } else {
                     orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(id));
                 }
@@ -340,6 +347,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
 
             //算融泽 成功放款总额
             double successOrderMoneyRZ = orderMapper.sucessOrderMoney(merchant, OrderSourceEnum.RONGZE.getSoruce());
+
+            //算蹦蹦 成功放款总额
+            double successOrderMoneyBB = orderMapper.sucessOrderMoney(merchant, OrderSourceEnum.BENGBENG.getSoruce());
 
             //算聚合 32*完整注册
             //int countAllUser = userMapper.countAllUser(merchant, UserOriginEnum.JH.getCode());

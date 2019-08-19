@@ -12,6 +12,7 @@ import com.mod.loan.model.Manager;
 import com.mod.loan.model.Merchant;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
+import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderAuditService;
 import com.mod.loan.service.OrderService;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +46,12 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
 
     @Autowired
     private UserMapper userMapper;
-    @Resource
+
+    @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengService callBackBengBengService;
 
     @Override
     public List<Map<String, Object>> findOrderAuditList(Map<String, Object> param, Page page) {
@@ -115,6 +119,8 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
         }
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushOrderStatus(order);
+        } else if (order.getSource() == ConstantUtils.TWO) {
+            callBackBengBengService.pushOrderStatus(order);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));
         }

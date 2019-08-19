@@ -11,6 +11,7 @@ import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderRepay;
+import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderRepayService;
 import com.mod.loan.service.OrderService;
@@ -57,6 +58,9 @@ public class OrderRepayController {
 
     @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengService callBackBengBengService;
 
     @RequestMapping(value = "order_repay_list")
     public ModelAndView order_repay_list(ModelAndView view) {
@@ -147,6 +151,8 @@ public class OrderRepayController {
         orderRepayService.updateOrderOffline(record, orderRepay);
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushOrderStatus(orderMapper.selectByPrimaryKey(orderId));
+        } else if (order.getSource() == ConstantUtils.TWO) {
+            callBackBengBengService.pushOrderStatus(orderMapper.selectByPrimaryKey(orderId));
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
         }

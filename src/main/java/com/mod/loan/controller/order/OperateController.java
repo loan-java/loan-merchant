@@ -6,6 +6,7 @@ import com.mod.loan.common.model.ResultMessage;
 import com.mod.loan.mapper.OrderMapper;
 import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Order;
+import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.OrderService;
 import com.mod.loan.util.ConstantUtils;
@@ -31,6 +32,9 @@ public class OperateController {
 
     @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengService callBackBengBengService;
 
     @RequestMapping(value = "order_bad")
     public ResultMessage order_bad(Long orderId) {
@@ -73,6 +77,8 @@ public class OperateController {
         orderMapper.updateByPrimaryKeySelective(record);
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushRepayPlan(orderMapper.selectByPrimaryKey(orderId));
+        } else if (order.getSource() == ConstantUtils.TWO) {
+            callBackBengBengService.pushRepayPlan(orderMapper.selectByPrimaryKey(orderId));
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));
         }

@@ -11,10 +11,7 @@ import com.mod.loan.mapper.UserMapper;
 import com.mod.loan.model.Merchant;
 import com.mod.loan.model.Order;
 import com.mod.loan.model.OrderAudit;
-import com.mod.loan.service.CallBackRongZeService;
-import com.mod.loan.service.MerchantService;
-import com.mod.loan.service.OrderAuditService;
-import com.mod.loan.service.OrderService;
+import com.mod.loan.service.*;
 import com.mod.loan.util.ConstantUtils;
 import com.mod.loan.util.ExcelUtil;
 import com.mod.loan.util.TimeUtils;
@@ -51,6 +48,10 @@ public class OrderController {
 
     @Autowired
     private CallBackRongZeService callBackRongZeService;
+
+    @Autowired
+    private CallBackBengBengService callBackBengBengService;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -245,6 +246,8 @@ public class OrderController {
         orderAuditService.refuseAuditResult(orderAudit);
         if (order.getSource() == ConstantUtils.ONE) {
             callBackRongZeService.pushOrderStatus(order);
+        } else if (order.getSource() == ConstantUtils.TWO) {
+            callBackBengBengService.pushOrderStatus(order);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderService.selectByPrimaryKey(orderId));
         }
