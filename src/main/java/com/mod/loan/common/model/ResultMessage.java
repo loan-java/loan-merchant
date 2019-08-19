@@ -63,15 +63,15 @@ public class ResultMessage {
 	}
 
 	public ResultMessage(ResponseEnum responseEnum) {
-		this(responseEnum.getCode(), responseEnum.getMessage(), null, null);
+		this(responseEnum.getCode(), responseEnum.getMsg(), null, null);
 	}
 
 	public ResultMessage(ResponseEnum responseEnum, Object data) {
-		this(responseEnum.getCode(), responseEnum.getMessage(), data, null);
+		this(responseEnum.getCode(), responseEnum.getMsg(), data, null);
 	}
 
 	public ResultMessage(ResponseEnum responseEnum, Object data, Page page) {
-		this(responseEnum.getCode(), responseEnum.getMessage(), data, page);
+		this(responseEnum.getCode(), responseEnum.getMsg(), data, page);
 	}
 
 	public String getStatus() {

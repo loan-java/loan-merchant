@@ -25,7 +25,7 @@ public class BizException extends Exception {
     }
 
     public BizException(ResponseEnum r) {
-        super(r.getMessage());
+        super(r.getMsg());
         this.code = r.getCode();
     }
 
