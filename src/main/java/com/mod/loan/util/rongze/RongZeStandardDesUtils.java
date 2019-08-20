@@ -15,7 +15,7 @@ import java.util.Random;
 
 /**
  * 
- * @Description : StandardDesUtils 
+ * @Description : RongZeStandardDesUtils
  * @Copyright   : Sinaif Software Co.,Ltd.Rights Reserved
  * @Company     : 海南新浪爱问普惠科技有限公司
  * @author      : Darben
@@ -23,12 +23,12 @@ import java.util.Random;
  * @Date        : 2018年11月5日 下午16:00:07
  *
  */
-public class StandardDesUtils {
+public class RongZeStandardDesUtils {
 
     private static final Integer DES_KEY_LEN = 16;
     private static final String ALL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    public StandardDesUtils() {
+    public RongZeStandardDesUtils() {
     }
 
     /**

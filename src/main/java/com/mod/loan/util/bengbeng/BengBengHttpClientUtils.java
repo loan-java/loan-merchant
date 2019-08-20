@@ -9,7 +9,7 @@ import java.net.URL;
 
 /**
  * @包名 com.sinaif.common.utils
- * @类名: HttpClientUtils
+ * @类名: RongZeHttpClientUtils
  * @描述: http client请求工具类 @作者： 李运期 @创建时间： 2016年9月21日 上午10:41:19
  */
 @Slf4j

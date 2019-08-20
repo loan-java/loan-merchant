@@ -25,7 +25,7 @@ public class RongZeRequestUtil {
 //        String kingplatformUrl = "http://king-platform-callback.king-test.svc.cluster.local:9090/platform/callback";
 //        String reqParamsStr = "{\"app_id\":\"appid1000000\",\"biz_data\":\"pGBul5nSR6ufWBMs/VRBPmduZhorhdfG8JEvIeikTgm4pvPdo/+qeB28lHw/G+NT2ZqXRMfn51LhsMutNWCzrSC06C35jFiOkQb3b4in1U3DS0jOxeN3AGbuF/7EzwA6ThlQTm1HkMw=\",\"biz_enc\":\"1\",\"des_key\":\"MDuA8iX/SIIxJRJRn8IAJ2+OZDZbAyZCGhhMU/oG5bOK51HypaLTIo9LKyKCRwbtqh0mJOP2ZS19o3lZNFCCexxOu4lFwnRWfOes+crDF8ppb4Z90W826GiNhtN3zk8UlXI0d3epCMIXLcHg3niXJu9O+ikAo9ycgM0u2EnXyPs=\",\"format\":\"json\",\"method\":\"api.bank.result\",\"return_url\":\"\",\"sign\":\"nhab1zczyG5t2PEhK0ztmttTm+5wcHFjekreSSRBOs8c19WVkl4ajO1nCXojPqxI34AlhdTQOkb/YMnOxHX3qX9n4jZ3W2qEdCnz2QcDBhvKrAqUbCD1Wty+iPltN+u+D41h0FmPvKuculPLGKDdINMkIPQjERVs9T49L5semF4=\",\"sign_type\":\"RSA\",\"timestamp\":\"1543396830799\",\"version\":\"1.0\"}";
 
-        String result = HttpClientUtils.sendPost(url, reqParamsStr.getBytes());
+        String result = RongZeHttpClientUtils.sendPost(url, reqParamsStr.getBytes());
         log.info("接口融泽请求结束");
         return result;
     }
@@ -42,12 +42,12 @@ public class RongZeRequestUtil {
         //机构RSA公钥
 //        String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQChLFs1vQQjMmvn02fYpBOTy4JVRt3jISBumoxeDbJn4y/4wYFspW5j8b1p7sztZ5yPlFQw5ia8R7gd/TSLth9WyXI2eaPFhe7RKZzGEPBhUADQsjkohELlewO/b3sRig38k+w/lYyS1ZTIbEvWb9m3Ry4vZ9VLDXYHopgTvzb0MwIDAQAB";
 
-        String despwd = StandardDesUtils.generateDesKey();
+        String despwd = RongZeStandardDesUtils.generateDesKey();
 
         RequestRongZeBean vo = new RequestRongZeBean();
         vo.setMethod(method);
         vo.setSign_type("RSA");
-        vo.setBiz_data(BizDataUtil.encryptBizData(bizData, despwd));
+        vo.setBiz_data(RongZeBizDataUtil.encryptBizData(bizData, despwd));
         vo.setBiz_enc("1");
         vo.setDes_key(genDescKey(despwd));
         vo.setApp_id(Constant.rongZeRequestAppId);
@@ -69,11 +69,11 @@ public class RongZeRequestUtil {
 //        }
 //        String pendVertContent = sbfStr.toString().substring(0, sbfStr.length() - 1);
 //        System.out.println("待生成签名的字符串：" + pendVertContent);
-//        String sign = RSAUtils.sign(pendVertContent, privatekey);
+//        String sign = RongZeRSAUtils.sign(pendVertContent, privatekey);
 //        System.out.println("签名sign:" + sign);
 
         //设置签名
-        vo.setSign(SignUtil.genSign(reqContent));
+        vo.setSign(RongZeSignUtil.genSign(reqContent));
         return JSONObject.toJSONString(vo);
     }
 
@@ -83,7 +83,7 @@ public class RongZeRequestUtil {
 
     //生成 RSA 加密后的密钥
     public static String genDescKey(String despwd) throws Exception {
-        return RSAUtils.encrypt(despwd, Constant.rongZePublicKey);
+        return RongZeRSAUtils.encrypt(despwd, Constant.rongZePublicKey);
     }
 
     public static class RequestRongZeBean {

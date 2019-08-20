@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * 
- * @Description : RSAUtils
+ * @Description : RongZeRSAUtils
  * @Copyright   : Sinaif Software Co.,Ltd.Rights Reserved
  * @Company     : 海南新浪爱问普惠科技有限公司
  * @author      : Darben

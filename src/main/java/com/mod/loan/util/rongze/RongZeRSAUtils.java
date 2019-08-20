@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * 
- * @Description : RSAUtils
+ * @Description : RongZeRSAUtils
  * @Copyright   : Sinaif Software Co.,Ltd.Rights Reserved
  * @Company     : 海南新浪爱问普惠科技有限公司
  * @author      : Darben
@@ -24,7 +24,7 @@ import java.util.Map;
  * @Date        : 2018年11月5日 下午16:00:07
  *
  */
-public class RSAUtils {
+public class RongZeRSAUtils {
 	private static int KEYSIZE = 1024;
 
 	public static PublicKey getPublicKey(String key) throws Exception {
