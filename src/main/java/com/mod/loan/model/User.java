@@ -15,7 +15,7 @@ public class User {
 	private String userPwd;
 
 	/**
-	 * 注册渠道，来源：1-聚合，2-融泽
+	 * 注册渠道，来源：1-聚合，2-融泽，2-蹦蹦
 	 */
 	@Column(name = "user_origin")
 	private String userOrigin;

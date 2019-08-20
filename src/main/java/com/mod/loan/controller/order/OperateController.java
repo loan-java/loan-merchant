@@ -1,5 +1,6 @@
 package com.mod.loan.controller.order;
 
+import com.mod.loan.common.enums.OrderSourceEnum;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.RequestThread;
 import com.mod.loan.common.model.ResultMessage;
@@ -75,9 +76,9 @@ public class OperateController {
         record.setReduceMoney(money);
         record.setShouldRepay(order.getInterestFee().add(order.getBorrowMoney()).add(order.getOverdueFee()).subtract(money));
         orderMapper.updateByPrimaryKeySelective(record);
-        if (order.getSource() == ConstantUtils.ONE) {
+        if (OrderSourceEnum.isRongZe(order.getSource())) {
             callBackRongZeService.pushRepayPlan(orderMapper.selectByPrimaryKey(orderId));
-        } else if (order.getSource() == ConstantUtils.TWO) {
+        } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
             callBackBengBengService.pushRepayPlan(orderMapper.selectByPrimaryKey(orderId));
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));

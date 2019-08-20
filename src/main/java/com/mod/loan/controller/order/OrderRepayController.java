@@ -1,5 +1,6 @@
 package com.mod.loan.controller.order;
 
+import com.mod.loan.common.enums.OrderSourceEnum;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
@@ -149,9 +150,9 @@ public class OrderRepayController {
         orderRepay.setRemark(remark);
         orderRepay.setUpdateTime(new Date());
         orderRepayService.updateOrderOffline(record, orderRepay);
-        if (order.getSource() == ConstantUtils.ONE) {
+        if (OrderSourceEnum.isRongZe(order.getSource())) {
             callBackRongZeService.pushOrderStatus(orderMapper.selectByPrimaryKey(orderId));
-        } else if (order.getSource() == ConstantUtils.TWO) {
+        } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
             callBackBengBengService.pushOrderStatus(orderMapper.selectByPrimaryKey(orderId));
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderId));

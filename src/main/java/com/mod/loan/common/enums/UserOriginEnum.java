@@ -9,7 +9,8 @@ public enum UserOriginEnum {
      * 订单类型
      */
     JH("0", "聚合"),
-    RZ("1", "融泽");
+    RZ("1", "融泽"),
+    BB("2", "蹦蹦");
 
     private String code;
     private String msg;

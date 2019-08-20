@@ -23,12 +23,12 @@ import java.util.Random;
  * @Date        : 2018年11月5日 下午16:00:07
  *
  */
-public class StandardDesUtils {
+public class BengBengStandardDesUtils {
 
     private static final Integer DES_KEY_LEN = 16;
     private static final String ALL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    public StandardDesUtils() {
+    public BengBengStandardDesUtils() {
     }
 
     /**

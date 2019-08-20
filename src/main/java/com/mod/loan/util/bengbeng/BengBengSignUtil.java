@@ -13,18 +13,18 @@ import java.util.Map;
  * @ author liujianjian
  * @ date 2019/5/15 17:04
  */
-public class SignUtil {
+public class BengBengSignUtil {
 
     public static String genSign(String json) throws Exception {
         if (StringUtils.isBlank(json)) return "";
 
         String pendVertContent = bindPreSignStr(json);
-        String sign = RSAUtils.sign(pendVertContent, Constant.bengBengOrgPrivateKey);
+        String sign = BengBengRSAUtils.sign(pendVertContent, Constant.bengBengOrgPrivateKey);
         return sign;
     }
 
     public static boolean checkSign(String json, String sign) {
-        return RSAUtils.checkSign(bindPreSignStr(json), sign, Constant.bengBengPublicKey);
+        return BengBengRSAUtils.checkSign(bindPreSignStr(json), sign, Constant.bengBengPublicKey);
     }
 
     private static String bindPreSignStr(String json) {

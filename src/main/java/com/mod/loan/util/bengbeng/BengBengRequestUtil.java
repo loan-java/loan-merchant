@@ -9,10 +9,9 @@ import lombok.extern.slf4j.Slf4j;
  * @ date 2019/5/15 9:03
  */
 @Slf4j
-public class RongZeRequestUtil {
+public class BengBengRequestUtil {
 
     public static String doPost(String url, String method, String bizData) throws Exception {
-        log.info("接口融泽请求开始, 方法是:{}", method);
         return doPost(url, method, bizData, "");
     }
 
@@ -21,12 +20,7 @@ public class RongZeRequestUtil {
     }
 
     private static String doPost(String url, String reqParamsStr) throws Exception {
-        //大王贷款回调服务API接口URL
-//        String kingplatformUrl = "http://king-platform-callback.king-test.svc.cluster.local:9090/platform/callback";
-//        String reqParamsStr = "{\"app_id\":\"appid1000000\",\"biz_data\":\"pGBul5nSR6ufWBMs/VRBPmduZhorhdfG8JEvIeikTgm4pvPdo/+qeB28lHw/G+NT2ZqXRMfn51LhsMutNWCzrSC06C35jFiOkQb3b4in1U3DS0jOxeN3AGbuF/7EzwA6ThlQTm1HkMw=\",\"biz_enc\":\"1\",\"des_key\":\"MDuA8iX/SIIxJRJRn8IAJ2+OZDZbAyZCGhhMU/oG5bOK51HypaLTIo9LKyKCRwbtqh0mJOP2ZS19o3lZNFCCexxOu4lFwnRWfOes+crDF8ppb4Z90W826GiNhtN3zk8UlXI0d3epCMIXLcHg3niXJu9O+ikAo9ycgM0u2EnXyPs=\",\"format\":\"json\",\"method\":\"api.bank.result\",\"return_url\":\"\",\"sign\":\"nhab1zczyG5t2PEhK0ztmttTm+5wcHFjekreSSRBOs8c19WVkl4ajO1nCXojPqxI34AlhdTQOkb/YMnOxHX3qX9n4jZ3W2qEdCnz2QcDBhvKrAqUbCD1Wty+iPltN+u+D41h0FmPvKuculPLGKDdINMkIPQjERVs9T49L5semF4=\",\"sign_type\":\"RSA\",\"timestamp\":\"1543396830799\",\"version\":\"1.0\"}";
-
-        String result = HttpClientUtils.sendPost(url, reqParamsStr.getBytes());
-        log.info("接口融泽请求结束");
+        String result = BengBengHttpClientUtils.sendPost(url, reqParamsStr.getBytes());
         return result;
     }
 
@@ -34,46 +28,22 @@ public class RongZeRequestUtil {
      * 构建请求参数
      */
     public static String buildRequestParams(String method, String bizData, String returnUrl) throws Exception {
-        //说明：秘钥格式PKCS8，秘钥长度1024，签名方式RSA，字符集UTF-8
-
-        //机构RSA私钥
-//        String privatekey = Constant.orgPrivateKey;
-//        String privatekey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKEsWzW9BCMya+fTZ9ikE5PLglVG3eMhIG6ajF4NsmfjL/jBgWylbmPxvWnuzO1nnI+UVDDmJrxHuB39NIu2H1bJcjZ5o8WF7tEpnMYQ8GFQANCyOSiEQuV7A79vexGKDfyT7D+VjJLVlMhsS9Zv2bdHLi9n1UsNdgeimBO/NvQzAgMBAAECgYBD0wGzFI64LRDBpvItdaaTbHG1ZzQaz6bxRHJLZiIsm6tlWDEZwmg5ANK/0HFGenKk7TuctE2ar+eoHxTMsmBvGzctn8KSU+c5MqLiwMko4tkzoSJkaRAIO2f9Uv2rqLMHaOehzxHVgB39wIBv1HL5I1BmRjETHMR4cxmmb9w56QJBAPv2z246LDHe6ndCujcubkxYcNusGIWttSocwS3uCCGDLnrqEQ72zCmUevuSrYZFfnAT0LbA1fveP06J6Oa5pbUCQQCjwUEW3X08P2E8O2uCUWclianmQbZELaP68evNgumyOD8E3YJxDZtcTDcjrWoanE+UW31rm2ShihIEJrujMWNHAkBLIptSnGhHatjyPWS4RdFAVPM6noQlgNpQN4jnwF6OV8cJgjkaBEB3eb5+vIugSaLdmxsXFEP7OpgYPInGG8AtAkAni90/O2AqM5g05pixER2a2CMaw1XUIz2NtezfZbUwYBr//sqoqMOTR6itSgzsvkENsAaa/R0RUfnF3ODFqYCzAkEA7hH2HCE47Jy6q8tNGptbKy3Rj18KhcrLyQ4aq5KgX2wX2hNY0A5ZWJ+csYkWNgmPfbeOHj6gDwawg+ce0lZMng==";
-        //机构RSA公钥
-//        String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQChLFs1vQQjMmvn02fYpBOTy4JVRt3jISBumoxeDbJn4y/4wYFspW5j8b1p7sztZ5yPlFQw5ia8R7gd/TSLth9WyXI2eaPFhe7RKZzGEPBhUADQsjkohELlewO/b3sRig38k+w/lYyS1ZTIbEvWb9m3Ry4vZ9VLDXYHopgTvzb0MwIDAQAB";
-
-        String despwd = StandardDesUtils.generateDesKey();
-
-        RequestRongZeBean vo = new RequestRongZeBean();
+        String despwd = BengBengStandardDesUtils.generateDesKey();
+        RequestBengBengBean vo = new RequestBengBengBean();
         vo.setMethod(method);
         vo.setSign_type("RSA");
-        vo.setBiz_data(BizDataUtil.encryptBizData(bizData, despwd));
+        vo.setBiz_data(BengBengBizDataUtil.encryptBizData(bizData, despwd));
         vo.setBiz_enc("1");
         vo.setDes_key(genDescKey(despwd));
-        vo.setApp_id(Constant.rongZeRequestAppId);
+        vo.setApp_id(Constant.bengBengRequestAppId);
         vo.setVersion("1.0");
         vo.setFormat("json");
         vo.setTimestamp(System.currentTimeMillis() + "");
         vo.setReturn_url(returnUrl);
 
         String reqContent = JSONObject.toJSONString(vo);
-//        Map<String, String> paramMap = JSONObject.parseObject(reqContent, Map.class);
-//
-//        StringBuffer sbfStr = new StringBuffer();
-//        List<String> list = new ArrayList<String>(paramMap.keySet());
-//        Collections.sort(list); //参数名ASCII码从小到大排序（字典序）
-//        for (String key : list) {
-//            if (StringUtils.isNotBlank(paramMap.get(key))) {
-//                sbfStr.append(key + "=" + paramMap.get(key) + "&");
-//            }
-//        }
-//        String pendVertContent = sbfStr.toString().substring(0, sbfStr.length() - 1);
-//        System.out.println("待生成签名的字符串：" + pendVertContent);
-//        String sign = RSAUtils.sign(pendVertContent, privatekey);
-//        System.out.println("签名sign:" + sign);
-
         //设置签名
-        vo.setSign(SignUtil.genSign(reqContent));
+        vo.setSign(BengBengSignUtil.genSign(reqContent));
         return JSONObject.toJSONString(vo);
     }
 
@@ -83,10 +53,10 @@ public class RongZeRequestUtil {
 
     //生成 RSA 加密后的密钥
     public static String genDescKey(String despwd) throws Exception {
-        return RSAUtils.encrypt(despwd, Constant.rongZePublicKey);
+        return BengBengRSAUtils.encrypt(despwd, Constant.bengBengPublicKey);
     }
 
-    public static class RequestRongZeBean {
+    public static class RequestBengBengBean {
         /**
          * 要请求的 API 方法名称
          */

@@ -1,6 +1,7 @@
 package com.mod.loan.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.mod.loan.common.enums.OrderSourceEnum;
 import com.mod.loan.common.enums.PbResultEnum;
 import com.mod.loan.common.enums.PolicyResultEnum;
 import com.mod.loan.common.mapper.BaseServiceImpl;
@@ -117,9 +118,9 @@ public class OrderAuditServiceImpl extends BaseServiceImpl<OrderAudit, Long> imp
             orderAudit.setCreteTime(new Date());
             orderAuditMapper.updateByPrimaryKeySelective(orderAudit);
         }
-        if (order.getSource() == ConstantUtils.ONE) {
+        if (OrderSourceEnum.isRongZe(order.getSource())) {
             callBackRongZeService.pushOrderStatus(order);
-        } else if (order.getSource() == ConstantUtils.TWO) {
+        } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
             callBackBengBengService.pushOrderStatus(order);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(orderAudit.getOrderId()));

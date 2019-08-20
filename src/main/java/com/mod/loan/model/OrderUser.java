@@ -26,7 +26,7 @@ public class OrderUser {
     private Date createTime;
 
     /**
-     * 订单来源，0-聚合，1-融泽
+     * 订单来源，0-聚合，1-融泽，2-蹦蹦
      */
     @Column(name = "source")
     private Integer source;

@@ -1,5 +1,6 @@
 package com.mod.loan.controller.order;
 
+import com.mod.loan.common.enums.OrderSourceEnum;
 import com.mod.loan.common.enums.ResponseEnum;
 import com.mod.loan.common.model.Page;
 import com.mod.loan.common.model.RequestThread;
@@ -244,9 +245,9 @@ public class OrderController {
         orderAudit.setOrderId(orderId);
         orderAudit.setFailReason("取消放款");
         orderAuditService.refuseAuditResult(orderAudit);
-        if (order.getSource() == ConstantUtils.ONE) {
+        if (OrderSourceEnum.isRongZe(order.getSource())) {
             callBackRongZeService.pushOrderStatus(order);
-        } else if (order.getSource() == ConstantUtils.TWO) {
+        } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
             callBackBengBengService.pushOrderStatus(order);
         } else {
             orderService.orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderService.selectByPrimaryKey(orderId));

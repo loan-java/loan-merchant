@@ -8,6 +8,7 @@ import com.mod.loan.model.UserBank;
 import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.OrderService;
 import com.mod.loan.service.UserBankService;
+import com.mod.loan.util.bengbeng.BengBengRequestUtil;
 import com.mod.loan.util.rongze.RongZeRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +42,7 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
 
             postOrderStatus(order);
         } catch (Exception e) {
-            log.error("给融泽推送订单状态失败: " + e.getMessage(), e);
+            log.error("给蹦蹦推送订单状态失败: " + e.getMessage(), e);
         }
     }
 
@@ -51,7 +52,7 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
             order = checkOrder(order);
             postRepayPlan(order);
         } catch (Exception e) {
-            log.error("给融泽推送还款计划失败: " + e.getMessage(), e);
+            log.error("给蹦蹦推送还款计划失败: " + e.getMessage(), e);
         }
     }
 
@@ -193,12 +194,12 @@ public class CallBackBengBengServiceImpl implements CallBackBengBengService {
     }
 
     private void postOrderStatus(Map<String, Object> map) throws Exception {
-        RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.order.status", JSON.toJSONString(map));
+        BengBengRequestUtil.doPost(Constant.bengBengCallbackUrl, "api.order.status", JSON.toJSONString(map));
     }
 
 
     private void postRepayPlan(Map<String, Object> map) throws Exception {
-        RongZeRequestUtil.doPost(Constant.rongZeCallbackUrl, "api.payment.plan", JSON.toJSONString(map));
+        BengBengRequestUtil.doPost(Constant.bengBengCallbackUrl, "api.payment.plan", JSON.toJSONString(map));
     }
 
 

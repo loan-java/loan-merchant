@@ -19,6 +19,7 @@ import com.mod.loan.service.UserService;
 import com.mod.loan.util.aliyun.AliOssStaticUtil;
 import com.mod.loan.util.ExcelUtil;
 import com.mod.loan.util.TimeUtils;
+import com.mod.loan.util.bengbeng.BengBengRequestUtil;
 import com.mod.loan.util.moxie.AddressListUtil;
 import com.mod.loan.util.moxie.ContactUtil;
 import com.mod.loan.util.moxie.MoxieOssUtil;
@@ -282,6 +283,8 @@ public class UserController {
             view.setViewName("user/user_carrier_info");
         } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
             view.setViewName("user/user_carrier_info_rz");
+        }else if (user.getUserOrigin().equals(UserOriginEnum.BB.getCode())) {
+            view.setViewName("user/user_carrier_info_bb");
         }
         return view;
     }
@@ -296,6 +299,8 @@ public class UserController {
             view.setViewName("user/user_smses_info");
         } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
             view.setViewName("user/user_smses_info_rz");
+        }else if (user.getUserOrigin().equals(UserOriginEnum.BB.getCode())) {
+            view.setViewName("user/user_smses_info_bb");
         }
         return view;
     }
@@ -314,11 +319,38 @@ public class UserController {
         if (moxieMobile == null || moxieMobile.getRemark() == null)
 
             if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
-                OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
+            OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("order_no", orderUser.getOrderNo());
+            jsonObject1.put("type", "1");
+            String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
+            //判断运营商数据
+            JSONObject jsonObject = JSONObject.parseObject(mxMobile);
+            if (!jsonObject.containsKey("code") || !jsonObject.containsKey("data") || jsonObject.getInteger("code") != 200) {
+                throw new Exception("推送用户补充信息:下载运营商数据解析失败");
+            }
+            String dataStr = jsonObject.getString("data");
+            JSONObject all = JSONObject.parseObject(dataStr);
+            JSONObject data = all.getJSONObject("data");
+            JSONObject report = data.getJSONObject("report");
+            JSONObject members = report.getJSONObject("members");
+            //上传
+            String mxMobilePath = AliOssStaticUtil.uploadStr(members.toJSONString(), user.getId());
+            if (StringUtils.isBlank(mxMobilePath)) {
+                throw new Exception("推送用户补充信息:运营商数据上传失败");
+            }
+            moxieMobile = new MoxieMobile();
+            moxieMobile.setUid(user.getId());
+            moxieMobile.setPhone(user.getUserPhone());
+            //oss上文件的地址存在remark这个字段
+            moxieMobile.setRemark(mxMobilePath);
+            moxieMobileMapper.insertSelective(moxieMobile);
+        } else if (user.getUserOrigin().equals(UserOriginEnum.BB.getCode())) {
+                OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.BB.getCode()), user.getId());
                 JSONObject jsonObject1 = new JSONObject();
                 jsonObject1.put("order_no", orderUser.getOrderNo());
                 jsonObject1.put("type", "1");
-                String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
+                String mxMobile = BengBengRequestUtil.doPost(Constant.bengBengQueryUrl, "api.charge.data", jsonObject1.toJSONString());
                 //判断运营商数据
                 JSONObject jsonObject = JSONObject.parseObject(mxMobile);
                 if (!jsonObject.containsKey("code") || !jsonObject.containsKey("data") || jsonObject.getInteger("code") != 200) {
@@ -343,16 +375,21 @@ public class UserController {
             } else {
                 return new ResultMessage(ResponseEnum.M4000, "运营商数据不存在");
             }
-        String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(), Constant.bucket_name_mobile);
-        JSONObject jsonObject = JSON.parseObject(str);
-        if (StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
-            return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
-        } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
-            JSONArray jsonArray = jsonObject.getJSONArray("transactions");
-            if (jsonArray.size() > 0) {
-                return new ResultMessage(ResponseEnum.M2000, jsonArray.get(0));
+            String str = AliOssStaticUtil.ossGetFile(moxieMobile.getRemark(), Constant.bucket_name_mobile);
+            JSONObject jsonObject = JSON.parseObject(str);
+            if (StringUtil.isEmpty(user.getUserOrigin()) || user.getUserOrigin().equals(UserOriginEnum.JH.getCode())) {
+                return new ResultMessage(ResponseEnum.M2000, jsonObject.getJSONObject("data"));
+            } else if (user.getUserOrigin().equals(UserOriginEnum.RZ.getCode())) {
+                JSONArray jsonArray = jsonObject.getJSONArray("transactions");
+                if (jsonArray.size() > 0) {
+                    return new ResultMessage(ResponseEnum.M2000, jsonArray.get(0));
+                }
+            }else if (user.getUserOrigin().equals(UserOriginEnum.BB.getCode())) {
+                JSONArray jsonArray = jsonObject.getJSONArray("transactions");
+                if (jsonArray.size() > 0) {
+                    return new ResultMessage(ResponseEnum.M2000, jsonArray.get(0));
+                }
             }
-        }
         return new ResultMessage(ResponseEnum.M2000, null);
     }
 

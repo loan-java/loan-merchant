@@ -245,9 +245,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 // 修改订单状态
                 order.setStatus(Constant.ORDER_IN_LENDING);
                 orderMapper.updateByPrimaryKey(order);
-                if (order.getSource() == ConstantUtils.ONE) {
+                if (OrderSourceEnum.isRongZe(order.getSource())) {
                     callBackRongZeService.pushOrderStatus(order);
-                } else if (order.getSource() == ConstantUtils.TWO) {
+                } else if (OrderSourceEnum.isBengBeng(order.getSource())) {
                     callBackBengBengService.pushOrderStatus(order);
                 } else {
                     orderCallBack(userMapper.selectByPrimaryKey(order.getUid()), orderMapper.selectByPrimaryKey(id));
