@@ -322,7 +322,7 @@ public class UserController {
                 OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.RZ.getCode()), user.getId());
                 JSONObject jsonObject1 = new JSONObject();
                 jsonObject1.put("order_no", orderUser.getOrderNo());
-                jsonObject1.put("type", "2");
+                jsonObject1.put("type", "1");
                 String mxMobile = RongZeRequestUtil.doPost(Constant.rongZeQueryUrl, "api.charge.data", jsonObject1.toJSONString());
                 logger.info("运营商返回数据:" + mxMobile);
                 //判断运营商数据
@@ -350,7 +350,7 @@ public class UserController {
                 OrderUser orderUser = orderUserMapper.getUidLastOrder(Integer.valueOf(UserOriginEnum.BB.getCode()), user.getId());
                 JSONObject jsonObject1 = new JSONObject();
                 jsonObject1.put("order_no", orderUser.getOrderNo());
-                jsonObject1.put("type", "2");
+                jsonObject1.put("type", "1");
                 String mxMobile = BengBengRequestUtil.doPost(Constant.bengBengQueryUrl, "api.charge.data", jsonObject1.toJSONString());
                 logger.info("运营商返回数据:" + mxMobile);
                 //判断运营商数据
