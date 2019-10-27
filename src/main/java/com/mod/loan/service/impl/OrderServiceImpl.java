@@ -20,7 +20,6 @@ import com.mod.loan.service.CallBackBengBengService;
 import com.mod.loan.service.CallBackRongZeService;
 import com.mod.loan.service.MerchantService;
 import com.mod.loan.service.OrderService;
-import com.mod.loan.util.ConstantUtils;
 import com.mod.loan.util.MoneyUtil;
 import com.mod.loan.util.juhe.CallBackJuHeUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -258,14 +257,14 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long> implements Or
                 jsonObject.put("payType", payType);
                 System.out.println("放款类型：" + order.getPaymentType());
                 System.out.println("==========================================");
-                if (PaymentTypeEnum.BAOFOO.getCode().equals(order.getPaymentType())) {
+                if (PaymentTypeEnum.baofoo.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.baofoo_queue_order_pay, jsonObject);
-                } else if (PaymentTypeEnum.KUAIQIAN.getCode().equals(order.getPaymentType())) {
+                } else if (PaymentTypeEnum.kuaiqian.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.kuaiqian_queue_order_pay, jsonObject);
                 }
-                if (PaymentTypeEnum.CHANPAY.getCode().equals(order.getPaymentType())) {
+                if (PaymentTypeEnum.chanpay.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.chanpay_queue_order_pay, jsonObject);
-                } else if (PaymentTypeEnum.YEEPAY.getCode().equals(order.getPaymentType())) {
+                } else if (PaymentTypeEnum.yeepay.getCode().equals(order.getPaymentType())) {
                     rabbitTemplate.convertAndSend(RabbitConst.yeepay_queue_order_pay, jsonObject);
                 }
             }
