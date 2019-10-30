@@ -133,9 +133,6 @@ public class SystemController {
     @RequestMapping(value = "login_ajax", method = {RequestMethod.POST})
     public ResultMessage login_ajax(HttpServletRequest request, HttpServletResponse response, String loginname, String password, String code) {
         String merchant = request.getServerName().split("\\.")[0];
-        if (merchant.equals("localhost")  || merchant.contains("test")) {
-            merchant = "huashidai";
-        }
         if (StringUtils.isBlank(merchant)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "无效的请求");
         }
@@ -227,9 +224,6 @@ public class SystemController {
     @RequestMapping(value = "login_phone_code_ajax", method = {RequestMethod.POST})
     public ResultMessage login_phone_code_ajax(HttpServletRequest request, String loginname, String password) {
         String merchant = request.getServerName().split("\\.")[0];
-        if (merchant.equals("localhost")  || merchant.contains("test") ) {
-            merchant = "huashidai";
-        }
         if (StringUtils.isBlank(merchant)) {
             return new ResultMessage(ResponseEnum.M4000.getCode(), "无效的请求");
         }
@@ -287,9 +281,6 @@ public class SystemController {
     @RequestMapping(value = "login_current_merchant_ajax", method = {RequestMethod.POST})
     public ResultMessage login_current_merchant_ajax(HttpServletRequest request) {
         String merchantAlias = RequestThread.get().getMerchant() == null ? request.getServerName().split("\\.")[0] : RequestThread.get().getMerchant();
-        if (merchantAlias.equals("localhost")  || merchantAlias.contains("test")) {
-            merchantAlias = "huashidai";
-        }
         Merchant temp = new Merchant();
         temp.setMerchantAlias(merchantAlias);
         temp.setMerchantStatus(1);
