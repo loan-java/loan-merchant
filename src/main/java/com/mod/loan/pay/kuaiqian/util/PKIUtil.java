@@ -1,7 +1,10 @@
 package com.mod.loan.pay.kuaiqian.util;
 
+import com.mod.loan.service.pay.baofoo.BaofooBalanceQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 
@@ -19,8 +22,9 @@ public class PKIUtil {
 	
 
 	private static final String ENCODING = "utf-8";
-	
-    
+
+	public static final Logger log = LoggerFactory.getLogger(PKIUtil.class);
+
     public static String byte2UTF8String(byte[] bytes) {
 		try {
 			return new String(bytes, ENCODING);

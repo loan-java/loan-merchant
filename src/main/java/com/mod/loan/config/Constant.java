@@ -68,6 +68,10 @@ public class Constant {
      */
     public final static Integer ORDER_CANCLE = 53;
 
+
+    public static  String FILE_VISIT_HOST;
+    public static  String FILE_SAVE_PATH;
+
     public static String accesskey_id;
 
     public static String access_key_secret;
@@ -136,6 +140,17 @@ public class Constant {
 //    public void setChanpayPartnerId(String chanpayPartnerId) {
 //        Constant.chanpayPartnerId = chanpayPartnerId;
 //    }
+
+
+    @Value("${file.visit.host:}")
+    public void setFileVisitHost(String fileVisitHost) {
+        Constant.FILE_VISIT_HOST = fileVisitHost;
+    }
+
+    @Value("${file.save.path:}")
+    public void setFileSavePath(String fileSavePath) {
+        Constant.FILE_SAVE_PATH = fileSavePath;
+    }
 
     @Value("${chanpay.merchant.no:}")
     public void setChanpayMerchantNo(String chanpayMerchantNo) {
