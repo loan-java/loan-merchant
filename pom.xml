@@ -32,7 +32,7 @@
 		<commons-httpclient.version>3.0</commons-httpclient.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
-		<jsoup.version>1.9.2</jsoup.version>
+		<jsoup.version>1.15.3</jsoup.version>
 		<guava.version>19.0</guava.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
